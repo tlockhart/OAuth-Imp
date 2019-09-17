@@ -11,7 +11,7 @@ import ProductForm from "../components/ProductsOLD";
 import ProductList from "../components/ProductList";
 
 
-class ProductsContainer extends Component {
+class ProductContainer extends Component {
     constructor(props) {
         super(props);
         let _productListComponents = [];
@@ -80,4 +80,4 @@ class ProductsContainer extends Component {
     }
 } // class
 
-export default ProductsContainer;
+export default ProductContainer;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBContainer, MDBInputGroup, MDBBtn } from "mdbreact";
 
-let ProductForm = (props) => {
+let ProductFormOLD = (props) => {
     return (
         <main role="main" className="flex-shrink-0">
             <div className="container">
@@ -20,4 +20,4 @@ let ProductForm = (props) => {
     )
 };
 
-export default ProductForm;
+export default ProductFormOLD;

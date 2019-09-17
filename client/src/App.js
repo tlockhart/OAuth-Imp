@@ -12,7 +12,8 @@ import Footer from './components/Footer';
 
 // Import Pages
 import HomeContainer from './pages/HomeContainer';
-import ProductContainer from './pages/ProductsContainer';
+import ProductsContainer from './pages/ProductsContainer';
+import ProductContainer from './pages/ProductContainer';
 import SignupContainer from './pages/SignupContainer';
 import LoginContainer from './pages/LoginContainer';
 
@@ -25,7 +26,8 @@ class App extends Component {
           <Route exact path="/" component={HomeContainer} />
           <Route exact path="/user/signup" component={SignupContainer} />
           <Route exact path="/user/login" component={LoginContainer} />
-          <Route exact path="/products" component={ProductContainer} />
+          <Route exact path="/products" component={ProductsContainer} />
+          <Route exact path="/products/:products_id" component={ProductContainer} />
           <Footer />
         </div>
       </Router>
