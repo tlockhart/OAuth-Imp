@@ -78,6 +78,7 @@ exports.products_create_product = (req, res, next) => {
 exports.products_get_product = (req, res, next) => {
     // Extract the productId
     const id = req.params.productId;
+    console.log("products_get_product", id);
     // Find document by id
 
     // Find a document by product id
@@ -118,6 +119,7 @@ exports.products_update_product = (req, res, next) => {
     for (let key of req.body) {
         updateProps[key.propName] = key.value;
     }
+
     Product.update( {_id: id }, { $set: updateProps } )
     .exec()
     .then( document => {

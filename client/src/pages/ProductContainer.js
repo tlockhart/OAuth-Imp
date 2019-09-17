@@ -18,52 +18,46 @@ class ProductContainer extends Component {
         this.state = {
             products: '',
         };
-
-        // this.clickHandler = this.clickHander.bind(this);
     } // constructor
     
     componentDidMount() {
-        let baseURL = "/products";
+        // Option1: Simple limiting
+        // const { product_id } = this.props.match.params;
+        // console.log('ID', product_id);
 
-        let returnProducts = (baseURL) => {
-            API.getProducts(baseURL)
+        // Option2: Can pull more complex properties
+        const { id } = this.props.location.state;
+        console.log('ID:', id);
+
+         
+        let baseURL = `/products/${id}`;
+        console.log("baseline:", baseURL);
+
+        let returnProduct = (baseURL) => {
+            API.getProduct(baseURL)
             .then(res => {
-                // callback to store state variables
-                // cb(res);
                 console.log(res);
-                // this.setState({products: res.data.products});
-                this.productListComponents = res.data.products;
+                this.productListComponents = {...res.data, _id: id};
             })
             .catch(err => console.log(err));
         };
 
         // Execute getProducts
-        returnProducts(baseURL);
+        returnProduct(baseURL);
     }
 
     set productListComponents(data) {
-        let productsData = data;
-        console.log("in get", productsData, "length", productsData.length);
-        this._productListComponents = productsData.map((productData) => {
-            return <ProductList key={productData._id} id={productData._id} name={productData.name} price={productData.price} /> 
-        });
+        let productData = data;
+        console.log("in get", productData, "length", productData.length);
+        this._productListComponents =  <ProductList key={productData._id} id={productData._id} name={productData.name} price={productData.price} />;
         
         this.setState({products: this._productListComponents});
         console.log('productListComponent', this.state.products);
-        // return productListComponents;
-        // return 1;
     }
 
     get productListComponents() {
         return this._productListComponents;
     }
-    
-    // clickHander(event) {
-    //     event.preventDefault();
-        // getProducts = (cb) => {
-        
-    // } // clickHandler
-
     
     render() {
         
@@ -71,9 +65,6 @@ class ProductContainer extends Component {
         console.log('components:', productComponents);
         return (
             <React.Fragment>
-                {/* <ProductForm  */}
-                {/* // clickHandler={this.clickHandler} 
-                // /> */}
                 {productComponents}
             </React.Fragment>
         )

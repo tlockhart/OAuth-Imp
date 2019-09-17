@@ -27,7 +27,7 @@ class App extends Component {
           <Route exact path="/user/signup" component={SignupContainer} />
           <Route exact path="/user/login" component={LoginContainer} />
           <Route exact path="/products" component={ProductsContainer} />
-          <Route exact path="/products/:products_id" component={ProductContainer} />
+          <Route exact path="/products/:product_id" component={ProductContainer} />
           <Footer />
         </div>
       </Router>

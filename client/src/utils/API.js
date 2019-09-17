@@ -56,4 +56,14 @@ export default {
         else
             console.log("NO DATA TO SEND");
     },
+
+    getProduct: async (baseURL) => {
+        if(baseURL) {
+            console.log("in API.getProduct", baseURL);
+            let response = await axios.get(baseURL);
+            return response;
+        }
+        else
+            console.log("NO DATA TO SEND");
+    },
 }; 
