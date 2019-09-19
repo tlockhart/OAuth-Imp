@@ -19,48 +19,50 @@ class ProductContainer extends Component {
             products: '',
         };
     } // constructor
-    
+
     componentDidMount() {
         // Option1: Simple limiting
         // const { product_id } = this.props.match.params;
         // console.log('ID', product_id);
 
-        // Option2: Can pull more complex properties
-        const { id } = this.props.location.state;
-        console.log('ID:', id);
+        if (this.props.location.state) {
+            // Option2: Can pull more complex properties
+            const { id } = this.props.location.state;
+            console.log('ID:', id);
 
-         
-        let baseURL = `/products/${id}`;
-        console.log("baseline:", baseURL);
 
-        let returnProduct = (baseURL) => {
-            API.getProduct(baseURL)
-            .then(res => {
-                console.log(res);
-                this.productListComponents = {...res.data, _id: id};
-            })
-            .catch(err => console.log(err));
-        };
+            let baseURL = `/products/${id}`;
+            console.log("baseline:", baseURL);
 
-        // Execute getProducts
-        returnProduct(baseURL);
+            let returnProduct = (baseURL) => {
+                API.getProduct(baseURL)
+                    .then(res => {
+                        console.log(res);
+                        this.productListComponents = { ...res.data, _id: id };
+                    })
+                    .catch(err => console.log(err));
+            };
+
+            // Execute getProducts
+            returnProduct(baseURL);
+        }
     }
 
     set productListComponents(data) {
         let productData = data;
         console.log("in get", productData, "length", productData.length);
-        this._productListComponents =  <ProductList key={productData._id} id={productData._id} name={productData.name} price={productData.price} />;
-        
-        this.setState({products: this._productListComponents});
+        this._productListComponents = <ProductList key={productData._id} id={productData._id} name={productData.name} price={productData.price} />;
+
+        this.setState({ products: this._productListComponents });
         console.log('productListComponent', this.state.products);
     }
 
     get productListComponents() {
         return this._productListComponents;
     }
-    
+
     render() {
-        
+
         const productComponents = this.productListComponents;
         console.log('components:', productComponents);
         return (

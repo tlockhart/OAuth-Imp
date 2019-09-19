@@ -7,17 +7,17 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } 
 import API from '../utils/API';
 
 // Import Components
-import LoginForm from "../components/LoginInputs";
+import ProductUpdateForm from "../components/ProductUpdateInputs";
 
-class LoginContainer extends Component {
+class ProductUpdateContainer extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            email: '',
-            password: '',
-            message: '',
-            token: ''
+            productName: '',
+            productPrice: '',
+            // message: '',
+            // token: ''
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -49,48 +49,53 @@ class LoginContainer extends Component {
         event.preventDefault();
         // alert(`User Name: ${this.state.email}\n
         //   Password: ${this.state.password}\n`);
-        console.log(`User Name: ${this.state.email}, Password: ${this.state.password}`);
+        console.log(`Product Name: ${this.state.productName}, Password: ${this.state.productPrice}`);
 
         // Package Data to be sent in the Post Request Body
         let data = {
-            email: this.state.email,
-            password: this.state.password
+            productName: this.state.productName,
+            productPrice: this.state.productPrice
         };
 
         // Define Call to Server Side utils to post body to the backend server:
-        let register = (data) => {
-            console.log('IN LOGIN CALL');
-            API.login(data)
-                .then(res => {
-                      this.setState( { token: res.token});
-                    console.log("RES:", res);
-                })
-                .catch(err => console.log(err));
-        };
+        // let updateProduct = (data) => {
+        //     console.log('IN LOGIN CALL');
+        //     API.login(data)
+        //         .then(res => {
+        //               this.setState( { token: res.token});
+        //             console.log("RES:", res);
+        //         })
+        //         .catch(err => console.log(err));
+        // };
 
         // Execute register
-        register(data);
+        // updateProduct(data);
 
         // Reset state variables after submit
         this.setState({
-            email: '',
-            password: ''
+            productName: '',
+            productValue: ''
         });
     }
 
+    componentDidMount() {
+        if (this.props.match.params.product_id) {
+            const {product_id} = this.props.match.params;
+            console.log("Product_ID:", product_id);
+        }
+    }
     render() {
         return (
             <React.Fragment>
-                <LoginForm
+                <ProductUpdateForm
                     changeHandler={this.changeHandler}
                     clickHandler={this.clickHandler}
-                    email={this.state.email}
-                    password={this.state.password} 
-                    message={this.state.message}
-                    token={this.state.token} />
+                    productName={this.state.productName}
+                    productPrice={this.state.productPrice} 
+                    />
             </React.Fragment>
         )
     }
 } // class
 
-export default LoginContainer;
+export default ProductUpdateContainer;
