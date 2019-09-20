@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     try {
         // Parse token, to remove Bearer
         const token = req.headers.authorization.split(' ')[1];
-        // console.log(token);
+        console.log(token);
         // const decoded = jwt.verify(req.body.token, process.env.JWT_PRIVATE_KEY);
         const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         // add a new decoded token to the request

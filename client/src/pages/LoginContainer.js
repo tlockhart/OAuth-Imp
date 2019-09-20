@@ -57,19 +57,20 @@ class LoginContainer extends Component {
             password: this.state.password
         };
 
-        // Define Call to Server Side utils to post body to the backend server:
-        let register = (data) => {
+        // Define Call to Server Side utils to post body to the backend server and set states, using login method:
+        let login = (data) => {
             console.log('IN LOGIN CALL');
             API.login(data)
                 .then(res => {
                       this.setState( { token: res.token});
                     console.log("RES:", res);
+                    localStorage.setItem('token', res.token);
                 })
                 .catch(err => console.log(err));
         };
 
-        // Execute register
-        register(data);
+        // Execute login
+        login(data);
 
         // Reset state variables after submit
         this.setState({

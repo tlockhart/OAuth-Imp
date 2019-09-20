@@ -2,11 +2,11 @@ import React from 'react';
 import { MDBContainer, MDBInputGroup, MDBBtn } from "mdbreact";
 
 
-let SignupForm = (props) => {
+let RegistrationForm = (props) => {
     return (
         <main role="main" className="flex-shrink-0">
             <div className="container">
-                <h1 className="mt-5">Signup Form</h1>
+                <h1 className="mt-5">Registration Form</h1>
                 <br />
                 {/* email */}
                 <div className="form-group">
@@ -72,4 +72,4 @@ let SignupForm = (props) => {
     )
 };
 
-export default SignupForm;
+export default RegistrationForm;

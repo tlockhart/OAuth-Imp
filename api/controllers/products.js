@@ -6,7 +6,7 @@ const Product = require('../models/product');
 exports.products_get_all = (req, res, next) => {
     Product.find()
     // Get the fields you want
-    .select('name price _id productImage')
+    .select('name value _id productImage')
     .exec()
     .then( documents => {
         const response = {
@@ -14,7 +14,7 @@ exports.products_get_all = (req, res, next) => {
             products: documents.map(document => {
                 return {
                     name: document.name,
-                    price: document.price,
+                    value: document.value,
                     _id: document._id,
                     productImage: document.productImage,
                     request: {
@@ -45,7 +45,7 @@ exports.products_create_product = (req, res, next) => {
         // Create a unique ID
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price,
+        value: req.body.value,
         productImage: 'uploads/'+path[1]
     });
 
@@ -58,7 +58,7 @@ exports.products_create_product = (req, res, next) => {
             message: 'Created product successfully',
             createdProduct: {
                 name: result.name,
-                price: result.price,
+                value: result.value,
                 _id: result._id,
                 request: {
                     type: 'GET',
@@ -83,13 +83,13 @@ exports.products_get_product = (req, res, next) => {
 
     // Find a document by product id
     Product.findById(id)
-        .select('name price _id productImage')
+        .select('name value _id productImage')
         .exec()
         .then(document => {
             console.log(document);
             const product = {
                 name: document.name,
-                price: document.price,
+                value: document.value,
                 productImage: document.productImage,
                 _id: document._id,
                 request: {
@@ -129,7 +129,7 @@ exports.products_update_product = (req, res, next) => {
             message: 'Product Updated',
             request: {
                 type: 'GET',
-                url: 'http://localhost:3000/products/' + id
+                url: 'http://localhost:3000/products/product/update/' + id
             }
         };
         res.status(200).json(product);
@@ -155,7 +155,7 @@ exports.products_delete_product = (req, res, next) => {
             request: {
                 type: 'POST',
                 url:'http://localhost:3000/products',
-                body: { name: 'String', price: 'Number'}
+                body: { name: 'String', value: 'Number'}
             }
         };
         res.status(200).json(document);

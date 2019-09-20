@@ -58,7 +58,7 @@ export default {
     },
 
     getProduct: async (baseURL) => {
-        if(baseURL) {
+        if (baseURL) {
             console.log("in API.getProduct", baseURL);
             let response = await axios.get(baseURL);
             return response;
@@ -66,4 +66,40 @@ export default {
         else
             console.log("NO DATA TO SEND");
     },
+    // /:productId
+    updateProduct: async (baseURL, authToken, name, value) => {
+        if (baseURL) {
+            console.log("in API.updateProduct, baseURL:", baseURL, 'authToken:', authToken, 'name', name, 'value', value);
+
+            const data = 
+                [
+                    {
+                        'propName': 'name',
+                        'value': name
+                    },
+                    {
+                        'propName': 'value',
+                        'value': value
+                    } 
+                ];
+            // JSON.stringify( // );
+
+        // const headers =
+
+        const response = await axios.patch(baseURL, data, {
+            headers:
+            {
+                Authorization: authToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response;
+
+
+
+    }
+        else
+            console.log("NO DATA TO SEND");
+},
 }; 

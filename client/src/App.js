@@ -12,10 +12,10 @@ import Footer from './components/Footer';
 
 // Import Pages
 import HomeContainer from './pages/HomeContainer';
-import ProductsContainer from './pages/ProductsContainer';
-import ProductContainer from './pages/ProductContainer';
+import ProductsListContainer from './pages/ProductsListContainer';
+import ProductViewContainer from './pages/ProductViewContainer';
 import ProductUpdateContainer from './pages/ProductUpdateContainer';
-import SignupContainer from './pages/SignupContainer';
+import RegistrationContainer from './pages/RegistrationContainer';
 import LoginContainer from './pages/LoginContainer';
 
 class App extends Component {
@@ -25,11 +25,11 @@ class App extends Component {
         <div>
           <Navbar />
           <Route exact path="/" component={HomeContainer} />
-          <Route exact path="/user/signup" component={SignupContainer} />
+          <Route exact path="/user/registration" component={RegistrationContainer} />
           <Route exact path="/user/login" component={LoginContainer} />
           <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />
-          <Route exact path="/products/product/:product_id" component={ProductContainer} />
-          <Route exact path="/products" component={ProductsContainer} />
+          <Route exact path="/products/product/:product_id" component={ProductViewContainer} />
+          <Route exact path="/products" component={ProductsListContainer} />
           <Footer />
         </div>
       </Router>

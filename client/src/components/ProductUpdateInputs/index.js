@@ -14,9 +14,9 @@ let ProductUpdateForm = (props) => {
                     <label htmlFor="formGroupExampleInput" />
                     <input
                         type="text"
-                        className="form-control"
+                        className="form-control product-name"
                         id="formGroupExampleInput"
-                        placeholder="product name"
+                        placeholder={props.placeholderName}
                         name = "productName"
                         value = {props.productName}
                         onChange = {props.changeHandler}
@@ -27,9 +27,9 @@ let ProductUpdateForm = (props) => {
                     <label htmlFor="formGroupExampleInput" />
                     <input
                         type="text"
-                        className="form-control"
+                        className="form-control product-value"
                         id="formGroupExampleInput"
-                        placeholder="product value"
+                        placeholder={props.placeholderValue}
                         name="productValue"
                         value={props.productValue}
                         onChange={props.changeHandler}

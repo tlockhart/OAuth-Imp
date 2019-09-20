@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+// import {browserHistory} from 'react-router';
 // import "../style.css";
 // import CarouselPage from "../components/Carousel";
 import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
@@ -7,15 +8,22 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } 
 import API from '../utils/API';
 
 // Import Components
-import ProductUpdateForm from "../components/ProductUpdateInputs";
+import ProductUpdateInputs from "../components/ProductUpdateInputs";
+
+// import query
+// const $ = window.$;
 
 class ProductUpdateContainer extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            productId: '',
+            token: '',
             productName: '',
-            productPrice: '',
+            productValue: '',
+            placeholderName: '',
+            placeholderValue: '',
             // message: '',
             // token: ''
         };
@@ -23,6 +31,24 @@ class ProductUpdateContainer extends Component {
         this.changeHandler = this.changeHandler.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
     } // constructor
+
+    componentDidMount() {
+        if (this.props.match.params.product_id && this.props.location.state) {
+            // Get id off the URL Dynamic Segment
+            const { product_id } = this.props.match.params;
+            console.log("Product_ID:", product_id);
+
+            // Pass item info from button
+            const { handle } = this.props.match.params;
+            const { name, value } = this.props.location.state;
+            this.setState({
+                productId: product_id,
+                placeholderName: name,
+                placeholderValue: `$ ${value}`,
+            });
+        }
+        // else find the ID, name and value
+    }
 
     changeHandler(event) {
         // First disable default behavior
@@ -47,52 +73,56 @@ class ProductUpdateContainer extends Component {
 
     clickHandler(event) {
         event.preventDefault();
-        // alert(`User Name: ${this.state.email}\n
-        //   Password: ${this.state.password}\n`);
-        console.log(`Product Name: ${this.state.productName}, Password: ${this.state.productPrice}`);
 
-        // Package Data to be sent in the Post Request Body
-        let data = {
-            productName: this.state.productName,
-            productPrice: this.state.productPrice
-        };
-
-        // Define Call to Server Side utils to post body to the backend server:
-        // let updateProduct = (data) => {
-        //     console.log('IN LOGIN CALL');
-        //     API.login(data)
-        //         .then(res => {
-        //               this.setState( { token: res.token});
-        //             console.log("RES:", res);
-        //         })
-        //         .catch(err => console.log(err));
-        // };
-
-        // Execute register
-        // updateProduct(data);
+        let name = this.state.productName;
+        let value = this.state.productValue;
 
         // Reset state variables after submit
-        this.setState({
-            productName: '',
-            productValue: ''
-        });
+        this.setState({ productName: '' });
+        this.setState({ productValue: '' });
+        this.setState({ placeholderName: '' });
+        this.setState({ placeholderValue: '' });
+
+        // Get token
+        const token = localStorage.getItem('token');
+        // console.log('gettoken:', token);
+
+        let authToken = token ? 'Bearer ' + token : '';
+        // console.log('authtoken:', authToken);
+
+        let baseURL = `/products/product/update/${this.state.productId}`;
+        // console.log('name', name, 'value', value);
+
+        // Define Call to Server Side utils to post body to the backend server:
+        let updateProduct = (url, token, name, value) => {
+            console.log('IN LOGIN CALL');
+            API.updateProduct(url, token, name, value)
+                .then(res => {
+                    // console.log("RES:", res);
+
+                    // Set State Values
+                    this.setState({ placeholderName: name });
+                    this.setState({ placeholderValue: value });
+
+                })
+                .catch(err => console.log(err, err.message));
+        };
+
+        // Execute Updat
+        updateProduct(baseURL, authToken, name, value);
     }
 
-    componentDidMount() {
-        if (this.props.match.params.product_id) {
-            const {product_id} = this.props.match.params;
-            console.log("Product_ID:", product_id);
-        }
-    }
     render() {
         return (
             <React.Fragment>
-                <ProductUpdateForm
+                <ProductUpdateInputs
                     changeHandler={this.changeHandler}
                     clickHandler={this.clickHandler}
                     productName={this.state.productName}
-                    productPrice={this.state.productPrice} 
-                    />
+                    productValue={this.state.productValue}
+                    placeholderName={this.state.placeholderName}
+                    placeholderValue={this.state.placeholderValue}
+                />
             </React.Fragment>
         )
     }

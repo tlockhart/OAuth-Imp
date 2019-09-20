@@ -7,14 +7,14 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } 
 import API from '../utils/API';
 
 // Import Components
-import ProductForm from "../components/ProductsOLD";
-import ProductList from "../components/ProductList";
+// import ProductForm from "../components/ProductsOLD";
+import ProductListItem from "../components/ProductListItem";
 
 
-class ProductsContainer extends Component {
+class ProductsListContainer extends Component {
     constructor(props) {
         super(props);
-        let _productListComponents = [];
+        let _productsComponent = [];
         this.state = {
             products: '',
         };
@@ -32,7 +32,7 @@ class ProductsContainer extends Component {
                 // cb(res);
                 console.log(res);
                 // this.setState({products: res.data.products});
-                this.productListComponents = res.data.products;
+                this.ProductsComponent = res.data.products;
             })
             .catch(err => console.log(err));
         };
@@ -41,21 +41,24 @@ class ProductsContainer extends Component {
         returnProducts(baseURL);
     }
 
-    set productListComponents(data) {
+    set ProductsComponent(data) {
         let productsData = data;
         console.log("in get", productsData, "length", productsData.length);
-        this._productListComponents = productsData.map((productData) => {
-            return <ProductList key={productData._id} id={productData._id} name={productData.name} price={productData.price} /> 
+        this._productsComponent = productsData.map((productData) => {
+            return <ProductListItem key={productData._id} id={productData._id} name={productData.name} value={productData.value} /> 
         });
         
-        this.setState({products: this._productListComponents});
-        console.log('productListComponent', this.state.products);
-        // return productListComponents;
+        this.setState(
+            {
+                products: this._productsComponent
+            });
+        console.log('productsComponent', this.state.products);
+        // return ProductsComponent;
         // return 1;
     }
 
-    get productListComponents() {
-        return this._productListComponents;
+    get productsComponent() {
+        return this._productsComponent;
     }
     
     // clickHander(event) {
@@ -67,17 +70,18 @@ class ProductsContainer extends Component {
     
     render() {
         
-        const productComponents = this.productListComponents;
-        console.log('components:', productComponents);
+        const productsComponent = this.state.products;
+
+        console.log('components:', productsComponent);
         return (
             <React.Fragment>
                 {/* <ProductForm  */}
                 {/* // clickHandler={this.clickHandler} 
                 // /> */}
-                {productComponents}
+                {productsComponent}
             </React.Fragment>
         )
     }
 } // class
 
-export default ProductsContainer;
+export default ProductsListContainer;

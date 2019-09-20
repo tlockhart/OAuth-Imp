@@ -1,11 +1,12 @@
 import React from 'react';
-import ViewProductsBtn from '../ViewProductsBtn';
+// import ViewProductBtn from '../ViewProductBtn';
+import ProductUpdateBtn from '../ProductUpdateBtn';
 
-let ProductList = (props) => {
+let ProductItem = (props) => {
   let name = props.name;
   let nameText = `Name: ${name}`;
-  let price = props.price;
-  let priceText = `$: ${price}`;
+  let value = props.value;
+  let valueText = `$: ${value}`;
   let id = props.id;
   console.log('in productLIst:', props);
 
@@ -14,24 +15,24 @@ let ProductList = (props) => {
       <div className="row">
         <div className="col">
           <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
-          <p>{priceText}<br /></p>
-          <ViewProductsBtn to={
+          <p>{valueText}<br /></p>
+          {/* <ViewProductBtn to={
             {
               pathname: `/products/product/${id}`,
               state: {
                 name: name,
-                price: price,
+                value: value,
                 id: id,
               }
             }}
-            buttonName={"View"}/>
+            buttonName={"View"}/> */}
 
-          <ViewProductsBtn to={
+          <ProductUpdateBtn to={
             {
               pathname: `/products/product/update/${id}`,
               state: {
                 name: name,
-                price: price,
+                value: value,
                 id: id,
               }
             }
@@ -44,4 +45,4 @@ let ProductList = (props) => {
   )
 };
 
-export default ProductList;
+export default ProductItem;

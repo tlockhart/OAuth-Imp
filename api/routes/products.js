@@ -56,7 +56,7 @@ router.get('/', ProductsController.products_get_all);
 // Post request body:
 // {
 // 	"name": "Smurfs",
-// 	"price": 12.99,
+// 	"value": 12.99,
 //  "productImage": tlockhart.png
 // }
 // upload by multer gives us handlers used before main request handlers
@@ -76,13 +76,13 @@ router.get('/:productId', ProductsController.products_get_product);
 // 		"value": "Harry Potter 7"
 // 	},
 // 	{
-// 		"propName": "price",
+// 		"propName": "value",
 // 		"value": "10"
 // 	}
 // ]
 // localhost:3000/products/5d75802fa50af037b063668d
 // NOTE: Authorization add 
-router.patch('/:productId', checkAuth, ProductsController.products_update_product);
+router.patch('/product/update/:productId', checkAuth, ProductsController.products_update_product);
 
 // localhost:3000/products/5d75802fa50af037b063668d
 // NOTE: Authorization added

@@ -12,7 +12,7 @@ let Navbar = () => {
                         <Link to="/" className={window.location.pathname === "/" ? 'active nav-link' : 'nav-link'}>Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/user/signup" className={window.location.pathname === "/user/signup" ? 'active nav-link' : 'nav-link'}>Register</Link>
+                        <Link to="/user/registration" className={window.location.pathname === "/user/registration" ? 'active nav-link' : 'nav-link'}>Register</Link>
                     </li>
                     <li className="nav-item">
                         <Link to="/user/login" className={window.location.pathname === "/user/login" ? 'active nav-link' : 'nav-link'}>Login</Link>

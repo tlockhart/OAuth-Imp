@@ -1,15 +1,13 @@
 import React, { Component } from "react";
-// import "../style.css";
-// import CarouselPage from "../components/Carousel";
 import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
 
 // Import Components
-import SignupForm from "../components/Signup";
+import RegistrationForm from "../components/Registration";
 
-class SignupContainer extends Component {
+class RegistrationContainer extends Component {
     constructor(props) {
         super(props);
 
@@ -57,7 +55,7 @@ class SignupContainer extends Component {
             password: this.state.password
         };
 
-        // Define Call to Server Side utils to post body to the backend server and set states:
+        // Define Call to Server Side utils to post body to the backend server and set states, using register method:
         let register = (data) => {
             console.log('IN REGISTER CALL');
             API.register(data)
@@ -81,7 +79,7 @@ class SignupContainer extends Component {
     render() {
         return (
             <React.Fragment>
-                <SignupForm
+                <RegistrationForm
                     changeHandler={this.changeHandler}
                     clickHandler={this.clickHandler}
                     email={this.state.email}
@@ -92,4 +90,4 @@ class SignupContainer extends Component {
     }
 } // class
 
-export default SignupContainer;
+export default RegistrationContainer;

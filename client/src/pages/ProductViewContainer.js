@@ -7,11 +7,11 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } 
 import API from '../utils/API';
 
 // Import Components
-import ProductForm from "../components/ProductsOLD";
-import ProductList from "../components/ProductList";
+// import ProductForm from "../components/ProductsOLD";
+import ProductViewItem from "../components/ProductViewItem";
 
 
-class ProductContainer extends Component {
+class ProductViewContainer extends Component {
     constructor(props) {
         super(props);
         let _productListComponents = [];
@@ -51,7 +51,7 @@ class ProductContainer extends Component {
     set productListComponents(data) {
         let productData = data;
         console.log("in get", productData, "length", productData.length);
-        this._productListComponents = <ProductList key={productData._id} id={productData._id} name={productData.name} price={productData.price} />;
+        this._productListComponents = <ProductViewItem key={productData._id} id={productData._id} name={productData.name} value={productData.value} />;
 
         this.setState({ products: this._productListComponents });
         console.log('productListComponent', this.state.products);
@@ -63,14 +63,14 @@ class ProductContainer extends Component {
 
     render() {
 
-        const productComponents = this.productListComponents;
-        console.log('components:', productComponents);
+        const ProductListComponents = this.productListComponents;
+        console.log('components:', ProductListComponents);
         return (
             <React.Fragment>
-                {productComponents}
+                {ProductListComponents}
             </React.Fragment>
         )
     }
 } // class
 
-export default ProductContainer;
+export default ProductViewContainer;
