@@ -6,6 +6,7 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } 
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
+import tokenAccess from '../utils/tokenAccess';
 
 // Import Components
 import ProductUpdateInputs from "../components/ProductUpdateInputs";
@@ -39,7 +40,7 @@ class ProductUpdateContainer extends Component {
             console.log("Product_ID:", product_id);
 
             // Pass item info from button
-            const { handle } = this.props.match.params;
+            // const { handle } = this.props.match.params;
             const { name, value } = this.props.location.state;
             this.setState({
                 productId: product_id,
@@ -80,14 +81,14 @@ class ProductUpdateContainer extends Component {
         // Reset state variables after submit
         this.setState({ productName: '' });
         this.setState({ productValue: '' });
-        this.setState({ placeholderName: '' });
-        this.setState({ placeholderValue: '' });
+        // this.setState({ placeholderName: '' });
+        // this.setState({ placeholderValue: '' });
 
-        // Get token
-        const token = localStorage.getItem('token');
-        // console.log('gettoken:', token);
+        // Get access_token
+        const access_token = tokenAccess.retrieveToken('access_token');
+        console.log('gettoken:', access_token);
 
-        let authToken = token ? 'Bearer ' + token : '';
+        let authToken = access_token ? 'Bearer ' + access_token : '';
         // console.log('authtoken:', authToken);
 
         let baseURL = `/products/product/update/${this.state.productId}`;
@@ -108,7 +109,7 @@ class ProductUpdateContainer extends Component {
                 .catch(err => console.log(err, err.message));
         };
 
-        // Execute Updat
+        // Execute Update
         updateProduct(baseURL, authToken, name, value);
     }
 

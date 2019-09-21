@@ -6,6 +6,9 @@ const oAuthAccessToken = require('../generators/oAuthAccessToken');
 //import user model
 const User = require('../models/user');
 
+//import momentjs
+const moment = require('moment');
+
 exports.user_signup = async (req, res, next) => {
     // Check if the user exists before inserting a document
     let user = await User.find({ email: req.body.email }).exec();
@@ -61,41 +64,49 @@ exports.user_login = async (req, res, next) => {
                 });
             } else {
 
-                try {
+                // let time = moment().format('MM-DD-YYYY HH:mm:ss');
+                let time = moment();
+                console.log('time:', time);
+
+                let startTime = moment(time);
+                let endTime = moment(startTime).add(1, 'hours');
+                console.log('startTime:', startTime, 'endTime:', endTime);
+
+                let diff = endTime.diff(startTime, 'hours');
+                console.log('Dif:', diff);
                     /*************************************************************
                      * Check if password sent matches what was saved to database
                      **************************************************************/
-                    await oAuthAccessToken.comparePasswords(req.body.password, user.password);
+                    let passwordsEqual = await oAuthAccessToken.comparePasswords(req.body.password, user.password);
 
+                    console.log("Passwords Equal:", passwordsEqual);
                     console.log("In comparePasswords");
-                    /*******************************************
-                     * Returns signed JWT TOken
-                     *******************************************/
-                    const token = oAuthAccessToken.signJwt(user.email, user._id);
 
-                    console.log("TOKEN:", token);
+                    let access_token;
 
-                    /**********************************************************************
-                     * To Do: Move to access_token Collection instead of user.
-                     * *******************************************************************/
-                    user.updateOne({ token: token })
-                        .then((result) => {
-                            console.log("token inserted", result);
-                        })
-                        .catch(error => {
-                            console.log("error:", error);
+                    // if passwords Equal
+                    if (passwordsEqual) {
+                        /*******************************************
+                        * Returns signed JWT TOken
+                        *******************************************/
+                        access_token = oAuthAccessToken.createAccessToken(user.email, user._id);
+                        console.log("TOKEN:", access_token);
+                        return res.status(200).json({
+                            message: 'Auth successful',
+                            access_token: access_token,
+                            expiration: endTime.toString(),
+                            moose: 'moose'
                         });
-
-                    return res.status(200).json({
-                        message: 'Auth successful',
-                        token: token
-                    });
-                } // try
-                catch (error) {
+                    } // if
+                    // if passwords not Equal
+                    else {
+                        return res.status(401).json({
+                            message: 'Auth failed'
+                        });
+                    } // else
                     return res.status(401).json({
                         message: 'Auth failed'
                     });
-                } // catch
             } // else
         })
         .catch(err => {

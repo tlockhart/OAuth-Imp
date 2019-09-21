@@ -34,12 +34,16 @@ export default {
 
             if (response.status == 200) {
                 const responseMessage = response.data.message;
-                const responseToken = response.data.token;
-                console.log('Message:', responseMessage, 'Token:', responseToken);
+                const responseToken = response.data.access_token;
+                const responseExpiration = response.data.expiration;
+                const responseMoose = response.data.moose;
+                // console.log('Message:', responseMessage, 'Token:', responseToken, 'responseExpiration', responseExpiration);
                 const responseData = {
                     message: responseMessage,
-                    token: responseToken
-                }
+                    access_token: responseToken,
+                    expiration: responseExpiration,
+                    exAt: responseMoose
+                };
                 return responseData;
             }
 

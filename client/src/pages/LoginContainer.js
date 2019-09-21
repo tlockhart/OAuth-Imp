@@ -3,6 +3,8 @@ import React, { Component } from "react";
 // import CarouselPage from "../components/Carousel";
 import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
+import tokenAccess from '../utils/tokenAccess';
+
 // Import Server-Side Utilities:
 import API from '../utils/API';
 
@@ -17,7 +19,7 @@ class LoginContainer extends Component {
             email: '',
             password: '',
             message: '',
-            token: ''
+            access_token: ''
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -62,9 +64,11 @@ class LoginContainer extends Component {
             console.log('IN LOGIN CALL');
             API.login(data)
                 .then(res => {
-                      this.setState( { token: res.token});
-                    console.log("RES:", res);
-                    localStorage.setItem('token', res.token);
+                    if (res) {
+                        this.setState({ access_token: res.access_token });
+                        console.log("RES:", res);
+                        tokenAccess.storeToken(this.state.access_token);
+                    }
                 })
                 .catch(err => console.log(err));
         };
@@ -86,7 +90,7 @@ class LoginContainer extends Component {
                     changeHandler={this.changeHandler}
                     clickHandler={this.clickHandler}
                     email={this.state.email}
-                    password={this.state.password} 
+                    password={this.state.password}
                     message={this.state.message}
                     token={this.state.token} />
             </React.Fragment>

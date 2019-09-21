@@ -32,7 +32,10 @@ exports.comparePasswords = ((inputPassword, storedPassword) => {
     });  // promise  
 });
 
-exports.signJwt = (email, id) => {
+const accessExpire = 1;
+
+// Create a new access_token
+exports.createAccessToken = (email, id) => {
     return jwt.sign(
         {
             email: email,
@@ -40,7 +43,21 @@ exports.signJwt = (email, id) => {
         },
         process.env.JWT_PRIVATE_KEY,
         {
-            expiresIn: "1h"
+            expiresIn: `${accessExpire}h`
         }
+    );
+};
+
+// Create a new access_token
+exports.createRefreshToken = (email, id) => {
+    return jwt.sign(
+        {
+            email: email,
+            userId: id
+        },
+        process.env.JWT_PRIVATE_KEY
+        // {
+        //     expiresIn: "5h"
+        // }
     );
 };
