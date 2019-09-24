@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // import "../style.css";
 // import CarouselPage from "../components/Carousel";
-import {  MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
+// import {  MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
 // Import Components
 import Home from "../components/Home";

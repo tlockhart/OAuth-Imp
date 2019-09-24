@@ -1,5 +1,5 @@
 import React from 'react';
-import { MDBContainer, MDBInputGroup, MDBBtn } from "mdbreact";
+import { MDBBtn } from "mdbreact";
 
 
 let ProductUpdateForm = (props) => {

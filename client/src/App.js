@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 
 // Handle Routes
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route} from "react-router-dom";
 
 // Import Components
 import Navbar from './components/Navbar';
-import MainContent from './components/MainContent';
+// import MainContent from './components/MainContent';
 import Footer from './components/Footer';
 
 // Import Pages

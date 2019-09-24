@@ -8,7 +8,7 @@ let ProductListItem = (props) => {
   let value = props.value;
   let valueText = `$: ${value}`;
   let id = props.id;
-  console.log('in productLIst:', props);
+  // console.log('in productLIst:', props);
 
   return (
     <div className="container-fluid text-center">

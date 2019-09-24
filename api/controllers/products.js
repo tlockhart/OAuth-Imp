@@ -113,11 +113,35 @@ exports.products_get_product = (req, res, next) => {
 };
 
 exports.products_update_product = (req, res, next) => {
+    /**************************************************
+     * Check if this request contains a refresh token
+     **************************************************/
+    // let encodedRefreshToken = res.body.refresh_token;
+    // let encodedRefreshToken = req.headers.refreshtoken;
+    // console.log('encodedRefreshToken:', encodedRefreshToken);
+
+    // let decodedRefreshToken;
+
+    // if (encodedRefreshToken) {
+    //     decodedRefreshToken = oAuthAccessToken.decode(encodedRefreshtoken, process.env.JWT_PRIVATE_KEY);
+    //     console.log("Decoded Refresh_Token:", decodedRefreshToken);
+    //     let email = decodedRefreshToken.email;
+
+    //     // add decoded email to req body
+    //     req.body.email = email;     
+    // }
+    /*************************************************/
+    // After refreshToken verified then send a new access and refresh token
+    console.log("IN PRODUCT UPDATE");
+
     const id = req.params.productId;
     const updateProps = {};
     // loop through the array of objects sent in the request, which will choose the field you want to update from the request body (name). The new object (updatePorps) will have the field and value you want to update
     for (let key of req.body) {
-        updateProps[key.propName] = key.value;
+        // validate that data has been supplied
+        if (key.value) {
+            updateProps[key.propName] = key.value;
+        }
     }
 
     Product.update( {_id: id }, { $set: updateProps } )
@@ -140,7 +164,7 @@ exports.products_update_product = (req, res, next) => {
             err: err 
         });
     });
-};
+}; // products_update_product
 
 exports.products_delete_product = (req, res, next) => {
     // res.status(200).json({

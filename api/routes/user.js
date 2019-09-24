@@ -17,11 +17,16 @@ const checkAuth = require('../authenticators/check-auth');
 // localhost:3000/user/signup
 router.post('/signup', UserController.user_signup); // post
 
+// localhost:3000//user/login/refresh
+router.post('/login/refresh', checkAuth, UserController.user_refreshTokens);
+
 // create a token
 // localhost:3000/user/login
 router.post('/login', UserController.user_login);
 
 // localhost:3000/user/5d75802fa50af037b063668d
 router.delete('/:userId', checkAuth, UserController.user_delete); // delete
+
+ 
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 
 exports.getHash = ((password, salt) => {
@@ -55,9 +56,33 @@ exports.createRefreshToken = (email, id) => {
             email: email,
             userId: id
         },
-        process.env.JWT_PRIVATE_KEY
-        // {
-        //     expiresIn: "5h"
-        // }
+        process.env.JWT_PRIVATE_KEY,
+        {
+            expiresIn: `${2 * accessExpire}h`
+        }
     );
+};
+
+// Parse token
+exports.verify = (token) => {
+    return jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+};
+
+exports.decode = (token) => {
+    return jwt.decode(token, process.env.JWT_PRIVATE_KEY);
+};
+
+// get token expiration
+exports.getExpiration = () => {
+    // let time = moment().format('MM-DD-YYYY HH:mm:ss');
+    let time = moment();
+    console.log('time:', time);
+
+    let startTime = moment(time);
+    let endTime = moment(startTime).add(1, 'hours');
+    console.log('startTime:', startTime, 'endTime:', endTime);
+
+    // let diff = endTime.diff(startTime, 'hours');
+    // console.log('Dif:', diff);
+    return endTime;
 };

@@ -2,14 +2,17 @@ import React, { Component } from "react";
 // import {browserHistory} from 'react-router';
 // import "../style.css";
 // import CarouselPage from "../components/Carousel";
-import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
+// import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
-import tokenAccess from '../utils/tokenAccess';
+// import tokenAccess from '../utils/dataStore';
+import dataStore from '../utils/dataStore';
 
 // Import Components
 import ProductUpdateInputs from "../components/ProductUpdateInputs";
+
+const moment = require('moment');
 
 // import query
 // const $ = window.$;
@@ -25,6 +28,11 @@ class ProductUpdateContainer extends Component {
             productValue: '',
             placeholderName: '',
             placeholderValue: '',
+            authToken: '',
+            refresh_token: '',
+            email: '',
+            hasTimeExpired: false,
+            isUserAuthorized: true
             // message: '',
             // token: ''
         };
@@ -72,45 +80,128 @@ class ProductUpdateContainer extends Component {
 
     } // changeHandler
 
-    clickHandler(event) {
-        event.preventDefault();
+    // Define Call to Server Side utils to post body to the backend server:
+    updateProduct(url, accessToken, refreshToken, name, value) {
+        console.log('IN LOGIN CALL');
 
-        let name = this.state.productName;
-        let value = this.state.productValue;
+        API.updateProduct(url, accessToken, refreshToken, name, value)
+            .then(res => {
+                // console.log("RES:", res);
 
-        // Reset state variables after submit
-        this.setState({ productName: '' });
-        this.setState({ productValue: '' });
-        // this.setState({ placeholderName: '' });
-        // this.setState({ placeholderValue: '' });
-
-        // Get access_token
-        const access_token = tokenAccess.retrieveToken('access_token');
-        console.log('gettoken:', access_token);
-
-        let authToken = access_token ? 'Bearer ' + access_token : '';
-        // console.log('authtoken:', authToken);
-
-        let baseURL = `/products/product/update/${this.state.productId}`;
-        // console.log('name', name, 'value', value);
-
-        // Define Call to Server Side utils to post body to the backend server:
-        let updateProduct = (url, token, name, value) => {
-            console.log('IN LOGIN CALL');
-            API.updateProduct(url, token, name, value)
-                .then(res => {
-                    // console.log("RES:", res);
-
-                    // Set State Values
+                // Set State Values
+                if (name) {
                     this.setState({ placeholderName: name });
+                }
+                if (value) {
                     this.setState({ placeholderValue: value });
+                }
+            })
+            .catch(err => console.log(err, err.message));
+    }
+    // call refreshTokens to perform update
+    refreshTokens(url, accessToken, refreshToken, email) {
+        console.log('ProductionUpdate-refreshTokens:', refreshToken);
+        API.refreshTokens(url, accessToken, refreshToken, email)
+            .then(res => {
+                console.log("ProductionUpdate:response returned", res);
+                if (res.ok) {
+                    console.log("NEW ACCESS TOKENS HAVE BEEN RECEIVED");
+                    console.log(res);
+                    /***********************************************
+                     * MAKE DRY, SAME METHODS CALLED IN LOGIN
+                     ************************************************/
+                    dataStore.set('access_token', res.data.access_token);
+                    dataStore.set('refresh_token', res.data.refresh_token);
+                    dataStore.set('expiration', res.data.expiration);
+                    dataStore.set('email', res.data.email);
+                }
+                else {
+                    // status is 401 clear all tokens
+                    console.log('401 status received in ProductUpdate');
+                    dataStore.set('access_token', '');
+                    dataStore.set('refresh_token', '');
+                    dataStore.set('expiration', '');
+                    dataStore.set('email', '');
 
-                })
-                .catch(err => console.log(err, err.message));
-        };
+                    this.setState({ authToken: '' });
+                    this.setState({ refresh_token: '' });
+                    this.setState({ email: '' });
+                    this.setState({ hasTimeExpired: false });
 
-        // Execute Update
-        updateProduct(baseURL, authToken, name, value);
+                    throw new Error("Authorization Error", res);
+                }
+            })
+            .catch(err => {
+                console.log(err, err.message);
+                this.setState({ isUserAuthorized: false })
+                //return err;
+            });
+    }
+
+    async clickHandler(event) {
+        try {
+            event.preventDefault();
+
+            let name = this.state.productName;
+            let value = this.state.productValue;
+
+            // Reset state variables after submit
+            this.setState({ productName: '' });
+            this.setState({ productValue: '' });
+            // this.setState({ placeholderName: '' });
+            // this.setState({ placeholderValue: '' });
+
+            /************************************************
+             * SET VARIABLES
+             ************************************************/
+            let authToken = "Bearer "+await dataStore.get('access_token');
+            console.log("Auth token", authToken);
+            this.setState({ authToken: authToken });
+
+            // Get refresh_token for expired access_token
+            let refresh_token = await dataStore.get('refresh_token');
+            console.log("Refresh token", refresh_token);
+            this.setState({ refresh_token: refresh_token });
+
+            let email = await dataStore.get('email');
+            this.setState({ email: email });
+
+            let hasTimeExpired = dataStore.hasTimeExpired();
+            console.log("Expired?", hasTimeExpired);
+            this.setState({ hasTimeExpired: hasTimeExpired });
+            /************************************************/
+
+            let baseURL = `/products/product/update/${this.state.productId}`;
+            // console.log('name', name, 'value', value);
+
+            if (this.state.hasTimeExpired) {
+
+                const baseURL = '/user/login/refresh';
+                console.log("ProductUpdateContainer: ", refresh_token);
+
+                // RefreshTokens
+                // await this.refreshTokens(baseURL, authToken, refresh_token, email);
+                await this.refreshTokens(baseURL, this.state.authToken, this.state.refresh_token, this.state.email);
+            }
+            else {
+                refresh_token = 'norefresh';
+                this.setState({ refresh_token: refresh_token });
+            }
+
+            if (this.state.isUserAuthorized) {
+                try {
+                    console.log('ProductUpdateContainer:refresh_token = ', refresh_token);
+                    // Call method to update product
+                    this.updateProduct(baseURL, this.state.authToken, this.state.refresh_token, name, value);
+                } //try
+                catch(err) {
+                    console.log("Caught Authentiation Error 1", err);
+                }        
+            } // if
+        }
+        catch(err) {
+            console.log("Caught Authentiation Error 2", err);
+        }                
     }
 
     render() {

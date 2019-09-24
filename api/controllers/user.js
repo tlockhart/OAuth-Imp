@@ -10,8 +10,10 @@ const User = require('../models/user');
 const moment = require('moment');
 
 exports.user_signup = async (req, res, next) => {
+    let email = req.body.email;
+
     // Check if the user exists before inserting a document
-    let user = await User.find({ email: req.body.email }).exec();
+    let user = await User.find({ email  }).exec();
 
     if (user.length >= 1) {
         return res.status(409).json({
@@ -33,7 +35,7 @@ exports.user_signup = async (req, res, next) => {
 
             const user = new User({
                 _id: new mongoose.Types.ObjectId(),
-                email: req.body.email,
+                email,
                 password: passwordHash
             });
 
@@ -43,7 +45,7 @@ exports.user_signup = async (req, res, next) => {
 
             res.status(201).json({
                 message: 'User created',
-                id: result._id
+                id: result._id,
             });
         } // try
         catch (error) {
@@ -55,8 +57,10 @@ exports.user_signup = async (req, res, next) => {
     } // else
 };
 
-exports.user_login = async (req, res, next) => {
-    User.findOne({ email: req.body.email })
+exports.user_refreshTokens = async (req, res, next) => {
+    let email = req.body.email;
+    console.log("user_controller: "+email);
+    User.findOne({ email })
         .then(async user => {
             if (user.length < 1) {
                 return res.status(401).json({
@@ -64,16 +68,62 @@ exports.user_login = async (req, res, next) => {
                 });
             } else {
 
-                // let time = moment().format('MM-DD-YYYY HH:mm:ss');
-                let time = moment();
-                console.log('time:', time);
+                let endTime = oAuthAccessToken.getExpiration();
+                    /*******************
+                     * Create New Tokens
+                     *******************/
+                    let access_token;
+                    let refresh_token;
+                        /*******************************************
+                        * Returns signed JWT TOken
+                        *******************************************/
+                        access_token = oAuthAccessToken.createAccessToken(email, user._id);
+                        refresh_token = oAuthAccessToken.createRefreshToken(email, user._id);
+                        console.log("TOKEN:", access_token);
+                        return res.status(200).json({
+                            message: 'Auth successful',
+                            access_token: access_token,
+                            refresh_token: refresh_token,
+                            expiration: endTime.toString(),
+                            email
+                        });
+                    // return res.status(401).json({
+                    //     message: 'Auth failed'
+                    // });
+            } // else
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(401).json({
+                message: 'Auth failed'
+            });
+        });
+    /*******************************************
+    * Returns signed JWT TOken
+    *******************************************/
+    // access_token = oAuthAccessToken.createAccessToken(user.email, user._id);
+    // refresh_token = oAuthAccessToken.createRefreshToken(user.email, user._id);
+    // console.log("TOKEN:", access_token);
+    // return res.status(200).json({
+    //     message: 'Auth successful',
+    //     access_token: access_token,
+    //     refresh_token: refresh_token,
+    //     expiration: endTime.toString(),
+    // });
+}; // user_refreshToken
 
-                let startTime = moment(time);
-                let endTime = moment(startTime).add(1, 'hours');
-                console.log('startTime:', startTime, 'endTime:', endTime);
+exports.user_login = async (req, res, next) => {
 
-                let diff = endTime.diff(startTime, 'hours');
-                console.log('Dif:', diff);
+    let email = req.body.email;
+    User.findOne({ email })
+        .then(async user => {
+            if (user.length < 1) {
+                return res.status(401).json({
+                    message: 'Auth failed'
+                });
+            } else {
+
+                let endTime = oAuthAccessToken.getExpiration();
                     /*************************************************************
                      * Check if password sent matches what was saved to database
                      **************************************************************/
@@ -83,19 +133,22 @@ exports.user_login = async (req, res, next) => {
                     console.log("In comparePasswords");
 
                     let access_token;
+                    let refresh_token;
 
                     // if passwords Equal
                     if (passwordsEqual) {
                         /*******************************************
                         * Returns signed JWT TOken
                         *******************************************/
-                        access_token = oAuthAccessToken.createAccessToken(user.email, user._id);
+                        access_token = oAuthAccessToken.createAccessToken(email, user._id);
+                        refresh_token = oAuthAccessToken.createRefreshToken(email, user._id);
                         console.log("TOKEN:", access_token);
                         return res.status(200).json({
                             message: 'Auth successful',
                             access_token: access_token,
+                            refresh_token: refresh_token,
                             expiration: endTime.toString(),
-                            moose: 'moose'
+                            email
                         });
                     } // if
                     // if passwords not Equal
@@ -104,9 +157,9 @@ exports.user_login = async (req, res, next) => {
                             message: 'Auth failed'
                         });
                     } // else
-                    return res.status(401).json({
-                        message: 'Auth failed'
-                    });
+                    // return res.status(401).json({
+                    //     message: 'Auth failed'
+                    // });
             } // else
         })
         .catch(err => {
@@ -116,6 +169,10 @@ exports.user_login = async (req, res, next) => {
             });
         });
 };
+
+// exports.user_refresh = (req, res, next) => {
+
+// }
 
 exports.user_delete = (req, res, next) => {
     User.remove({ _id: req.params.userId })

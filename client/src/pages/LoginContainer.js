@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 // import "../style.css";
 // import CarouselPage from "../components/Carousel";
-import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
+// import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
-import tokenAccess from '../utils/tokenAccess';
+import dataStore from '../utils/dataStore';
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
@@ -19,7 +19,9 @@ class LoginContainer extends Component {
             email: '',
             password: '',
             message: '',
-            access_token: ''
+            access_token: '',
+            refresh_token: '',
+            expiration: ''
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -65,9 +67,20 @@ class LoginContainer extends Component {
             API.login(data)
                 .then(res => {
                     if (res) {
-                        this.setState({ access_token: res.access_token });
+                        let { message, access_token, refresh_token, expiration, email } = res;
+                        this.setState(
+                            { 
+                                access_token,
+                                expiration,
+                                refresh_token,
+                                message, 
+                                email
+                         });
                         console.log("RES:", res);
-                        tokenAccess.storeToken(this.state.access_token);
+                        dataStore.set('access_token', this.state.access_token);
+                        dataStore.set('refresh_token', this.state.refresh_token);
+                        dataStore.set('expiration', this.state.expiration);
+                        dataStore.set('email', this.state.email);
                     }
                 })
                 .catch(err => console.log(err));

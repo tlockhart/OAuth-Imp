@@ -33,16 +33,18 @@ export default {
             }); // response
 
             if (response.status == 200) {
-                const responseMessage = response.data.message;
-                const responseToken = response.data.access_token;
-                const responseExpiration = response.data.expiration;
-                const responseMoose = response.data.moose;
+                // const responseMessage = response.data.message;
+                // const responseAccessToken = response.data.access_token;
+                // const responseExpiration = response.data.expiration;
+                let { message, access_token, refresh_token, expiration, email } = response.data;
+                // const responseMoose = response.data.moose;
                 // console.log('Message:', responseMessage, 'Token:', responseToken, 'responseExpiration', responseExpiration);
                 const responseData = {
-                    message: responseMessage,
-                    access_token: responseToken,
-                    expiration: responseExpiration,
-                    exAt: responseMoose
+                    message,
+                    access_token,
+                    expiration,
+                    refresh_token,
+                    email
                 };
                 return responseData;
             }
@@ -70,40 +72,70 @@ export default {
         else
             console.log("NO DATA TO SEND");
     },
-    // /:productId
-    updateProduct: async (baseURL, authToken, name, value) => {
-        if (baseURL) {
-            console.log("in API.updateProduct, baseURL:", baseURL, 'authToken:', authToken, 'name', name, 'value', value);
+    refreshTokens: async (url, accessToken, refreshToken, email) => {
+        // try {
+            console.log("API: in login");
+            console.log("API RefreshToken: ", refreshToken);
 
-            const data = 
-                [
-                    {
-                        'propName': 'name',
-                        'value': name
-                    },
-                    {
-                        'propName': 'value',
-                        'value': value
-                    } 
-                ];
-            // JSON.stringify( // );
+            // package the body
+            const response = await axios({
+                method: 'post',
+                url,
+                data: {
+                    accesstoken: accessToken,
+                    refreshtoken: refreshToken,
+                    email
+                }
+            }); // response
 
-        // const headers =
+            if (response.status == 200) {
+                let { message, access_token, refresh_token, email } = response.data;
 
-        const response = await axios.patch(baseURL, data, {
-            headers:
-            {
-                Authorization: authToken,
-                'Content-Type': 'application/json'
+                const responseData = {
+                    message,
+                    access_token,
+                    refresh_token,
+                    email
+                };
+                return responseData;
             }
-        });
+            else {
+                console.log("ERROR", response.message);
+                return response.status(401).json({
+                    message: response.message
+                });
+            }
+        }, // catch
 
-        return response;
+        // /:productId
+        updateProduct: async (baseURL, authToken, refreshToken, name, value) => {
+            if (baseURL) {
+                console.log("in API.updateProduct, baseURL:", baseURL, 'authToken:', authToken, 'refreshToken', refreshToken, 'name', name, 'value', value);
 
+                const data =
+                    [
+                        {
+                            'propName': 'name',
+                            'value': name
+                        },
+                        {
+                            'propName': 'value',
+                            'value': value
+                        }
+                    ];
 
+                const response = await axios.patch(baseURL, data, {
+                    headers:
+                    {
+                        Authorization: authToken,
+                        'Content-Type': 'application/json',
+                        'refreshtoken': refreshToken
+                    }
+                });
+                return response;
 
-    }
-        else
-            console.log("NO DATA TO SEND");
-},
+            } // if
+            else
+                console.log("NO DATA TO SEND");
+        },
 }; 
