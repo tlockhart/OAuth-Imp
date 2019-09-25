@@ -72,10 +72,10 @@ export default {
         else
             console.log("NO DATA TO SEND");
     },
-    refreshTokens: async (url, accessToken, refreshToken, email) => {
+    refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
         // try {
-            console.log("API: in login");
-            console.log("API RefreshToken: ", refreshToken);
+            // console.log("API: in login");
+            console.log("API In RefreshToken: ", refreshToken);
 
             // package the body
             const response = await axios({
@@ -84,33 +84,37 @@ export default {
                 data: {
                     accesstoken: accessToken,
                     refreshtoken: refreshToken,
-                    email
+                    email,
+                    expired
                 }
             }); // response
-
+            console.log("RESPONSE STATUS:", response.status);
             if (response.status == 200) {
-                let { message, access_token, refresh_token, email } = response.data;
+                console.log("API REFRESHTOKEN: STATUS", response.status);
+              
+                console.log(response.data, response.status);
+                /*************************************************************
+                 * Return all the data that has been packaged in the response
+                 ************************************************************/
+                return response;
 
-                const responseData = {
-                    message,
-                    access_token,
-                    refresh_token,
-                    email
-                };
-                return responseData;
             }
-            else {
-                console.log("ERROR", response.message);
-                return response.status(401).json({
-                    message: response.message
-                });
+            else if (response.status === 401) {
+                console.log("API REFRESHTOKEN: ERRORSTATUS", response.status);
+                // return response.status(401).json({
+                //     message: response.message
+                // });
+                return response;
             }
         }, // catch
 
         // /:productId
         updateProduct: async (baseURL, authToken, refreshToken, name, value) => {
             if (baseURL) {
-                console.log("in API.updateProduct, baseURL:", baseURL, 'authToken:', authToken, 'refreshToken', refreshToken, 'name', name, 'value', value);
+                console.log("in API.updateProduct, baseURL:", baseURL);
+                console.log('authToken:', authToken);
+                console.log( 'refreshToken', refreshToken);
+                console.log( 'name', name, 'value', value);
 
                 const data =
                     [

@@ -58,7 +58,7 @@ exports.createRefreshToken = (email, id) => {
         },
         process.env.JWT_PRIVATE_KEY,
         {
-            expiresIn: `${2 * accessExpire}h`
+            expiresIn: `${5 * accessExpire}h`
         }
     );
 };

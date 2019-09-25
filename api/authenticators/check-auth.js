@@ -8,34 +8,36 @@ module.exports = (req, res, next) => {
     // verify and return decoded value
     try {
         let decoded;
+        // console.log("REQ:",req);
         const refresh_token_header = req.headers.refreshtoken;
         const access_token_header = req.headers.authorization;
         const refresh_token_body = req.body.refreshtoken;
-        console.log(`check-auth:requestBody.refreshtoken: ${refresh_token_body}`);
-        console.log('check-auth:req.headers.refreshtoken: ', refresh_token_header, 'isrefreshEqNoRefresh', refresh_token_header === 'norefresh');
-        console.log('check-auth:req.headers.accesstoken: ', access_token_header);
-
-        // Verify refresh token when access token time has expired, token sent in the body
-        if( refresh_token_body && refresh_token_header != "norefresh") {
-            console.log("check-auth: refresh_token != refresh");
-
-            decoded = oAuthAccessToken.verify(refresh_token_body, process.env.JWT_PRIVATE_KEY);
-            console.log("CheckAuth: Refresh Token verified");
-        } // if
+        const access_token_body = req.body.accesstoken;
+        const expired = req.body.expired;
+        console.log(`check-auth:refresh_token_body: ${refresh_token_body}`);
+        console.log('check-auth:access_token_body: ', access_token_body);
+        console.log('check-auth:refresh_token_header: ', refresh_token_header, 'isrefreshEqNoRefresh', refresh_token_header === 'norefresh');
+        console.log('check-auth:access_token_header: ', access_token_header);
+        console.log('check-auth:expired: ', expired, 'isTrue', expired == true);
         
-        else if (refresh_token_header === 'norefresh') {
-            // Run a reguler access check because acces token is not required, token is sent in the header
-            console.log('In no refresh');
-            // Parse token, to remove Bearer
-            const access_token = req.headers.authorization.split(' ')[1];
-            console.log('check-auth:split token:', access_token);
+
+        // When a refresh is needed time has expired, refreshtoken and accesstoken sent in the body.  Verify the refresh_token_body
+        // Note: The if the refresh token has expired the user will have to relogin (5hs)
+        if(expired == true) {
+            console.log("check-auth: refresh_token: IF");
+            decoded = oAuthAccessToken.verify(refresh_token_body, process.env.JWT_PRIVATE_KEY);
+            console.log("CheckAuth: Refresh Token verified: IF: EXPIRED =", expired);
+        }
+        // If time has not expired then the refresh_token is set to norefresh and accesstokens is sent in the access_token_header and refresh_token_header
+        else if(refresh_token_header === 'norefresh' && access_token_header) {
+            console.log("check-auth: valid access_token_header refresh_token_header norefresh: ELSE IF2");
+            const access_token = access_token_header.split(' ')[1];
+            console.log("SPLIT", access_token);
             decoded = oAuthAccessToken.verify(access_token, process.env.JWT_PRIVATE_KEY);
-            
-            console.log("check-auth:Decoded token:", decoded);
-            // add a new decoded token to the request
-            // req.userData = decoded;
-        }  
+            console.log("CheckAuth: Refresh Token verified");
+        } 
         else {
+            console.log("check-auth: refresh_token: ELSE");
             throw new Error("Unauthorized Use");
         }
         next();

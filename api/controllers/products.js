@@ -144,11 +144,11 @@ exports.products_update_product = (req, res, next) => {
         }
     }
 
-    Product.update( {_id: id }, { $set: updateProps } )
+    Product.updateOne( {_id: id }, { $set: updateProps } )
     .exec()
     .then( document => {
         // No data is returned on a Patch request
-        console.log('document:', document);
+        // console.log('document:', document);
         const product = {
             message: 'Product Updated',
             request: {
