@@ -41,6 +41,7 @@ let ProductUpdateForm = (props) => {
                     <MDBBtn color="blue-grey" onClick={props.clickHandler}>Submit</MDBBtn>
                     {/* <h3 className="mt-5">{props.message? props.message:''}</h3>
                     <h3 className="mt-5">{props.token? props.token:''}</h3> */}
+                    <h3 className="mt-5">{props.message? props.message:''}</h3>
                 </div>
                 {/* experiment */}
                 {/* <label htmlFor="formGroupExampleInput">

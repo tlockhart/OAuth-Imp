@@ -7,9 +7,6 @@ import axios from 'axios';
 // Create Export Hash
 export default {
     register: async (data) => {
-        // try {
-        //     console.log("in register");
-        
             const post = await axios({
                 method: 'post',
                 url: '/user/register',
@@ -33,22 +30,16 @@ export default {
             let get = await axios.get(baseURL);
             return get;
         }
-        // else
-        //     console.log("NO DATA TO SEND");
     },
-
     getProduct: async (baseURL) => {
         if (baseURL) {
             console.log("in API.getProduct", baseURL);
             let get = await axios.get(baseURL);
             return get;
         }
-        // else
-        //     console.log("NO DATA TO SEND");
     },
     refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
         console.log("API In RefreshToken: ", refreshToken);
-
         if (url) {
             // package the body
             const post = await axios({

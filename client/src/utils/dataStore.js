@@ -25,17 +25,22 @@ exports.hasTimeExpired = ( () => {
     let currentTimeHour = moment(currentTime).format('HH');
     console.log("sessionExpirationHour: ", sessionExpirationHour, sessionExpirationHour == '23', 'currentTimeHour', currentTimeHour);
     let timeDiff = sessionExpirationTime.diff(currentTime, 'minutes');
+
     console.log("currentTime.isAfter(sessionExpirationTime):", currentTime.isAfter(sessionExpirationTime));
     console.log("sessionExpirationTime.isAfter(currentTime):", sessionExpirationTime.isAfter(currentTime));
 
     // When expiration time is 23:26 (11), but the currenttime is 23:26, moment thinks its a new day,
     // so substract 1440 mins from the timeDiff, to Normalize it
-    if(sessionExpirationTime.isAfter(currentTime) && sessionExpirationHour == '23' && currentTimeHour != '23') {
+    if(sessionExpirationTime.isAfter(currentTime) && sessionExpirationHour == '23') {
         timeDiff = timeDiff - 1440;
     }
-    else if(sessionExpirationTime.isAfter(currentTime) && sessionExpirationHour == '23' && currentTimeHour == '23') {
-        timeDiff = timeDiff - 1440;
-    }
+
+    // if(sessionExpirationTime.isAfter(currentTime) && sessionExpirationHour == '23' && currentTimeHour != '23') {
+    //     timeDiff = timeDiff - 1440;
+    // }
+    // else if(sessionExpirationTime.isAfter(currentTime) && sessionExpirationHour == '23' && currentTimeHour == '23') {
+    //     timeDiff = timeDiff - 1440;
+    // }
     // regular time,  when currenttime passing sessionExpirationTime, take the normal difference
     // If access_token is expired, user will have to relogin.
     else if (currentTime.isAfter(sessionExpirationTime)) {
@@ -60,7 +65,6 @@ exports.setLocalStorage = ((access_token, refresh_token, expiration, email, mess
     };
 
     this.set('data', JSON.stringify(data));
-
     return data;
 });
 
@@ -81,17 +85,5 @@ exports.getLocalStorage = (() => {
 });
 
 exports.resetLocalStorage = () => {
-    let access_token = '';
-    let refresh_token = '';
-    let expiration = '';
-    let email = '';
-
-    let returnData = {
-        access_token,
-        refresh_token,
-        expiration,
-        email
-    };
-
-    this.set('data', returnData);
+    localStorage.clear();
 };

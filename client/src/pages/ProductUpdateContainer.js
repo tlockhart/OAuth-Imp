@@ -21,7 +21,6 @@ class ProductUpdateContainer extends Component {
 
         this.state = {
             productId: '',
-            token: '',
             productName: '',
             productValue: '',
             placeholderName: '',
@@ -32,7 +31,6 @@ class ProductUpdateContainer extends Component {
             hasTimeExpired: false,
             isUserAuthorized: true,
             message: '',
-            // token: ''
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -117,7 +115,6 @@ class ProductUpdateContainer extends Component {
         console.log('IN UPDATE PRODUCT CALL');
         await API.updateProduct(url, accessToken, refreshToken, name, value)
             .then(res => {
-
                 // Set State Values
                 if (name) {
                     this.setState({ placeholderName: name });
@@ -125,8 +122,17 @@ class ProductUpdateContainer extends Component {
                 if (value) {
                     this.setState({ placeholderValue: value });
                 }
+                // Set message
+                this.setState({message: "Product updated"});
             })
-            .catch(err => console.log(err, err.message));
+            .catch(err => {
+                if (err.response.status === 500) {
+                    console.log('response:', err.response);
+                    console.log('err:', err.message);
+                    this.setState({ message: 'Invalid Input' });
+                }
+
+            });
     }
     // call refreshTokens to perform update
     async refreshTokens(url, accessToken, refreshToken, email, expired) {
@@ -153,8 +159,10 @@ class ProductUpdateContainer extends Component {
                     await this.setStateVariables(access_token, refresh_token, expiration, email, message);
                     /********************************************/
                 }
-                else if (res.status === 401) {
-                    // status is 401 clear all tokens
+            })
+            .catch(async err => {
+                // Clear all localStorage, due to invalid Refresh token
+                if (err.response.status === 401) {
                     console.log('401 status received in ProductUpdate');
                     /***********************************************
                      * Reset Local Storage Variables
@@ -165,13 +173,12 @@ class ProductUpdateContainer extends Component {
                      * SET STATE VARIABLES FROM Local Storage
                      *********************************************/
                     await this.resetStateVariables();
-                    throw new Error("Authorization Error", res);
+                    console.log('err', err.response);
+                    console.log('error status code', err.response.status);
+                    this.setState({ isUserAuthorized: false });
+                    this.setState({ message: err.response.data.message });
+                    //return err;
                 }
-            })
-            .catch(err => {
-                console.log(err, err.message);
-                this.setState({ isUserAuthorized: false });
-                //return err;
             });
     }
 
@@ -186,8 +193,8 @@ class ProductUpdateContainer extends Component {
              * **********************************************************************/
             this.setState({ productName: '' });
             this.setState({ productValue: '' });
-            // this.setState({ placeholderName: '' });
-            // this.setState({ placeholderValue: '' });
+            this.setState({ placeholderName: '' });
+            this.setState({ placeholderValue: '' });
 
             /************************************
              * SET STATE VARIABLES From LOCAL STORAGE
@@ -210,7 +217,6 @@ class ProductUpdateContainer extends Component {
             }
 
             if (this.state.isUserAuthorized) {
-                try {
                     // Refresh_Token should be set to 'norefresh' as tokens should be refreshed
                     this.setState({ refresh_token: 'norefresh' });
 
@@ -222,15 +228,13 @@ class ProductUpdateContainer extends Component {
                     // Reset Variables to Default
                     this.setState({ isUserAuthorized: true });
                     this.setState({ hasTimeExpired: false });
-
-                } //try
-                catch (err) {
-                    console.log("Caught Authentiation Error 1", err);
-                }
             } // if
         }
         catch (err) {
-            console.log("Caught Authentiation Error 2", err);
+            console.log("ERROR:", err.response);
+            // console.log("Caught Authentiation Error 2", err);
+            console.log("User is logged out");
+            this.setState({message: "User is logged out"});
         }
     }
 
@@ -244,6 +248,7 @@ class ProductUpdateContainer extends Component {
                     productValue={this.state.productValue}
                     placeholderName={this.state.placeholderName}
                     placeholderValue={this.state.placeholderValue}
+                    message={this.state.message}
                 />
             </React.Fragment>
         )
