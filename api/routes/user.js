@@ -14,8 +14,8 @@ const UserController = require('../controllers/user');
 //Import check Auth MiddleWare
 const checkAuth = require('../authenticators/check-auth');
 
-// localhost:3000/user/signup
-router.post('/signup', UserController.user_signup); // post
+// localhost:3000/user/register
+router.post('/register', UserController.user_register); // post
 
 // localhost:3000//user/login/refresh
 router.post('/login/refresh', checkAuth, UserController.user_refreshTokens);

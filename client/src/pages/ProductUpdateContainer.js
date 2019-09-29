@@ -6,16 +6,14 @@ import React, { Component } from "react";
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
-// import tokenAccess from '../utils/dataStore';
+
+// Import module to get/set variables from/in the LocalStorage
 import dataStore from '../utils/dataStore';
 
 // Import Components
 import ProductUpdateInputs from "../components/ProductUpdateInputs";
 
 const moment = require('moment');
-
-// import query
-// const $ = window.$;
 
 class ProductUpdateContainer extends Component {
     constructor(props) {
@@ -32,8 +30,8 @@ class ProductUpdateContainer extends Component {
             refresh_token: '',
             email: '',
             hasTimeExpired: false,
-            isUserAuthorized: true
-            // message: '',
+            isUserAuthorized: true,
+            message: '',
             // token: ''
         };
 
@@ -41,37 +39,49 @@ class ProductUpdateContainer extends Component {
         this.clickHandler = this.clickHandler.bind(this);
     } // constructor
 
-    setStateVariables() {
+    setStateVariables(access_token, refresh_token, expiration, email, message) {
         /************************************************
          * SET State VARIABLES FROM LocalStorage
          ************************************************/
-        let authToken = "Bearer "+ dataStore.get('access_token');
+        let authToken = "Bearer " + access_token;
+
         console.log("Auth token", authToken);
-        this.setState({ authToken: authToken });
+        this.setState({ authToken });
 
-        // Get refresh_token for expired access_token
-        let refresh_token = dataStore.get('refresh_token');
         console.log("Refresh token", refresh_token);
-        this.setState({ refresh_token: refresh_token });
+        this.setState({ refresh_token });
 
-        let email = dataStore.get('email');
-        this.setState({ email: email });
+        this.setState({ email });
 
         let hasTimeExpired = dataStore.hasTimeExpired();
+
         console.log("Expired?", hasTimeExpired);
-        this.setState({ hasTimeExpired: hasTimeExpired });
+        this.setState({ hasTimeExpired });
+
         this.setState({ isUserAuthorized: true });
+
+        this.setState({ message });
         /************************************************/
+    }
+
+    resetStateVariables() {
+        this.setState({ authToken: '' });
+        this.setState({ refresh_token: '' });
+        this.setState({ email: '' });
+        this.setState({ hasTimeExpired: false });
     }
 
     componentDidMount() {
         if (this.props.match.params.product_id && this.props.location.state) {
-            // Get id off the URL Dynamic Segment
+            /******************************************
+             *  Get id off the URL Dynamic Segment
+             * ****************************************/
             const { product_id } = this.props.match.params;
             console.log("Product_ID:", product_id);
 
-            // Pass item info from button
-            // const { handle } = this.props.match.params;
+            /********************************************
+             * Pass item info from click button
+             * *****************************************/
             const { name, value } = this.props.location.state;
             this.setState({
                 productId: product_id,
@@ -100,16 +110,13 @@ class ProductUpdateContainer extends Component {
                 }
             );  // setState
         }
-
     } // changeHandler
 
     // Define Call to Server Side utils to post body to the backend server:
     async updateProduct(url, accessToken, refreshToken, name, value) {
         console.log('IN UPDATE PRODUCT CALL');
-
         await API.updateProduct(url, accessToken, refreshToken, name, value)
             .then(res => {
-                // console.log("RES:", res);
 
                 // Set State Values
                 if (name) {
@@ -125,39 +132,39 @@ class ProductUpdateContainer extends Component {
     async refreshTokens(url, accessToken, refreshToken, email, expired) {
         console.log('In REFRESHTOKENS:', refreshToken);
         await API.refreshTokens(url, accessToken, refreshToken, email, expired)
+            // API.refreshTokens(url, accessToken, refreshToken, email, expired)
             .then(async res => {
                 console.log("ProductionUpdate:response returned", res);
                 if (res.status === 200) {
-                    console.log("NEW ACCESS TOKENS HAVE BEEN RECEIVED");
-                    console.log(res);
+                    console.log("NEW ACCESS TOKENS HAVE BEEN RECEIVED RES:", res);
                     /***********************************************
                      * Set Local Storage Variables
                      ************************************************/
-                    dataStore.set('access_token', res.data.access_token);
-                    console.log("ACCESS TOKEN", res.data.access_token);
-                    dataStore.set('refresh_token', res.data.refresh_token);
-                    dataStore.set('expiration', res.data.expiration);
-                    dataStore.set('email', res.data.email);
+                    let { access_token, refresh_token, expiration, email, message } = await dataStore.setLocalStorage(
+                        res.data.access_token,
+                        res.data.refresh_token,
+                        res.data.expiration,
+                        res.data.email,
+                        res.data.message);
 
                     /*********************************************
                      * SET STATE VARIABLES FROM Local Storage
-                     * ******************************************/
-                    await this.setStateVariables();
+                     ********************************************/
+                    await this.setStateVariables(access_token, refresh_token, expiration, email, message);
                     /********************************************/
                 }
                 else if (res.status === 401) {
                     // status is 401 clear all tokens
                     console.log('401 status received in ProductUpdate');
-                    dataStore.set('access_token', '');
-                    dataStore.set('refresh_token', '');
-                    dataStore.set('expiration', '');
-                    dataStore.set('email', '');
+                    /***********************************************
+                     * Reset Local Storage Variables
+                     ************************************************/
+                    await dataStore.resetLocalStorage();
 
-                    this.setState({ authToken: '' });
-                    this.setState({ refresh_token: '' });
-                    this.setState({ email: '' });
-                    this.setState({ hasTimeExpired: false });
-
+                    /*********************************************
+                     * SET STATE VARIABLES FROM Local Storage
+                     *********************************************/
+                    await this.resetStateVariables();
                     throw new Error("Authorization Error", res);
                 }
             })
@@ -171,7 +178,6 @@ class ProductUpdateContainer extends Component {
     async clickHandler(event) {
         try {
             event.preventDefault();
-
             let name = this.state.productName;
             let value = this.state.productValue;
 
@@ -186,14 +192,14 @@ class ProductUpdateContainer extends Component {
             /************************************
              * SET STATE VARIABLES From LOCAL STORAGE
              ************************************/
-            await this.setStateVariables();
+            let { access_token, refresh_token, expiration, email, message } = await dataStore.getLocalStorage();
+            await this.setStateVariables(access_token, refresh_token, expiration, email, message);
             /*************************************/
 
             let baseURL = `/products/product/update/${this.state.productId}`;
             // console.log('name', name, 'value', value);
 
             if (this.state.hasTimeExpired) {
-
                 const baseURL = '/user/login/refresh';
                 console.log("ProductUpdateContainer refresh-token: ", this.state.refresh_token);
 
@@ -209,19 +215,23 @@ class ProductUpdateContainer extends Component {
                     this.setState({ refresh_token: 'norefresh' });
 
                     console.log('ProductUpdateContainer:refresh_token = ', this.state.refresh_token);
-                    
+
                     // Call method to update product
                     await this.updateProduct(baseURL, this.state.authToken, this.state.refresh_token, name, value);
 
+                    // Reset Variables to Default
+                    this.setState({ isUserAuthorized: true });
+                    this.setState({ hasTimeExpired: false });
+
                 } //try
-                catch(err) {
+                catch (err) {
                     console.log("Caught Authentiation Error 1", err);
-                }        
+                }
             } // if
         }
-        catch(err) {
+        catch (err) {
             console.log("Caught Authentiation Error 2", err);
-        }                
+        }
     }
 
     render() {

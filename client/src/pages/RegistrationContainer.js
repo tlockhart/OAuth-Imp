@@ -60,10 +60,13 @@ class RegistrationContainer extends Component {
             console.log('IN REGISTER CALL');
             API.register(data)
                 .then(res => {
-                      this.setState( { message: res});
                     console.log("RES:", res);
+                      this.setState( { message: res.data.message}); 
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    console.log("ERROR:", err, "Message:", err.message);
+                    this.setState(
+                        { message: err.message}); });
         };
 
         // Execute register

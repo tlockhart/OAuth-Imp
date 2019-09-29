@@ -136,7 +136,7 @@ exports.products_update_product = (req, res, next) => {
 
     const id = req.params.productId;
     const updateProps = {};
-    // loop through the array of objects sent in the request, which will choose the field you want to update from the request body (name). The new object (updatePorps) will have the field and value you want to update
+    // loop through the array of objects sent in the request, which will choose the field you want to update from the request body (name). The new object (updateProps) will have the field and value you want to update
     for (let key of req.body) {
         // validate that data has been supplied
         if (key.value) {

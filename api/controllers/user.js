@@ -9,7 +9,7 @@ const User = require('../models/user');
 //import momentjs
 const moment = require('moment');
 
-exports.user_signup = async (req, res, next) => {
+exports.user_register = async (req, res, next) => {
     let email = req.body.email;
 
     // Check if the user exists before inserting a document
@@ -62,12 +62,14 @@ exports.user_refreshTokens = async (req, res, next) => {
     console.log("user_controller: "+email);
     User.findOne({ email })
         .then(async user => {
+            // Error
             if (user.length < 1) {
                 return res.status(401).json({
                     message: 'Auth failed'
                 });
-            } else {
-
+            } 
+            // Success
+            else {
                 let endTime = oAuthAccessToken.getExpiration();
                     /*******************
                      * Create New Tokens
@@ -87,9 +89,6 @@ exports.user_refreshTokens = async (req, res, next) => {
                             expiration: endTime.toString(),
                             email
                         });
-                    // return res.status(401).json({
-                    //     message: 'Auth failed'
-                    // });
             } // else
         })
         .catch(err => {
@@ -143,7 +142,7 @@ exports.user_login = async (req, res, next) => {
                         access_token = oAuthAccessToken.createAccessToken(email, user._id);
                         refresh_token = oAuthAccessToken.createRefreshToken(email, user._id);
                         console.log("TOKEN:", access_token);
-                        return res.status(200).json({
+                        res.status(200).json({
                             message: 'Auth successful',
                             access_token: access_token,
                             refresh_token: refresh_token,
@@ -153,26 +152,26 @@ exports.user_login = async (req, res, next) => {
                     } // if
                     // if passwords not Equal
                     else {
-                        return res.status(401).json({
-                            message: 'Auth failed'
+                        // return res.status(401).json({message: 'Auth failed'});
+                        console.log("in Password failed condition");
+                        res.status(401).send({
+                            message: 'Auth failed',
+                            // access_token: access_token,
+                            // refresh_token: refresh_token,
+                            // expiration: endTime.toString(),
+                            // email
                         });
                     } // else
-                    // return res.status(401).json({
-                    //     message: 'Auth failed'
-                    // });
             } // else
         })
         .catch(err => {
             console.log(err);
             res.status(500).json({
                 error: err,
+                message: err
             });
         });
 };
-
-// exports.user_refresh = (req, res, next) => {
-
-// }
 
 exports.user_delete = (req, res, next) => {
     User.remove({ _id: req.params.userId })

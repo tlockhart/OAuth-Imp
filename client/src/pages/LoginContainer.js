@@ -3,6 +3,7 @@ import React, { Component } from "react";
 // import CarouselPage from "../components/Carousel";
 // import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
+// Import module to get/set variables from/in the LocalStorage
 import dataStore from '../utils/dataStore';
 
 // Import Server-Side Utilities:
@@ -51,8 +52,7 @@ class LoginContainer extends Component {
 
     clickHandler(event) {
         event.preventDefault();
-        // alert(`User Name: ${this.state.email}\n
-        //   Password: ${this.state.password}\n`);
+
         console.log(`User Name: ${this.state.email}, Password: ${this.state.password}`);
 
         // Package Data to be sent in the Post Request Body
@@ -65,9 +65,9 @@ class LoginContainer extends Component {
         let login = (data) => {
             console.log('IN LOGIN CALL');
             API.login(data)
-                .then(res => {
+                .then(async res => {
                     if (res) {
-                        let { message, access_token, refresh_token, expiration, email } = res;
+                        let { message, access_token, refresh_token, expiration, email } = res.data;
                         this.setState(
                             { 
                                 access_token,
@@ -77,13 +77,20 @@ class LoginContainer extends Component {
                                 email
                          });
                         console.log("RES:", res);
-                        dataStore.set('access_token', this.state.access_token);
-                        dataStore.set('refresh_token', this.state.refresh_token);
-                        dataStore.set('expiration', this.state.expiration);
-                        dataStore.set('email', this.state.email);
+
+                        await dataStore.setLocalStorage(
+                            access_token,
+                            refresh_token,
+                            expiration,
+                            email,
+                            message);
                     }
                 })
-                .catch(err => console.log(err));
+                .catch(async err => {
+                    console.log("LOGIN ERROR", err);
+                    this.setState(
+                        { message: err.message});
+                });
         };
 
         // Execute login
