@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+// import NavbarDDL from '../NavbarDDL';
 import "./style.css";
+// MDBCollapse, MDBNavItem, MDBNavLink, MDBDropdown,
+// MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
+// MDBIcon} from 'mdbreact';
 
 let Navbar = () => {
     return (
@@ -26,6 +30,9 @@ let Navbar = () => {
                     </li>
                     <li className="nav-item">
                         <a className="nav-link disabled" href="#" tabIndex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                    <li className="nav-item">
+                        <NavbarDDL/>
                     </li>
                 </ul>
             </div>

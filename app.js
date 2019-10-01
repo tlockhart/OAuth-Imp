@@ -19,8 +19,10 @@ mongoose.connect(
     '@node-rest-shop-77xp2.mongodb.net/test?retryWrites=true&w=majority', 
     { 
         useCreateIndex: true,
-        useNewUrlParser: true 
+        useNewUrlParser: true ,
+        useUnifiedTopology: true 
     });
+    
 
     // Handle Deprecation warning.  Use javascript default promises instead of mongoose
     mongoose.Promise = global.Promise;
