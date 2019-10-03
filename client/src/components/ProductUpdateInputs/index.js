@@ -36,12 +36,15 @@ let ProductUpdateForm = (props) => {
                     />
                     {/* <h2>{props.password}</h2> */}
 
-                    {/* button */}
+                    {/* Update button */}
                     <label htmlFor="formGroupExampleInput" />
-                    <MDBBtn color="blue-grey" onClick={props.clickHandler}>Submit</MDBBtn>
-                    {/* <h3 className="mt-5">{props.message? props.message:''}</h3>
-                    <h3 className="mt-5">{props.token? props.token:''}</h3> */}
+                    <MDBBtn color="blue-grey" onClick={props.updateClickHandler}>Update</MDBBtn>
                     <h3 className="mt-5">{props.message? props.message:''}</h3>
+
+                    {/* Delete button */}
+                    {/* <label htmlFor="formGroupExampleInput" />
+                    <MDBBtn color="blue-grey" onClick={props.deleteClickHandler}>Delete</MDBBtn>
+                    <h3 className="mt-5">{props.message? props.message:''}</h3> */}
                 </div>
                 {/* experiment */}
                 {/* <label htmlFor="formGroupExampleInput">

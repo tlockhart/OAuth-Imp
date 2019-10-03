@@ -4,7 +4,14 @@ import {Link} from 'react-router-dom';
 
 // The ...props means, spread all of the passed props onto this element
 // That way we don't have to define them all individually
-function ViewProductBtn(props) {
+// function LinkActionBtn(props) {
+//   return (
+//       <button type="button" className="btn custom-view-btn" tabIndex="0" onClick={event => props.deleteClickHandler(event)} >
+//          {props.buttonName}
+//       </button>
+//   );
+// }
+function LinkActionBtn(props) {
   return (
     <Link to= {props.to}>
       <button type="button" className="btn custom-view-btn" tabIndex="0">
@@ -16,4 +23,4 @@ function ViewProductBtn(props) {
   );
 }
 
-export default ViewProductBtn;
+export default LinkActionBtn;

@@ -1,6 +1,6 @@
 import React from 'react';
 // import ViewProductBtn from '../ViewProductBtn';
-import ProductUpdateBtn from '../ProductUpdateBtn';
+import LinkActionBtn from '../LinkActionBtn';
 
 let ProductItem = (props) => {
   let name = props.name;
@@ -27,7 +27,7 @@ let ProductItem = (props) => {
             }}
             buttonName={"View"}/> */}
 
-          <ProductUpdateBtn to={
+          <LinkActionBtn to={
             {
               pathname: `/products/product/update/${id}`,
               state: {

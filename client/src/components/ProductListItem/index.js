@@ -1,6 +1,8 @@
 import React from 'react';
-import ProductViewBtn from '../ProductViewBtn';
-import ProductUpdateBtn from '../ProductUpdateBtn';
+// import ProductViewBtn from '../ProductViewBtn';
+// import ProductUpdateBtn from '../ProductUpdateBtn';
+import LinkActionBtn from '../LinkActionBtn';
+import NoLinkActionBtn from '../NoLinkActionBtn';
 
 let ProductListItem = (props) => {
   let name = props.name;
@@ -8,15 +10,16 @@ let ProductListItem = (props) => {
   let value = props.value;
   let valueText = `$: ${value}`;
   let id = props.id;
+  let key = props.key;
   // console.log('in productLIst:', props);
 
   return (
-    <div className="container-fluid text-center">
+    <div className="container-fluid text-center" id={id}>
       <div className="row">
         <div className="col">
           <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
           <p>{valueText}<br /></p>
-          <ProductViewBtn to={
+          <LinkActionBtn to={
             {
               pathname: `/products/product/${id}`,
               state: {
@@ -25,9 +28,9 @@ let ProductListItem = (props) => {
                 id: id,
               }
             }}
-            buttonName={"View"}/>
+            buttonName={"View"} />
 
-          <ProductUpdateBtn to={
+          <LinkActionBtn to={
             {
               pathname: `/products/product/update/${id}`,
               state: {
@@ -37,7 +40,9 @@ let ProductListItem = (props) => {
               }
             }
           }
-          buttonName={"Update"}/>
+            buttonName={"Update"} />
+
+          <NoLinkActionBtn buttonName={"Hide"} filterClickHandler={event =>props.filterClickHandler(event)} id={id} key={key}/>
           <hr />
         </div>
       </div>

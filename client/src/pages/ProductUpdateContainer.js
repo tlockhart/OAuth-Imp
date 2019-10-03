@@ -34,7 +34,7 @@ class ProductUpdateContainer extends Component {
         };
 
         this.changeHandler = this.changeHandler.bind(this);
-        this.clickHandler = this.clickHandler.bind(this);
+        this.updateClickHandler = this.updateClickHandler.bind(this);
     } // constructor
 
     setStateVariables(access_token, refresh_token, expiration, email, message) {
@@ -134,6 +134,7 @@ class ProductUpdateContainer extends Component {
 
             });
     }
+
     // call refreshTokens to perform update
     async refreshTokens(url, accessToken, refreshToken, email, expired) {
         console.log('In REFRESHTOKENS:', refreshToken);
@@ -182,7 +183,7 @@ class ProductUpdateContainer extends Component {
             });
     }
 
-    async clickHandler(event) {
+    async updateClickHandler(event) {
         try {
             event.preventDefault();
             let name = this.state.productName;
@@ -243,7 +244,7 @@ class ProductUpdateContainer extends Component {
             <React.Fragment>
                 <ProductUpdateInputs
                     changeHandler={this.changeHandler}
-                    clickHandler={this.clickHandler}
+                    updateClickHandler={this.updateClickHandler}
                     productName={this.state.productName}
                     productValue={this.state.productValue}
                     placeholderName={this.state.placeholderName}
