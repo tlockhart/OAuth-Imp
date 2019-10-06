@@ -65,6 +65,33 @@ export default {
     }, // catch
 
     // /:productId
+    deleteProduct: async (baseURL, authToken, refreshToken, expired) =>
+    {
+        if (baseURL){
+            const data = {
+                expired
+            };
+            console.log(`API: GOING TO DELETE ROUTE: ${baseURL}`);
+            console.log(`auththoken: ${authToken}, refreshtoken: ${refreshToken}, expired: ${expired}`);
+
+            const remove = await axios.delete(
+                baseURL, 
+                {
+                    headers:
+                    {
+                        Authorization: authToken,
+                        'Content-Type': 'application/json',
+                        'refreshtoken': refreshToken
+                    }
+                },
+                data);
+            
+            return remove; 
+        }
+
+    },
+
+    // /:productId
     updateProduct: async (baseURL, authToken, refreshToken, name, value) => {
         if (baseURL) {
             console.log("in API.updateProduct, baseURL:", baseURL);

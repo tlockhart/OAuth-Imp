@@ -16,16 +16,6 @@ let ProductItem = (props) => {
         <div className="col">
           <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
           <p>{valueText}<br /></p>
-          {/* <ViewProductBtn to={
-            {
-              pathname: `/products/product/${id}`,
-              state: {
-                name: name,
-                value: value,
-                id: id,
-              }
-            }}
-            buttonName={"View"}/> */}
 
           <LinkActionBtn to={
             {

@@ -10,6 +10,8 @@ import API from '../utils/API';
 // import ProductForm from "../components/ProductsOLD";
 import ProductListItem from "../components/ProductListItem";
 
+import dataStore from "../utils/dataStore";
+
 
 class ProductsListContainer extends Component {
     constructor(props) {
@@ -17,6 +19,7 @@ class ProductsListContainer extends Component {
         this._productsList = [];
         this.state = {
             products: '',
+            message: ''
         };
 
         // this.clickHandler = this.clickHander.bind(this);
@@ -40,21 +43,6 @@ class ProductsListContainer extends Component {
         returnProducts(baseURL);
     }
 
-    async deleteProduct(url, accessToken) {
-        console.log('IN UPDATE PRODUCT CALL');
-        await API.deleteProduct(url, accessToken)
-            .then(res => {
-                this.setState({message: "Product deleted"});
-            })
-            .catch(err => {
-                if (err.response.status === 500) {
-                    console.log('response:', err.response);
-                    console.log('err:', err.message);
-                    this.setState({ message: 'Invalid Product' });
-                }
-            });
-    }
-
     set productsList(data) {
         let products = data;
         // let filterClickHandler = this.filterClickHandler;
@@ -64,7 +52,7 @@ class ProductsListContainer extends Component {
         // Set productsList from response data
         
         this._productsList = products.map((product) => {
-            return (<ProductListItem key={product._id} id={product._id} name={product.name} value={product.value} filterClickHandler={ (event)=>this.filterClickHandler(event) }/>) 
+            return (<ProductListItem key={product._id} id={product._id} name={product.name} value={product.value} filterClickHandler={ (event)=>this.filterClickHandler(event) } deleteClickHandler = {(event)=>this.deleteClickHandler(event)} />) 
         });
 
         //  = list; 
@@ -83,7 +71,7 @@ class ProductsListContainer extends Component {
     }
 
     filterClickHandler(event) {
-        // event.preventDefault();
+        event.preventDefault();
         const event_id = event.target.id;
         console.log('IN Delete PRODUCT CALL', event_id);
 
@@ -108,7 +96,41 @@ class ProductsListContainer extends Component {
         this._productsList = filteredList;
         this.setState({products: this.productsList});
     }
-        
+
+    async deleteProduct(url, accessToken, refresh_token, expired) {
+        console.log('IN DELETE PRODUCT CALL');
+        await API.deleteProduct(url, accessToken, refresh_token, expired)
+            .then(res => {
+                this.setState({message: "Product deleted"});
+            })
+            .catch(err => {
+                if (err.response.status === 500) {
+                    console.log('response:', err.response);
+                    console.log('err:', err.message);
+                    this.setState({ message: 'Invalid Product' });
+                }
+            });
+    }
+
+    async deleteClickHandler(event) {
+        try{
+            event.preventDefault();
+            let id = event.target.id;
+            let { access_token, refresh_token, expiration } = await dataStore.getLocalStorage();
+            refresh_token = 'norefresh';
+            let authToken = "Bearer " + access_token;
+            let url = `/products/product/delete/${id}`;
+
+            // delete record
+            await  this.deleteProduct(url, authToken, refresh_token, expiration);
+        }
+        catch (err) {
+            console.log("ERROR:", err.response);
+            // console.log("Caught Authentiation Error 2", err);
+            console.log("User is logged out");
+            this.setState({message: "User is logged out"});
+        }      
+    }   
     render() {
         
         let productsList = this.state.products;

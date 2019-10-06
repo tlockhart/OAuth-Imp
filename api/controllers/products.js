@@ -113,37 +113,19 @@ exports.products_get_product = (req, res, next) => {
 };
 
 exports.products_update_product = (req, res, next) => {
-    /**************************************************
-     * Check if this request contains a refresh token
-     **************************************************/
-    // let encodedRefreshToken = res.body.refresh_token;
-    // let encodedRefreshToken = req.headers.refreshtoken;
-    // console.log('encodedRefreshToken:', encodedRefreshToken);
-
-    // let decodedRefreshToken;
-
-    // if (encodedRefreshToken) {
-    //     decodedRefreshToken = oAuthAccessToken.decode(encodedRefreshtoken, process.env.JWT_PRIVATE_KEY);
-    //     console.log("Decoded Refresh_Token:", decodedRefreshToken);
-    //     let email = decodedRefreshToken.email;
-
-    //     // add decoded email to req body
-    //     req.body.email = email;     
-    // }
-    /*************************************************/
-    // After refreshToken verified then send a new access and refresh token
+    // Step 1: After the access token is verified, send a new access and refresh token
     console.log("IN PRODUCT UPDATE");
 
     const id = req.params.productId;
     const updateProps = {};
-    // loop through the array of objects sent in the request, which will choose the field you want to update from the request body (name). The new object (updateProps) will have the field and value you want to update
+    // Step 2: Loop through the array of objects sent in the request, which will choose the field you want to update from the request body (name). The new object (updateProps) will have the field and value you want to update
     for (let key of req.body) {
         // validate that data has been supplied
         if (key.value) {
             updateProps[key.propName] = key.value;
         }
     }
-
+    // Step 3: Perform the update
     Product.updateOne( {_id: id }, { $set: updateProps } )
     .exec()
     .then( document => {
@@ -171,15 +153,17 @@ exports.products_delete_product = (req, res, next) => {
     //     message: 'Deleted product!',
     // }); 
     const id = req.params.productId;
-    Product.remove( {_id: id} ).exec()
+    // Product.deleteOne( {_id: id} )
+    Product.remove( {_id: id} )
+    .exec()
     .then(document => {
         console.log("document:", document);
         const response = {
             message: 'Product deleted',
             request: {
                 type: 'POST',
-                url:'http://localhost:3000/products',
-                body: { name: 'String', value: 'Number'}
+                url:'http://localhost:3000/products/product/delete' + id,
+                // body: { name: 'String', value: 'Number'}
             }
         };
         res.status(200).json(document);

@@ -84,8 +84,10 @@ router.get('/:productId', ProductsController.products_get_product);
 // NOTE: Authorization add 
 router.patch('/product/update/:productId', checkAuth, ProductsController.products_update_product);
 
+router.delete('/product/delete/:productId', checkAuth, ProductsController.products_delete_product);
+
 // localhost:3000/products/5d75802fa50af037b063668d
 // NOTE: Authorization added
-router.delete('/:productId', checkAuth, ProductsController.products_delete_product);
+// router.delete('/:productId', checkAuth, ProductsController.products_delete_product);
 
 module.exports = router;

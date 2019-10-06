@@ -44,6 +44,7 @@ module.exports = (req, res, next) => {
         next();
     } 
     catch (error) {
+        console.log("check-auth: No condition met");
         return res.status(401).json({
             message: 'Auth failed'
         });

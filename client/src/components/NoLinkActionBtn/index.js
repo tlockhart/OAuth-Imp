@@ -8,9 +8,10 @@ import { checkPropTypes } from "prop-types";
 function NoLinkActionBtn(props) {
   const key = props.key;
   const id = props.id;
+  const btnClickHandler = props.btnClickHandler;
   return (
     // <Link to= {props.to}>
-      <button type="button" className="btn custom-view-btn" tabIndex="0" onClick={event=> props.filterClickHandler(event)} id={id} key = {key}>
+      <button type="button" className="btn custom-view-btn" tabIndex="0" onClick={event=> btnClickHandler(event)} id={id} key = {key}>
          {props.buttonName}
       </button>
     // </Link>

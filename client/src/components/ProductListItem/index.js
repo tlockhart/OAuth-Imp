@@ -10,7 +10,7 @@ let ProductListItem = (props) => {
   let value = props.value;
   let valueText = `$: ${value}`;
   let id = props.id;
-  let key = props.key;
+  // let key = props.key;
   // console.log('in productLIst:', props);
 
   return (
@@ -42,7 +42,9 @@ let ProductListItem = (props) => {
           }
             buttonName={"Update"} />
 
-          <NoLinkActionBtn buttonName={"Hide"} filterClickHandler={event =>props.filterClickHandler(event)} id={id} key={key}/>
+          <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event =>props.filterClickHandler(event)} id={id}/>
+
+          <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event =>props.deleteClickHandler(event)} id={id} />
           <hr />
         </div>
       </div>
