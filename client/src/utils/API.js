@@ -7,21 +7,32 @@ import axios from 'axios';
 // Create Export Hash
 export default {
     register: async (data) => {
+        /*************************************************************
+         *  package and send the body to the endpoint
+         ************************************************************/
             const post = await axios({
                 method: 'post',
                 url: '/user/register',
                 data: data
             }); // post
+            /*************************************************************
+             * Send the results back to the calling program
+             ************************************************************/
             return post;
     },
     login: async (data) => {
         console.log("in login");
-
+        /*************************************************************
+         *  package and send the body to the endpoint
+         ************************************************************/
         let post = await axios({
             method: 'post',
             url: '/user/login',
             data: data
         });
+        /*************************************************************
+         * Send the results back to the calling program
+         ************************************************************/
         return post;
     },
     getProducts: async (baseURL) => {
@@ -41,7 +52,9 @@ export default {
     refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
         console.log("API In RefreshToken: ", refreshToken);
         if (url) {
-            // package the body
+            /*************************************************************
+             *  package and send the body to the endpoint
+             ************************************************************/
             const post = await axios({
                 method: 'post',
                 url,
@@ -58,7 +71,7 @@ export default {
             }); // post
             // console.log(post.data, post.status);
             /*************************************************************
-             * Send HTTP Post Request
+             * Send the results back to the calling program
              ************************************************************/
             return post;
         }
@@ -73,7 +86,9 @@ export default {
             };
             console.log(`API: GOING TO DELETE ROUTE: ${baseURL}`);
             console.log(`auththoken: ${authToken}, refreshtoken: ${refreshToken}, expired: ${expired}`);
-
+            /*************************************************************
+             *  package and send the body to the endpoint
+             ************************************************************/
             const remove = await axios.delete(
                 baseURL, 
                 {
@@ -85,7 +100,9 @@ export default {
                     }
                 },
                 data);
-            
+            /*************************************************************
+             * Send the results back to the calling program
+             ************************************************************/
             return remove; 
         }
 
@@ -110,7 +127,9 @@ export default {
                         'value': value
                     }
                 ];
-
+            /*************************************************************
+             *  package and send the body to the endpoint
+             ************************************************************/
             const patch = await axios.patch(baseURL, data, {
                 headers:
                 {
@@ -119,6 +138,9 @@ export default {
                     'refreshtoken': refreshToken
                 }
             });
+            /*************************************************************
+             * Send the results back to the calling program
+             ************************************************************/
             return patch;
         }
     },
