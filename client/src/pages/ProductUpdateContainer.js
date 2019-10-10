@@ -156,26 +156,32 @@ class ProductUpdateContainer extends Component {
             this.setState({ placeholderValue: '' });
 
             /************************************
-             * SET STATE VARIABLES From LOCAL STORAGE
+             * STEP1: SET STATE VARIABLES From LOCAL STORAGE
              ************************************/
             let { access_token, refresh_token, expiration, email, message } = await dataStore.getLocalStorage();
-            await this.setStateVariables(access_token, refresh_token, expiration, email, message);
             /*************************************/
+
+            await this.setStateVariables(access_token, refresh_token, expiration, email, message);
+            
 
             let baseURL = `/products/product/update/${this.state.productId}`;
             // console.log('name', name, 'value', value);
-
+            /******************************************
+             * STEP2: SETSTATEVARIABLES METHOD
+             *******************************/
             if (this.state.hasTimeExpired) {
                 const baseURL = '/user/login/refresh';
                 console.log("ProductUpdateContainer refresh-token: ", this.state.refresh_token);
 
                 /***************************************
-                 * RefreshTokens: If tokens have expired
+                 * Step3: RefreshTokens: If tokens have expired
                  * **************************************/
                 try {
-                    // call refreshTokens to perform update
+                    /*********************************
+                     * Call refreshTokens to perform update
+                     *********************************/
                     let res = await tokenStore.refresh(baseURL, this.state.authToken, this.state.refresh_token, this.state.email, this.state.hasTimeExpired);
-
+                    /**************************/
                     // do something with response
                     console.log("ProductionUpdate:response returned", res);
                     if (res.status === 200) {

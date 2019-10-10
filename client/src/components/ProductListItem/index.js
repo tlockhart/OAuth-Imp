@@ -44,7 +44,7 @@ let ProductListItem = (props) => {
 
           <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event =>props.filterClickHandler(event)} id={id}/>
 
-          <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event =>props.deleteClickHandler(event)} id={id} />
+          <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event=>props.deleteClickHandler(event)} id={id} />
           <hr />
         </div>
       </div>

@@ -75,11 +75,15 @@ exports.decode = (token) => {
 // get token expiration
 exports.getExpiration = () => {
     // let time = moment().format('MM-DD-YYYY HH:mm:ss');
-    let time = moment();
+    // let time = moment();
+    let time = moment.utc();
     console.log('time:', time);
 
-    let startTime = moment(time);
-    let endTime = moment(startTime).add(1, 'hours');
+    // let startTime = moment(time);
+    let startTime = moment.utc(time);
+
+    // let endTime = moment(startTime).add(1, 'hours');
+    let endTime = moment.utc(startTime).add(1, 'hours');
     console.log('startTime:', startTime, 'endTime:', endTime);
 
     // let diff = endTime.diff(startTime, 'hours');

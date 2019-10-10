@@ -86,7 +86,8 @@ exports.user_refreshTokens = async (req, res, next) => {
                             message: 'Auth successful',
                             access_token: access_token,
                             refresh_token: refresh_token,
-                            expiration: endTime.toString(),
+                            // expiration: endTime.toString(),
+                            expiration: endTime,
                             email
                         });
             } // else

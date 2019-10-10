@@ -42,13 +42,13 @@ export default {
             return get;
         }
     },
-    getProduct: async (baseURL) => {
-        if (baseURL) {
-            console.log("in API.getProduct", baseURL);
-            let get = await axios.get(baseURL);
-            return get;
-        }
-    },
+    // getProduct: async (baseURL) => {
+    //     if (baseURL) {
+    //         console.log("in API.getProduct", baseURL);
+    //         let get = await axios.get(baseURL);
+    //         return get;
+    //     }
+    // },
     refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
         console.log("API In RefreshToken: ", refreshToken);
         if (url) {
@@ -85,7 +85,7 @@ export default {
                 expired
             };
             console.log(`API: GOING TO DELETE ROUTE: ${baseURL}`);
-            console.log(`auththoken: ${authToken}, refreshtoken: ${refreshToken}, expired: ${expired}`);
+            console.log(`authtoken: ${authToken}, refreshtoken: ${refreshToken}, expired: ${expired}`);
             /*************************************************************
              *  package and send the body to the endpoint
              ************************************************************/
@@ -103,6 +103,7 @@ export default {
             /*************************************************************
              * Send the results back to the calling program
              ************************************************************/
+            console.log("REMOVE=", remove);
             return remove; 
         }
 

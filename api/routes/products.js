@@ -63,7 +63,9 @@ router.get('/', ProductsController.products_get_all);
 // localhost:3000/products/
 // Add checkAuth to authenticate path:  Express will automatically pass request into checkAuth
 // checkAuth must be loaded after bodyparser, if sent as a token, but if sent in Authorization header, it doesn't matter
-router.post('/', checkAuth, upload.single('productImage'), ProductsController.products_create_product);
+// router.post('/', checkAuth, upload.single('productImage'), ProductsController.products_create_product);
+router.post('/', upload.single('productImage'), ProductsController.products_create_product);
+
 
 // localhost:3000/products/5d75802fa50af037b063668d
 router.get('/:productId', ProductsController.products_get_product);

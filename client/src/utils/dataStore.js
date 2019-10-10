@@ -12,17 +12,24 @@ exports.get = (name) => {
 };
 
 exports.hasTimeExpired = ( () => {
-    let currentTime = moment();
+    // let currentTime = moment();
+    let currentTime = moment.utc();
     let data = JSON.parse(this.get('data'));
     let { expiration } = data;
     console.log("expiration", expiration);
     let dataStore_expiration = expiration;
 
     let expirationTime = dataStore_expiration?dataStore_expiration:currentTime;
-    let sessionExpirationTime = moment(expirationTime);
+    // let sessionExpirationTime = moment(expirationTime);
+    let sessionExpirationTime = moment.utc(expirationTime);
 
-    let sessionExpirationHour = moment(sessionExpirationTime).format('HH');
-    let currentTimeHour = moment(currentTime).format('HH');
+
+    // let sessionExpirationHour = moment(sessionExpirationTime).format('HH');
+    let sessionExpirationHour = moment.utc(sessionExpirationTime).format('HH');
+
+    // let currentTimeHour = moment(currentTime).format('HH');
+    let currentTimeHour = moment.utc(currentTime).format('HH');
+
     console.log("sessionExpirationHour: ", sessionExpirationHour, sessionExpirationHour === '23', 'currentTimeHour', currentTimeHour);
     let timeDiff = sessionExpirationTime.diff(currentTime, 'minutes');
 
