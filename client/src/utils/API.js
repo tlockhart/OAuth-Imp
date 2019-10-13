@@ -35,6 +35,7 @@ export default {
          ************************************************************/
         return post;
     },
+    // products list
     getProducts: async (baseURL) => {
         if (baseURL) {
             console.log("In API.getProducts", baseURL);
@@ -42,13 +43,14 @@ export default {
             return get;
         }
     },
-    // getProduct: async (baseURL) => {
-    //     if (baseURL) {
-    //         console.log("in API.getProduct", baseURL);
-    //         let get = await axios.get(baseURL);
-    //         return get;
-    //     }
-    // },
+    // individual product
+    getProduct: async (baseURL) => {
+        if (baseURL) {
+            console.log("in API.getProduct", baseURL);
+            let get = await axios.get(baseURL);
+            return get;
+        }
+    },
     refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
         console.log("API In RefreshToken: ", refreshToken);
         if (url) {

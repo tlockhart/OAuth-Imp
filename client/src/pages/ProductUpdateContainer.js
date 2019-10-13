@@ -62,6 +62,7 @@ class ProductUpdateContainer extends Component {
 
     resetStateVariables() {
         this.setState({ authToken: '' });
+        this.setState({access_token: ''});
         this.setState({ refresh_token: '' });
         this.setState({ email: '' });
         this.setState({ hasTimeExpired: false });

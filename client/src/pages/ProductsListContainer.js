@@ -17,6 +17,12 @@ import tokenStore from '../utils/tokenStore';
 class ProductsListContainer extends Component {
     constructor(props) {
         super(props);
+        /******************************************
+             * STEP2a: SET DELETEURL
+             ******************************************/
+            this.deleteURL = `/products/product/delete/`;
+            this.refreshURL = '/user/login/refresh';
+            /******************************************/
         this._productsList = [];
         this.state = {
             products: '',
@@ -34,6 +40,13 @@ class ProductsListContainer extends Component {
         // this.clickHandler = this.clickHander.bind(this);
     } // constructor
 
+    resetStateVariables() {
+        this.setState({ authToken: '' });
+        this.setState({access_token: ''});
+        this.setState({ refresh_token: '' });
+        this.setState({ email: '' });
+        this.setState({ hasTimeExpired: false });
+    }
     setStateVariables(access_token, refresh_token, expiration, email, message) {
         /************************************************
          * SET State VARIABLES FROM LocalStorage
@@ -115,7 +128,7 @@ class ProductsListContainer extends Component {
         // Using Setters and getters
         let filteredList = this.productsList.filter((product) => {
             console.log("PRODUCT ID: ", product.props.id);
-            if (product.props.id.toString() != event_id.toString()) {
+            if (product.props.id.toString() !== event_id.toString()) {
                 console.log("MatchingProductID: ", product.props.id);
                 let data = {
                     name: product.props.name,
@@ -132,19 +145,117 @@ class ProductsListContainer extends Component {
 
     async deleteProduct(url, accessToken, refresh_token, expired) {
         console.log('IN DELETE PRODUCT CALL');
-        await API.deleteProduct(url, accessToken, refresh_token, expired)
-            .then(res => {
-                this.setState({ message: "Product deleted" });
-            })
-            .catch(err => {
-                if (err.response.status === 500) {
-                    console.log('response:', err.response);
-                    console.log('err:', err.message);
-                    this.setState({ message: 'Invalid Product' });
+        try {
+            let response = await API.deleteProduct(url, accessToken, refresh_token, expired);
+            this.setState({ message: "Product deleted" });
+            return response;
+        }
+        catch (err) {
+            if (err.response.status === 500) {
+                console.log('response:', err.response);
+                console.log('err:', err.message);
+                this.setState({ message: 'Invalid Product' });
+            }
+        }
+    }
+    async refreshTokens() {
+        // if (this.state.hasTimeExpired) {
+            console.log("ProductListContainer refresh-token: ", this.state.refresh_token);
+
+            /***************************************
+             * Step3: RefreshTokens: If tokens have expired
+             * **************************************/
+            try {
+                /*********************************
+                 * Step3b:Call refreshTokens to perform update
+                 *********************************/
+                let res = await tokenStore.refresh(this.refreshURL, this.state.authToken, this.state.refresh_token, this.state.email, this.state.hasTimeExpired);
+                /**************************/
+
+                // do something with response
+                console.log("ProductionList:response returned", res);
+                if (res.status === 200) {
+                    console.log("NEW ACCESS TOKENS HAVE BEEN RECEIVED RES:", res);
+                    /***********************************************
+                     * Step4: Set Local Storage Variables
+                     ************************************************/
+                    // console.log("In if 2: baseURL =", baseURL);
+                    let { access_token, refresh_token, expiration, email, message } = await dataStore.setLocalStorage(
+                        res.data.access_token,
+                        res.data.refresh_token,
+                        res.data.expiration,
+                        res.data.email,
+                        res.data.message);
+
+                    /*********************************************
+                     * STEP5: SET STATE VARIABLES FROM Local Storage
+                     ********************************************/
+                    await this.setStateVariables(access_token, refresh_token, expiration, email, message);
+                    /********************************************/
                 }
-            });
+            }
+            catch (err) {
+                // Clear all localStorage, due to invalid Refresh token
+                if (err.response.status === 401) {
+                    console.log('401 status received in ProductUpdate');
+                    /***********************************************
+                     * STEP6: Reset Local Storage Variables
+                     ************************************************/
+                    // console.log("In if 3: baseURL =", baseURL);
+                    await dataStore.resetLocalStorage();
+
+                    /*********************************************
+                     * STEP7: SET STATE VARIABLES FROM Local Storage
+                     *********************************************/
+                    await this.resetStateVariables();
+                    console.log('err', err.response);
+                    console.log('error status code', err.response.status);
+                    this.setState({ isUserAuthorized: false });
+                    console.log("isUserAuthorised = ", this.state.isUserAuthorized);
+                    this.setState({ message: err.response.data.message });
+                    //return err;
+                } // if
+            } // catch
+        // } // if
+    }
+    performDBAction(id) {
+        return this.deleteItem(id);
     }
 
+    async deleteItem(productId){
+        console.log("IN IF");
+                // Refresh_Token should be set to 'norefresh' as tokens should be refreshed
+                this.setState({ refresh_token: 'norefresh' });
+
+                console.log('ProductUpdateContainer:refresh_token = ', this.state.refresh_token);
+
+                /************************************
+                 *  STEP8: Call method to delete product
+                 ***********************************/
+                // await  this.deleteProduct(this.baseURL, authToken, refresh_token, expiration);
+                let deleteResponse = await this.deleteProduct(this.deleteURL+productId, this.state.authToken, this.state.refresh_token, this.state.expiration);
+                console.log("DELETEMESSAGE ", deleteResponse);
+                /***********************************/
+                /*********************
+                 * STEP9: update the productsList
+                 ********************/
+                try {
+                    let res = await API.getProducts('/products');
+                    let data = res.data.products;
+
+                    // this._productsList = data;
+                    this.productsList = data
+
+                    // Reset Variables to Default
+                    this.setState({ isUserAuthorized: true });
+                    this.setState({ hasTimeExpired: false });
+                }
+                catch (err) {
+                    console.log("Network Error", err.message);
+                    this.setState({ message: "Network Error" });
+                }
+
+    }
     async deleteClickHandler(event) {
         try {
             event.preventDefault();
@@ -168,130 +279,33 @@ class ProductsListContainer extends Component {
             let authToken = "Bearer " + access_token;
             console.log("AUTHTOKEN:", authToken);
             /*************************************/
-            /******************************************
-             * STEP2a: SET DELETEURL
-             ******************************************/
-            const deleteURL = `/products/product/delete/${productId}`;
-            const refreshURL = '/user/login/refresh';
-            /******************************************/
+            
             console.log("hasTimeExpired", this.state.hasTimeExpired);
+            /**************************************************
+             * STEP3: REFRESH TOKENS IF NECESSARY
+             **************************************************/
             if (this.state.hasTimeExpired) {
-                console.log("ProductListContainer refresh-token: ", this.state.refresh_token);
-
-                /***************************************
-                 * Step3: RefreshTokens: If tokens have expired
-                 * **************************************/
-                try {
-                    /*********************************
-                     * Step3b:Call refreshTokens to perform update
-                     *********************************/
-                    let res = await tokenStore.refresh(refreshURL, this.state.authToken, this.state.refresh_token, this.state.email, this.state.hasTimeExpired);
-                    /**************************/
-
-                    // do something with response
-                    console.log("ProductionList:response returned", res);
-                    if (res.status === 200) {
-                        console.log("NEW ACCESS TOKENS HAVE BEEN RECEIVED RES:", res);
-                        /***********************************************
-                         * Step4: Set Local Storage Variables
-                         ************************************************/
-                        // console.log("In if 2: baseURL =", baseURL);
-                        let { access_token, refresh_token, expiration, email, message } = await dataStore.setLocalStorage(
-                            res.data.access_token,
-                            res.data.refresh_token,
-                            res.data.expiration,
-                            res.data.email,
-                            res.data.message);
-
-                        /*********************************************
-                         * STEP5: SET STATE VARIABLES FROM Local Storage
-                         ********************************************/
-                        await this.setStateVariables(access_token, refresh_token, expiration, email, message);
-                        /********************************************/
-                    }
-                }
-                catch (err) {
-                    // Clear all localStorage, due to invalid Refresh token
-                    if (err.response.status === 401) {
-                        console.log('401 status received in ProductUpdate');
-                        /***********************************************
-                         * STEP6: Reset Local Storage Variables
-                         ************************************************/
-                        // console.log("In if 3: baseURL =", baseURL);
-                        await dataStore.resetLocalStorage();
-
-                        /*********************************************
-                         * STEP7: SET STATE VARIABLES FROM Local Storage
-                         *********************************************/
-                        await this.resetStateVariables();
-                        console.log('err', err.response);
-                        console.log('error status code', err.response.status);
-                        this.setState({ isUserAuthorized: false });
-                        console.log("isUserAuthorised = ", this.state.isUserAuthorized);
-                        this.setState({ message: err.response.data.message });
-                        //return err;
-                    } // if
-                } // catch
-            } // if
+                await this.refreshTokens();
+            }
+            /*************************************************/
             console.log("Is user authorized", this.state.isUserAuthorized);
             if (this.state.isUserAuthorized) {
-                console.log("IN IF");
-                // Refresh_Token should be set to 'norefresh' as tokens should be refreshed
-                this.setState({ refresh_token: 'norefresh' });
-
-                console.log('ProductUpdateContainer:refresh_token = ', this.state.refresh_token);
-
-                /************************************
-                 *  STEP8: Call method to delete product
-                 ***********************************/
-                // await  this.deleteProduct(baseURL, authToken, refresh_token, expiration);
-                await this.deleteProduct(deleteURL, this.state.authToken, this.state.refresh_token, this.state.expiration);
-                /***********************************/
-                /*********************
-                 * STEP9: update the productsList
-                 ********************/
-                try {
-                    let res = await API.getProducts('/products');
-                    let data = res.data.products;
-
-                    // this._productsList = data;
-                    this.productsList = data
-
-                    // Reset Variables to Default
-                    this.setState({ isUserAuthorized: true });
-                    this.setState({ hasTimeExpired: false });
-                }
-                catch (err) {
-                    console.log("Network Error");
-                    this.setState({ message: "Network Error" });
-                }
-
+                /*******************************
+                 *STEP 4: PERFORM A DB ACTION IF TOKENS R VALID
+                ********************************/
+                await this.performDBAction(productId)
             } // if
 
         }
         catch (err) {
             console.log("ERROR:", err);
-            // console.log("Caught Authentiation Error 2", err);
             console.log("User is logged out");
             this.setState({ message: "User is logged out" });
         }
     }
     render() {
-
-        // let productsList = this.state.products;
-        // this.setState(
-        //     {
-        //         products: this._productsList
-        //         // products: products
-        //     });
-
-        // console.log('components:', productsList);
         return (
             <React.Fragment>
-                {/* <ProductForm  */}
-                {/* // clickHandler={this.clickHandler} 
-                // /> */}
-                {/* {productsList} */}
                 {this.state.products}
             </React.Fragment>
         )

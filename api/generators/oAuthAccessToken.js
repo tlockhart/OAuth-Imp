@@ -83,7 +83,8 @@ exports.getExpiration = () => {
     let startTime = moment.utc(time);
 
     // let endTime = moment(startTime).add(1, 'hours');
-    let endTime = moment.utc(startTime).add(1, 'hours');
+    // let endTime = moment.utc(startTime).add(1, 'hours');
+    let endTime = startTime.add(1, 'hours');
     console.log('startTime:', startTime, 'endTime:', endTime);
 
     // let diff = endTime.diff(startTime, 'hours');
