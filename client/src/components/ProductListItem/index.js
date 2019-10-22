@@ -41,6 +41,16 @@ let ProductListItem = (props) => {
             }
           }
             buttonName={"Update"} />
+            <LinkActionBtn to={
+            {
+              pathname: `/products/product/insert`,
+              state: {
+                name: name,
+                value: value,
+              }
+            }
+          }
+            buttonName={"Insert"} />
 
           <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event =>props.filterClickHandler(event)} id={id}/>
 

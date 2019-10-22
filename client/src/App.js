@@ -16,6 +16,7 @@ import HomeContainer from './pages/HomeContainer';
 import ProductsListContainer from './pages/ProductsListContainer';
 import ProductViewContainer from './pages/ProductViewContainer';
 import ProductUpdateContainer from './pages/ProductUpdateContainer';
+import ProductInsertContainer from './pages/ProductInsertContainer';
 import RegistrationContainer from './pages/RegistrationContainer';
 import LoginContainer from './pages/LoginContainer';
 
@@ -47,6 +48,7 @@ class App extends Component {
           <Route exact path="/user/registration" component={RegistrationContainer} />
           <Route exact path="/user/login" component={LoginContainer} />
           <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />
+          <Route exact path="/products/product/insert" component={ProductInsertContainer} />
           {/* <Route exact path="/products/product/delete/:product_id" component={ProductUpdateContainer} /> */}
           <Route exact path="/products/product/:product_id" component={ProductViewContainer} />
           <Route exact path="/products" component={ProductsListContainer} />

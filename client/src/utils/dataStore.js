@@ -1,5 +1,8 @@
 const moment = require('moment');
 
+/**********************
+ * Contains methods for storing credentials in localStorage and packaging for setting as state variables
+ */
 exports.set = (name, value) => {
     localStorage.setItem(name, value);
 };
@@ -48,11 +51,15 @@ exports.hasTimeExpired = (() => {
         console.log("currentTime.isAfter(sessionExpirationTime):", currentTime.isAfter(sessionExpirationTime));
         console.log("sessionExpirationTime.isAfter(currentTime):", moment(sessionExpirationTime).isAfter(moment(currentTime)));
 
-        // When expiration time is 23:26 (11), but the currenttime is 23:26, moment thinks its a new day,
-        // so substract 1440 mins from the timeDiff, to Normalize it
-        if (moment(sessionExpirationTime).isAfter(moment(currentTime)) && sessionExpirationHour === '23') {
+        // Handles current time 7pm (23), expiration 8pm (00)
+        if (moment(sessionExpirationTime).isAfter(moment(currentTime)) && currentTimeHour === '23') {
             timeDiff = timeDiff - 1440;
         }
+        // When expiration time is 23:26 (11), but the currenttime is 23:26, moment thinks its a new day,
+        // so substract 1440 mins from the timeDiff, to Normalize it
+        // if (moment(sessionExpirationTime).isAfter(moment(currentTime)) && sessionExpirationHour === '23') {
+        //     timeDiff = timeDiff - 1440;
+        // }
 
         // regular time,  when currenttime passing sessionExpirationTime, take the normal difference
         // If access_token is expired, user will have to relogin.
@@ -62,12 +69,13 @@ exports.hasTimeExpired = (() => {
             // timeDiff = timeDiff;
         }
 
-        console.log('currentTime:', currentTime, 'sessionExpiration:', sessionExpirationTime, 'timeDiff:', timeDiff);
+        console.log('currentTime:', currentTime, 'sessionExpiration:', sessionExpirationTime);
+        console.log('TIMEDIFF:', timeDiff);
 
         returnValue = timeDiff <= 10 ? true : false;
         // return returnValue;
     } // if
-        return returnValue;
+    return returnValue;
 });
 
 exports.setLocalStorage = ((access_token, refresh_token, expiration, email, message) => {
@@ -79,8 +87,9 @@ exports.setLocalStorage = ((access_token, refresh_token, expiration, email, mess
         email,
         message
     };
-
+    console.log("created data", data.message);
     this.set('data', JSON.stringify(data));
+    console.log("set LocalStorage data", data.message);
     return data;
 });
 
@@ -110,8 +119,6 @@ exports.getLocalStorage = (() => {
             email: ''
         }
     }
-
-
     return returnData;
 });
 

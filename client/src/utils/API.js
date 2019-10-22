@@ -10,15 +10,15 @@ export default {
         /*************************************************************
          *  package and send the body to the endpoint
          ************************************************************/
-            const post = await axios({
-                method: 'post',
-                url: '/user/register',
-                data: data
-            }); // post
-            /*************************************************************
-             * Send the results back to the calling program
-             ************************************************************/
-            return post;
+        const post = await axios({
+            method: 'post',
+            url: '/user/register',
+            data: data
+        }); // post
+        /*************************************************************
+         * Send the results back to the calling program
+         ************************************************************/
+        return post;
     },
     login: async (data) => {
         console.log("in login");
@@ -80,9 +80,8 @@ export default {
     }, // catch
 
     // /:productId
-    deleteProduct: async (baseURL, authToken, refreshToken, expired) =>
-    {
-        if (baseURL){
+    deleteProduct: async (baseURL, authToken, refreshToken, expired) => {
+        if (baseURL) {
             const data = {
                 expired
             };
@@ -92,7 +91,7 @@ export default {
              *  package and send the body to the endpoint
              ************************************************************/
             const remove = await axios.delete(
-                baseURL, 
+                baseURL,
                 {
                     headers:
                     {
@@ -105,8 +104,8 @@ export default {
             /*************************************************************
              * Send the results back to the calling program
              ************************************************************/
-            console.log("REMOVE=", remove);
-            return remove; 
+            // console.log("REMOVE=", remove);
+            return remove;
         }
 
     },

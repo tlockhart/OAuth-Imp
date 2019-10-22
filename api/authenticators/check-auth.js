@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 module.exports = (req, res, next) => {
     // Step1: call next() if we did successfully authenticate
     // verify and return decoded value
+    // console.log("CHECKAUTH res: ", res);
     try {
         let decoded;
         // console.log("REQ:",req);

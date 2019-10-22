@@ -10,10 +10,10 @@ export default {
          ************************************************************/
         let result = await API.refreshTokens(url, accessToken, refreshToken, email, expired);
         console.log("tokenStore: result = ", result);
-        
+
         /*************************************************************
          * Send the results back to the calling program
          ************************************************************/
-        return result;       
+        return result;
     }
 };
