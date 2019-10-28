@@ -1,5 +1,6 @@
 import React from 'react';
 import { MDBBtn } from "mdbreact";
+import {Uploader} from '../Image'
 
 
 let ProductInsertForm = (props) => {
@@ -38,7 +39,7 @@ let ProductInsertForm = (props) => {
                     />
                     <br></br>
                     {/* <div > */}
-                    {/* <!--Select IMAGE --> */}
+                    {/* MDB REACT COMPONENT */}
                     <div className="custom-file">
                         <input
                             type="file"
@@ -48,8 +49,7 @@ let ProductInsertForm = (props) => {
                             name="props.productImage"
                             // ref={node => this.productImage = node}
                             onChange={
-                                (event) => 
-                                {
+                                (event) => {
                                     props.productImageClickHandler(event)
                                 }
                             }
@@ -58,14 +58,18 @@ let ProductInsertForm = (props) => {
                             {props.productImage}
                         </label>
                     </div>
-
-                    {/* </div> */}
-
-
                     {/* insert button */}
                     <label htmlFor="formGroupExampleInput" />
                     <MDBBtn color="blue-grey" onClick={props.insertClickHandler}>Insert</MDBBtn>
                     <h3 className="mt-5">{props.message ? props.message : ''}</h3>
+                    {/************************* Image Upload */}
+                    {/* SUPERHERO API IMAGE UPLOAD */}
+                    <Uploader
+                    />
+
+                    {/*****************************image end */}
+
+                    
 
                     {/* Delete button */}
                     {/* <label htmlFor="formGroupExampleInput" />
