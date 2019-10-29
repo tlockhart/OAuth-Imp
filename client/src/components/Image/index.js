@@ -23,6 +23,7 @@ export class Uploader extends Component {
       'image/png'
     ];
 
+    this.count = 0;
     this.list = null;
     this.listItem = null;
     this.br = document.createElement('br');
@@ -184,28 +185,53 @@ export class Uploader extends Component {
     this.file = this.input.files[0];
   };
   
-  displayImage = (img) => {
-
-    // img.crossOrigin = 'Anonymous'
+  appendChild(img, canvas) {
     img.onload = () =>{
-      var canvas = document.createElement('canvas')
+       
+      canvas.setAttribute("id", `canvas${this.count}`);
       console.log("IMG:", img);
       console.log("IMG Width:", img.width, "IMG HT:", img.height);
+
+      // Set canvas dimension to match image
       canvas.width = img.width
       canvas.height = img.height
 
       var context = canvas.getContext('2d');
 
 
+      // Draw image to canvas
       context.drawImage(img, 0, 0);
       this.preview = document.querySelector('.preview');
-      this.preview.appendChild(canvas);
-  }
-};
 
+      // Apend image to canvas div
+
+      
+        this.preview.appendChild(canvas);
+        this.count += 1;
+      }
+  }
+  displayImage = (img) => {
+    var canvas = document.createElement('canvas')
+    if(this.count < 1) {
+      // img.crossOrigin = 'Anonymous'
+      this.appendChild(img, canvas)
+      }else
+        {
+          var node = document.getElementById("canvas0"); 
+          this.preview.removeChild(node);
+          // Reset canvas count
+          this.count = 0;
+          // this.preview.appendChild(canvas);
+          this.appendChild(img, canvas);
+        }  
+};
+//  Select an image
 stageImage = (event) => {
     event.preventDefault();
+
+    // Set reference to #image-input div
     this.getFileInfo();
+
     var _URL = window.URL || window.webkitURL;
     var img;
     // var file = this.input.files[0];
@@ -345,17 +371,27 @@ stageImage = (event) => {
   convertImageFromUrlToBase64String = (url, callbackFn) => {
     var img = new Image()
     img.crossOrigin = 'Anonymous'
+    var dataUrl;
     img.onload = function () {
       var canvas = document.createElement('canvas')
       canvas.width = img.width
       canvas.height = img.height
 
+      // Get a canvas reference to draw to the canvas
       var context = canvas.getContext('2d')
+
+      // Draw image to the canvas
       context.drawImage(img, 0, 0)
-      var dataUrl = canvas.toDataURL('image/jpg');
+
+      // Return a data URI containing a representation of the image in jpg format
+      dataUrl = canvas.toDataURL('image/jpg');
       console.log("convertImageFromUrlToBase64String-DataURL:", dataUrl);
       var isCallBackAFunction = typeof callbackFn === 'function'
       console.log("isCallBackAFunction:", isCallBackAFunction);
+
+      /********************************************
+       * Send the dataUrl to the backend, or img.src
+       ********************************************
       if (dataUrl && isCallBackAFunction) {
         // look for "data: image/png;base64,"
         // or look for "data: image/jpg;base64,"
@@ -363,8 +399,14 @@ stageImage = (event) => {
         // The Call back function, passes it the dataURL (base64 image) as an argument
         callbackFn(dataUrl.replace(/^data:image\/(png|jpg|jpeg);base64,/, ''))
       }
+      ********************************************/
     }
+
+    // Setting the img.src will call img.onload when the src is loaded
     img.src = url// url is the img src
+    console.log("IMG SRC:", url);
+    // console.log("BASE64:", dataUrl);
+
   }// convertImage
 
   submitImageHandler = (event) => {
