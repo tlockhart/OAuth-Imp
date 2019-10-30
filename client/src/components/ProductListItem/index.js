@@ -41,9 +41,10 @@ let ProductListItem = (props) => {
             }
           }
             buttonName={"Update"} />
+            
             <LinkActionBtn to={
             {
-              pathname: `/products/product/insert`,
+              pathname: `/product/insert`,
               state: {
                 name: name,
                 value: value,

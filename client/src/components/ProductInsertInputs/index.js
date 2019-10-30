@@ -64,8 +64,7 @@ let ProductInsertForm = (props) => {
                     <h3 className="mt-5">{props.message ? props.message : ''}</h3>
                     {/************************* Image Upload */}
                     {/* SUPERHERO API IMAGE UPLOAD */}
-                    <Uploader
-                    />
+                    <Uploader/>
 
                     {/*****************************image end */}
 

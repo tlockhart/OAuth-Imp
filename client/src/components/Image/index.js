@@ -24,6 +24,7 @@ export class Uploader extends Component {
     ];
 
     this.count = 0;
+
     this.list = null;
     this.listItem = null;
     this.br = document.createElement('br');
@@ -140,6 +141,7 @@ export class Uploader extends Component {
 
     // Store the selected file into a variable called curFiles
     var curFiles = this.input.files;
+    console.log("CURRENTFILES", curFiles[0]);
     this.file = curFiles[0];
 
     // If no file was selected Output message to preview
@@ -184,10 +186,10 @@ export class Uploader extends Component {
     console.log("getFileInfo: File Information", this.input.files[0]);
     this.file = this.input.files[0];
   };
-  
+
   appendChild(img, canvas) {
-    img.onload = () =>{
-       
+    img.onload = () => {
+
       canvas.setAttribute("id", `canvas${this.count}`);
       console.log("IMG:", img);
       console.log("IMG Width:", img.width, "IMG HT:", img.height);
@@ -205,28 +207,29 @@ export class Uploader extends Component {
 
       // Apend image to canvas div
 
-      
-        this.preview.appendChild(canvas);
-        this.count += 1;
-      }
+
+      this.preview.appendChild(canvas);
+      this.count += 1;
+    }
   }
   displayImage = (img) => {
+    console.log("COUNT:", this.count);
     var canvas = document.createElement('canvas')
-    if(this.count < 1) {
+    if (this.count < 1) {
       // img.crossOrigin = 'Anonymous'
       this.appendChild(img, canvas)
-      }else
-        {
-          var node = document.getElementById("canvas0"); 
-          this.preview.removeChild(node);
-          // Reset canvas count
-          this.count = 0;
-          // this.preview.appendChild(canvas);
-          this.appendChild(img, canvas);
-        }  
-};
-//  Select an image
-stageImage = (event) => {
+    }
+    else {
+      var node = document.getElementById("canvas0");
+      this.preview.removeChild(node);
+      // Reset canvas count
+      this.count = 0;
+      // this.preview.appendChild(canvas);
+      this.appendChild(img, canvas);
+    }
+  };
+  //  Select an image
+  stageImage = (event) => {
     event.preventDefault();
 
     // Set reference to #image-input div
@@ -240,7 +243,7 @@ stageImage = (event) => {
     // img.onload = this.imgOnLoad();
     // img.onError = this.imgOnError();
     img.src = URL.createObjectURL(this.file);
-    
+
     // }// if
     console.log("IMAGE NAME", this.file);
 
@@ -276,51 +279,6 @@ stageImage = (event) => {
     }
   };
 
-  analyzeFace = () => {
-    var url = 'https://api-us.faceplusplus.com/facepp/v3/face/analyze'
-    var queryParams = [
-      'api_key=' + this.key,
-      'api_secret=' + this.secret,
-      'face_tokens=' + this.faceToken,
-      'return_landmark=1',
-      'return_attributes=gender,age,emotion,ethnicity,beauty,glass,skinstatus,facequality'
-    ].join('&')
-    var query = url + '?' + queryParams
-    // console.log("The queryURL = "+query);
-    $.ajax({
-      url: query,
-      method: 'POST'
-    }).then(function (response) {
-      // console.log(response);
-      var faceAge = response.faces[0].attributes.age.value
-      var faceGender = (response.faces[0].attributes.gender.value).toLowerCase()
-      // var faceEthnicity = (response.faces[0].attributes.ethnicity.value).toLowerCase()
-      // var faceBType = faceGender + '_score'
-      // var faceBRequest = 'response.faces[0].attributes.beauty.' + faceBType
-      // var faceBeauty = faceBRequest
-      // var faceEmotions = response.faces[0].attributes.emotion
-
-      // $faceMsg.text('');
-      var $facePara = $('#face')
-      if ($facePara.length === 0) {
-        var $faceMsg = $('<p>')
-        $faceMsg.attr('id', 'face')
-        $faceMsg.text('Identity processed!')
-        $faceMsg.attr('age', faceAge)
-        $faceMsg.attr('gender', faceGender)
-        $('.preview').append($faceMsg)
-
-        // Enable submit button  when response from face++ received
-        this.formComplete()
-
-        // console.log("Image has been processed!"+"Gender = "+faceGender+" Age = "+faceAge);
-      } else {
-        $faceMsg.text('Image not processed!')
-        // console.log("Image has been processed!"+"Gender = "+faceGender+" Age = "+faceAge);
-        // console.log("face id is not null");
-      }
-    })
-  };// analyzeFace
 
   /********************************************
    * Store Face_Token for data Analysis:
@@ -367,7 +325,7 @@ stageImage = (event) => {
       return (number / 1048576).toFixed(1) + 'MB'
     }
   };
-  
+
   convertImageFromUrlToBase64String = (url, callbackFn) => {
     var img = new Image()
     img.crossOrigin = 'Anonymous'
@@ -404,6 +362,7 @@ stageImage = (event) => {
 
     // Setting the img.src will call img.onload when the src is loaded
     img.src = url// url is the img src
+    console.log("IMG:", img, "Name:", this.fileName);
     console.log("IMG SRC:", url);
     // console.log("BASE64:", dataUrl);
 
@@ -412,6 +371,9 @@ stageImage = (event) => {
   submitImageHandler = (event) => {
     // Don't refresh the page!
     event.preventDefault()
+
+    //reset the canvas image to 0, so other images can be selected after submit
+    this.count = 0;
 
     // this.getFileInfo();
     this.updateImageDisplay();
@@ -539,7 +501,7 @@ stageImage = (event) => {
               />
               {/* UPLOAD IDENTITY BUTTON */}
               <button
-                class="btn btn-info"
+                className="btn btn-info"
                 // disabled ="disabled" 
                 id="submit-image"
                 type="submit"
