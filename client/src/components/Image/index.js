@@ -96,7 +96,7 @@ export class Uploader extends Component {
       )
 
       $('#select-btn').show()
-      // document.getElementById('submit-image').disabled = true
+      document.getElementById('submit-image').disabled = true
       $('#li-id').css({ 'color': 'red' })
     }
     console.log("in imgONLoad")
