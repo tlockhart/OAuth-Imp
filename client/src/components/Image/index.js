@@ -26,7 +26,7 @@ export class Uploader extends Component {
     // canvas div
     // this.preview = document.querySelector('.preview');
     // this.preview = '';
-    this.files = [];
+    // this.files = [];
     this.imageName = '';
     // this.fileName = '';
     // this.fileSize = 0;
@@ -62,13 +62,10 @@ export class Uploader extends Component {
 
   // imgOnLoad2 = (img) => {console.log(img)};
   displayImageProps = () => {
-    // img.onload = () => {
-    // console.log('IMGONLOAD_IMG', img);
-    // console.log('IMGONLOAD_IMG.WIDTH', img.width);
-    // }
-    // this.imageWidth = this.width
-    // this.imageHeight = this.height
 
+
+    let status = document.getElementById('error').innerHTML = '';
+    console.log(`status: ${status}`)
     this.para = document.createTextNode('File Name: ' + this.imageName + ', File Size: ' + this.imageSize + ', Width: ' + this.imageWidth + ', Height: ' + this.imageHeight);
 
     this.listItem = document.createElement('li');
@@ -76,6 +73,9 @@ export class Uploader extends Component {
 
     this.listItem.appendChild(this.br);
     this.listItem.appendChild(this.para);
+
+    // let ol = document.getElementsByTagName('ol')[0];
+    // ol.removeChild('li');
 
     this.list = document.createElement('ol');
     this.preview.appendChild(this.list);
@@ -272,6 +272,22 @@ export class Uploader extends Component {
     })
   }
 
+  resetImgInfo = () => {
+    /************************/
+    let ol = this.preview.getElementsByTagName("ol");
+    const isOLCreated = ol.length ? true : false;
+    console.log("OL Length", ol.length);
+    console.log("is ol created", isOLCreated);
+    console.log("no ol", ol);
+    if (isOLCreated) {
+      this.preview.removeChild(ol[0]);
+      // ol.remove()
+      // this.preview['ol'].remove();
+    }
+
+    /************************/
+  };
+
   //  Select an image
   selectImage = async (event) => {
     event.preventDefault();
@@ -283,7 +299,7 @@ export class Uploader extends Component {
     let img;
     var blob = this.input.files[0];
     if (blob) {
-      img = new Image();      
+      img = new Image();
       try {
         const result = await this.loadImage(img, blob);
         console.log("RESULT", result);
@@ -296,13 +312,14 @@ export class Uploader extends Component {
         this.imageSize = result.imageSize;
         this.imageName = result.imageName;
 
-
+        this.resetImgInfo();
         this.displayImageProps();
+        console.log("PREVIEW", this.preview.getElementsByTagName("OL"));
 
         // Create Canvas and load image
         this.displayImage(img);
       }
-      catch(err) {
+      catch (err) {
         console.log("failure ", err);
         this.imgOnError()
       }
