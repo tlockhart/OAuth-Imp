@@ -8,29 +8,30 @@ export class Uploader extends Component {
   constructor(props) {
     super(props);
 
-    // the input file
-    this.input = null;
+    this.image = {
+      input: null,
+      file: null,
+      preview: null,
+      fileTypes: [
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png'
+      ],
+    };
 
-    this.fileTypes = [
-      'image/jpeg',
-      'image/pjpeg',
-      'image/png'
-    ];
+    let {
+      input,
+      file,
+      preview,
+      fileTypes,
+    } = this.image;
 
-    this.count = 0;
+    this.input = input;
+    this.file = file;
+    this.preview = preview;
+    this.fileTypes = fileTypes;
 
-    this.list = null;
-    this.listItem = null;
-    this.br = document.createElement('br');
-    this.para = document.createElement('p');
-    // canvas div
-    // this.preview = document.querySelector('.preview');
-    // this.preview = '';
-    // this.files = [];
     this.imageName = '';
-    // this.fileName = '';
-    // this.fileSize = 0;
-    this.image = null;
     // Image Dimensions
     this.imageWidth = 0;
     this.imageHeight = 0;
@@ -54,41 +55,30 @@ export class Uploader extends Component {
     });
   }
 
-  componentDidMount() {
-    // this.input = document.querySelector('#image-input');
-    // this.preview = document.querySelector('.preview');
-    this.preview = document.querySelector('.preview');
-  }
-
-  // imgOnLoad2 = (img) => {console.log(img)};
   displayImageProps = () => {
-
-
+    let lnBreak = document.createElement('br');
     let status = document.getElementById('error').innerHTML = '';
-    console.log(`status: ${status}`)
-    this.para = document.createTextNode('File Name: ' + this.imageName + ', File Size: ' + this.imageSize + ', Width: ' + this.imageWidth + ', Height: ' + this.imageHeight);
+    // console.log(`status: ${status}`)
+    let para = document.createTextNode('File Name: ' + this.imageName + ', File Size: ' + this.imageSize + ', Width: ' + this.imageWidth + ', Height: ' + this.imageHeight);
 
-    this.listItem = document.createElement('li');
-    this.listItem.setAttribute('id', 'li-id');
+    let listItem = document.createElement('li');
+    listItem.setAttribute('id', 'li-id');
 
-    this.listItem.appendChild(this.br);
-    this.listItem.appendChild(this.para);
+    listItem.appendChild(lnBreak);
+    listItem.appendChild(para);
 
-    // let ol = document.getElementsByTagName('ol')[0];
-    // ol.removeChild('li');
+    let orderedList = document.createElement('ol');
+    this.preview.appendChild(orderedList);
 
-    this.list = document.createElement('ol');
-    this.preview.appendChild(this.list);
+    orderedList.appendChild(listItem);
 
-    this.list.appendChild(this.listItem);
-
-    // Insert break before paragraph:
-    this.listItem.insertBefore(this.br, this.para);
+    // Insert lnBreak before paragraph:
+    listItem.insertBefore(lnBreak, para);
     if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
-      console.log("IMAGE IS GOOD");
+      // console.log("IMAGE IS GOOD");
       document.getElementById('submit-image').disabled = false
     } else {
-      this.para = document.createTextNode(
+      para = document.createTextNode(
         'File Name: ' + this.imageName,
         'File Size: ' + this.imageSize,
         'Width: ' + this.imageWidth,
@@ -96,10 +86,10 @@ export class Uploader extends Component {
       )
 
       $('#select-btn').show()
-      document.getElementById('submit-image').disabled = true
+      // document.getElementById('submit-image').disabled = true
       $('#li-id').css({ 'color': 'red' })
     }
-    console.log("in imgONLoad")
+    // console.log("in imgONLoad")
   };
 
   imgOnError = () => {
@@ -130,8 +120,9 @@ export class Uploader extends Component {
   // Check whether the file type of the input file is valid
   isFileTypeValid = (file) => {
     for (var i = 0; i < this.fileTypes.length; i++) {
-      if (this.file.type === this.fileTypes[i]) {
-        // console.log("File Length = "+fileTypes.length);
+      if (file.type === this.fileTypes[i]) {
+        // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
+        console.log("File Length = " + this.fileTypes.length);
         return true
       }
     }
@@ -140,50 +131,45 @@ export class Uploader extends Component {
 
   // When there is a change on the input field call
   updateImageDisplay = () => {
-    // event.preventDefault();
 
-    // Set Dimensions
-    // this.selectImage();
-    // empty previous contents of .preview
-    while (this.preview.firstChild) {
-      this.preview.removeChild(this.preview.firstChild);
-    }
 
     // Store the selected file into a variable called curFiles
     var curFiles = this.input.files;
+    console.log("FILES", this.file);
+    // var curFiles = this.file;
     console.log("CURRENTFILES", curFiles[0]);
-    this.file = curFiles[0];
+    // this.file = curFiles[0];
 
+    let para = this.preview.getElementsByTagName('p');
+    var photo = document.createElement('img');
     // If no file was selected Output message to preview
+    console.log("curfiles", curFiles.length);
     if (curFiles.length === 0) {
-      this.para.textContent = 'No file currently selected for upload'
-      this.preview.appendChild(this.para);
+      para.textContent = 'No file currently selected for upload'
+      this.preview.appendChild(para);
     } else {
-      this.list = document.createElement('ul');
-      this.preview.appendChild(this.list);
-      for (var i = 0; i < curFiles.length; i++) {
-        this.listItem = document.createElement('li');
-        this.listItem.setAttribute('id', 'li-id');
+      var unOrderedList = document.createElement('ul');
+      this.preview.appendChild(unOrderedList);
+        var listItem = document.createElement('li');
+        listItem.setAttribute('id', 'li-id');
         // Print the image name and file size if the file type matches the accepted types
-        if (this.isFileTypeValid(curFiles[i])) {
-          // this.fileName = curFiles[i].name;
-          this.fileSize = this.returnFileSize(curFiles[i].size);
-          // console.log(curFiles[i]);
-          this.image = document.createElement('img');
-          this.image.setAttribute('id', 'image-id');
-          // this.image.src = window.URL.createObjectURL(curFiles[i]);
-          this.image.src = this.imageSrc;
-          // this.image.style.width = '200px';
-          this.image.style.width = this.imageWidth;
-          this.listItem.appendChild(this.image);
+        if (this.isFileTypeValid(curFiles[0])) {
+          // this.fileName = curFiles[0].name;
+          this.fileSize = this.returnFileSize(curFiles[0].size);
+          // var photo = document.createElement('img');
+          photo.setAttribute('id', 'image-id');
+          photo.src = this.imageSrc;
+          photo.style.width = this.imageWidth;
+          listItem.appendChild(photo);
           // document.getElementById('submit-image').disabled = false;
+          console.log("UpdateImageDisplay: Filesize =", this.fileSize, "SRC:", this.imageSrc);
         } else {
-          // this.para.textContent = 'File name ' + curFiles[i].name + ': File type not valid. Please select an image.';
-          this.para.textContent = 'File name ' + this.imageName + ': File type not valid. Please select an image.';
-          this.listItem.appendChild(this.para);
+          para.textContent = 'File name ' + this.imageName + ': File type not valid. Please select an image.';
+          listItem.appendChild(para);
           // document.getElementById('submit-image').disabled = true;
+
+          console.log("IN ELSE");
         }// else
-      }// for
     }// else
     /******************************
      * DISPLAY SAME PICTURE
@@ -195,54 +181,40 @@ export class Uploader extends Component {
 
   getFileInfo = () => {
     this.input = document.querySelector('#image-input');
-    // this.preview = document.querySelector('.preview');
     console.log("getFileInfo: File Information", this.input.files[0]);
     this.file = this.input.files[0];
   };
 
-  appendChild(img, canvas) {
+  appendImage(img, canvas) {
     img.onload = () => {
-
-      canvas.setAttribute("id", `canvas${this.count}`);
       console.log("APPEND_IMG:", img);
       console.log("APPEND_IMG Width:", img.width, "IMG HT:", img.height);
 
       // Set canvas dimension to match image
       canvas.width = img.width
       canvas.height = img.height
-
       var context = canvas.getContext('2d');
-
 
       // Draw image to canvas
       context.drawImage(img, 0, 0);
-      // this.preview = document.querySelector('.preview');
-
-      // Apend image to canvas div
-
-
       this.preview.appendChild(canvas);
-      this.count += 1;
     }
   }
   displayImage = (img) => {
-    console.log("COUNT:", this.count);
-    var canvas = document.createElement('canvas')
-    if (this.count < 1) {
-      // img.crossOrigin = 'Anonymous'
-      this.appendChild(img, canvas)
+    var canvasElement = this.preview.getElementsByTagName('canvas');
+    var canvas = document.createElement('canvas');
+    // console.log("CANVASELEMENT", canvasElement);
+    if (canvasElement.length === 0) {
+      this.appendImage(img, canvas)
     }
     else {
-      var node = document.getElementById("canvas0");
-      this.preview.removeChild(node);
-      // Reset canvas count
-      this.count = 0;
-      // this.preview.appendChild(canvas);
-      this.appendChild(img, canvas);
+      this.removeItem('canvas');
+      this.appendImage(img, canvas);
     }
   };
 
   loadImage = (img, blob) => {
+    console.log("IMG", img, "BLOB", blob);
     return new Promise(function (resolve, reject) {
       // define source
       img.src = URL.createObjectURL(blob);
@@ -255,6 +227,7 @@ export class Uploader extends Component {
         console.log('LOADIMAGE_BLOB.SIZE', blob.size);
         // this.imageSize = blob.size;
         console.log('LOADIMAGE_BLOB.Name', blob.name);
+        console.log("IMAGE", img, "size", img.size);
 
         const imageProps = {
           imageName: blob.name,
@@ -272,19 +245,16 @@ export class Uploader extends Component {
     })
   }
 
-  resetImgInfo = () => {
+  removeItem = (element) => {
     /************************/
-    let ol = this.preview.getElementsByTagName("ol");
-    const isOLCreated = ol.length ? true : false;
-    console.log("OL Length", ol.length);
-    console.log("is ol created", isOLCreated);
-    console.log("no ol", ol);
-    if (isOLCreated) {
-      this.preview.removeChild(ol[0]);
-      // ol.remove()
-      // this.preview['ol'].remove();
+    let item = this.preview.getElementsByTagName(`${element}`);
+    const isItemCreated = item.length ? true : false;
+    console.log("item Length", item.length);
+    console.log("is item created", isItemCreated);
+    console.log("no item", item);
+    if (isItemCreated) {
+      this.preview.removeChild(item[0]);
     }
-
     /************************/
   };
 
@@ -297,6 +267,7 @@ export class Uploader extends Component {
 
     var _URL = window.URL || window.webkitURL;
     let img;
+    this.preview = document.querySelector('.preview');
     var blob = this.input.files[0];
     if (blob) {
       img = new Image();
@@ -312,9 +283,9 @@ export class Uploader extends Component {
         this.imageSize = result.imageSize;
         this.imageName = result.imageName;
 
-        this.resetImgInfo();
+        this.removeItem('ol');
         this.displayImageProps();
-        console.log("PREVIEW", this.preview.getElementsByTagName("OL"));
+        // console.log("PREVIEW", this.preview.getElementsByTagName("OL"));
 
         // Create Canvas and load image
         this.displayImage(img);
@@ -332,7 +303,7 @@ export class Uploader extends Component {
     var $ptag = $('.preview #file-msg').text()
     if ($ptag === 'File not accepted.') {
       // disable submit-btn
-      $('#submit-btn').prop('disabled', true)
+      // $('#submit-btn').prop('disabled', true)
       // console.log("Image not processed");
     }
   };
@@ -372,22 +343,23 @@ export class Uploader extends Component {
     // console.log("IMG:", img, "Name:", this.fileName);
     console.log("IMG:", img, "Name:", this.imageName);
     console.log("IMG SRC:", url);
+    console.log("IMG SRC:", this.imageSrc);
     // console.log("BASE64:", dataUrl);
 
   }// convertImage
 
   submitImageHandler = (event) => {
     // Don't refresh the page!
-    event.preventDefault()
-
+    event.preventDefault();
+    console.log("****submitImageclicked");
+    alert("submitImageClicked");
     // checks image dimension and file size
     let isInputValid = false
 
-    //reset the canvas image to 0, so other images can be selected after submit
-    this.count = 0;
-
     // this.getFileInfo();
+    // var photo = this.updateImageDisplay();
     this.updateImageDisplay();
+    // console.log("submitImageHandler:", photo, "src:", photo.src);
 
     /***************************************
     *Disable Select Button, and Enable submit Button for Error Handling
@@ -409,14 +381,17 @@ export class Uploader extends Component {
     // Check File Size
     // console.log("FileName:", this.fileName);
     console.log("FileName:", this.imageName);
-    // console.log("FileSize:", this.fileSize);
-    console.log("FileSize:", this.imageSize);
+    console.log("SubmitImageHandler: FileSize =:", this.fileSize);
+    // console.log("FileSize:", this.imageSize);
 
     // Get Unit of Measure
-    var unit = this.imageSize.slice(-2).toLowerCase();
+    // var unit = this.imageSize.slice(-2).toLowerCase();
+    var unit = this.fileSize.slice(-2).toLowerCase();
+    // var unit = 'KB'
 
     // Get FileSize
-    var fileSizeNumber = this.imageSize.replace(/[^\d.-]/g, '');
+    // var fileSizeNumber = this.imageSize.replace(/[^\d.-]/g, '');
+    var fileSizeNumber = this.fileSize.replace(/[^\d.-]/g, '');
 
     console.log("FILESIZE = " + fileSizeNumber + "Unit = " + unit);
     console.log("Max File Size:", this.maxKB);
@@ -470,12 +445,10 @@ export class Uploader extends Component {
       // document.getElementById('submit-btn').disabled = true
     } else {
       // console.log ("Image is acceptable, Sending to FacePlusPlus!");
-      var imageUrl = this.image.src
-      /*********************************************************
-         *This is a call to the function above, it accepts the
-         *base64Str from the callbackFn and sends it to Face++API:
-         *It will take 10 sec depending on photo size
-        ***********************************************************/
+      // var imageUrl = photo.src
+      var imageUrl = this.imageSrc;
+      /******************************************************    Converts image to base64String
+      ****************************************************/
       this.convertImageFromUrlToBase64String(imageUrl);
     }// else
   };// submit-Image on click
@@ -515,15 +488,20 @@ export class Uploader extends Component {
               {/* UPLOAD IDENTITY BUTTON */}
               <button
                 className="btn btn-info"
-                disabled="disabled"
+
+                // disabled="disabled"
                 id="submit-image"
                 type="submit"
+                // onClick={
+                //   (event) => {
+                //     this.submitImageHandler(event)
+                //   }
+                // }
                 onClick={
-                  (event) => {
-                    this.submitImageHandler(event)
-                  }
+                  // this.submitMe
+                  this.submitImageHandler
                 }
-              >Upload Identity</button>
+              >Upload Image</button>
             </div>
 
             {/* **************************Image Display */}
