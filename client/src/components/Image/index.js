@@ -11,39 +11,57 @@ export class Uploader extends Component {
     this.image = {
       input: null,
       file: null,
-      preview: null,
+      canvasPreview: null,
       fileTypes: [
         'image/jpeg',
         'image/pjpeg',
         'image/png'
       ],
+      imageName: '',
+      imageWidth: 0,
+      imageHeight: 0,
+      imageSize: 0,
+      imageSrc: '',
+      imageMin: 200,
+      imageMax: 800,
+      maxKB: 2
     };
 
+    // Destructuring
     let {
       input,
       file,
-      preview,
+      canvasPreview,
       fileTypes,
+      imageName,
+      imageWidth,
+      imageHeight,
+      imageSize,
+      imageSrc,
+      imageMin,
+      imageMax,
+      maxKB
     } = this.image;
 
+    // Destructuring
     this.input = input;
     this.file = file;
-    this.preview = preview;
+    this.preview = canvasPreview;
     this.fileTypes = fileTypes;
 
-    this.imageName = '';
+    this.imageName = imageName;
     // Image Dimensions
-    this.imageWidth = 0;
-    this.imageHeight = 0;
-    this.imageSize = 0;
-    this.imageSrc = '';
+    this.imageWidth = imageWidth;
+    this.imageHeight = imageHeight;
+    this.imageSize = imageSize;
+    this.imageSrc = imageSrc;
 
     // const image dimension size
-    this.imageMin = 200
-    this.imageMax = 800
+    this.imageMin = imageMin;
+    this.imageMax = imageMax;
 
     // const image file size
-    this.maxKB = 2
+    this.maxKB = maxKB;
 
     $('#select-btn').on('click', function () {
       // select button isn't a button, its a label
@@ -129,55 +147,7 @@ export class Uploader extends Component {
     return false
   }
 
-  // When there is a change on the input field call
-  updateImageDisplay = () => {
-
-
-    // Store the selected file into a variable called curFiles
-    var curFiles = this.input.files;
-    console.log("FILES", this.file);
-    // var curFiles = this.file;
-    console.log("CURRENTFILES", curFiles[0]);
-    // this.file = curFiles[0];
-
-    let para = this.preview.getElementsByTagName('p');
-    var photo = document.createElement('img');
-    // If no file was selected Output message to preview
-    console.log("curfiles", curFiles.length);
-    if (curFiles.length === 0) {
-      para.textContent = 'No file currently selected for upload'
-      this.preview.appendChild(para);
-    } else {
-      var unOrderedList = document.createElement('ul');
-      this.preview.appendChild(unOrderedList);
-        var listItem = document.createElement('li');
-        listItem.setAttribute('id', 'li-id');
-        // Print the image name and file size if the file type matches the accepted types
-        if (this.isFileTypeValid(curFiles[0])) {
-          // this.fileName = curFiles[0].name;
-          this.fileSize = this.returnFileSize(curFiles[0].size);
-          // var photo = document.createElement('img');
-          photo.setAttribute('id', 'image-id');
-          photo.src = this.imageSrc;
-          photo.style.width = this.imageWidth;
-          listItem.appendChild(photo);
-          // document.getElementById('submit-image').disabled = false;
-          console.log("UpdateImageDisplay: Filesize =", this.fileSize, "SRC:", this.imageSrc);
-        } else {
-          para.textContent = 'File name ' + this.imageName + ': File type not valid. Please select an image.';
-          listItem.appendChild(para);
-          // document.getElementById('submit-image').disabled = true;
-
-          console.log("IN ELSE");
-        }// else
-    }// else
-    /******************************
-     * DISPLAY SAME PICTURE
-     * *****************************/
-    curFiles = [];
-    this.input.value = null;
-    /******************************/
-  };
+  
 
   getFileInfo = () => {
     this.input = document.querySelector('#image-input');
@@ -348,19 +318,24 @@ export class Uploader extends Component {
 
   }// convertImage
 
-  submitImageHandler = (event) => {
+  setFormattedFileSize() {
+    let curFiles = this.input.files;
+    if (this.isFileTypeValid(curFiles[0])) {
+      // this.fileName = curFiles[0].name;
+      this.fileSize = this.returnFileSize(curFiles[0].size);
+    }
+  }
+    submitImageHandler = (event) => {
     // Don't refresh the page!
     event.preventDefault();
     console.log("****submitImageclicked");
-    alert("submitImageClicked");
+    // alert("submitImageClicked");
     // checks image dimension and file size
     let isInputValid = false
 
-    // this.getFileInfo();
-    // var photo = this.updateImageDisplay();
-    this.updateImageDisplay();
-    // console.log("submitImageHandler:", photo, "src:", photo.src);
-
+    // this.updateImageDisplay();
+    // Set file size with Units:
+    this.setFormattedFileSize();
     /***************************************
     *Disable Select Button, and Enable submit Button for Error Handling
     ****************************************/
@@ -385,17 +360,14 @@ export class Uploader extends Component {
     // console.log("FileSize:", this.imageSize);
 
     // Get Unit of Measure
-    // var unit = this.imageSize.slice(-2).toLowerCase();
     var unit = this.fileSize.slice(-2).toLowerCase();
     // var unit = 'KB'
 
     // Get FileSize
-    // var fileSizeNumber = this.imageSize.replace(/[^\d.-]/g, '');
     var fileSizeNumber = this.fileSize.replace(/[^\d.-]/g, '');
 
     console.log("FILESIZE = " + fileSizeNumber + "Unit = " + unit);
     console.log("Max File Size:", this.maxKB);
-    // console.log("File Information", this.input.files);
 
     if (unit === 'mb') {
       console.log("max file size:", this.maxKB, ", actual file size:", fileSizeNumber);
@@ -417,9 +389,7 @@ export class Uploader extends Component {
     // If input is not valid do not accept image and do nothing
     console.log("Is Input File Valid:", isInputValid);
     if (!isInputValid) {
-      // console.log ("Image is not acceptable!");
       var fileMsg = document.getElementById('file-msg')
-      // console.log ("IS FILEMSG CREATED = "+fileMsg);
       if (fileMsg) {
         document.getElementById('file-msg').innerHTML = 'File not accepted.'
       } else {
@@ -444,8 +414,7 @@ export class Uploader extends Component {
       // $('#submit-btn').prop('disabled', true);
       // document.getElementById('submit-btn').disabled = true
     } else {
-      // console.log ("Image is acceptable, Sending to FacePlusPlus!");
-      // var imageUrl = photo.src
+      // console.log ("Image is acceptable");
       var imageUrl = this.imageSrc;
       /******************************************************    Converts image to base64String
       ****************************************************/
@@ -492,11 +461,6 @@ export class Uploader extends Component {
                 // disabled="disabled"
                 id="submit-image"
                 type="submit"
-                // onClick={
-                //   (event) => {
-                //     this.submitImageHandler(event)
-                //   }
-                // }
                 onClick={
                   // this.submitMe
                   this.submitImageHandler
@@ -510,7 +474,6 @@ export class Uploader extends Component {
                 <h4>Image Preview</h4>
                 <p id="error">No file currently selected for upload</p>
                 <p id="file-msg"></p>
-                {/* <!--p id="face"></p--> */}
               </div>
             </div>
           </div>
