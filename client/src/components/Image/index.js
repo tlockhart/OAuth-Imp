@@ -23,8 +23,12 @@ export class Uploader extends Component {
       imageSize: 0,
       imageSrc: '',
       imageMin: 200,
-      imageMax: 800,
-      maxKB: 2
+      imageMax: 450,
+      maxMB: 2,
+      errorTag: 'file-msg',
+      invalidMsg: 'Not a valid file.',
+      unacceptedMsg: 'File not accepted.',
+      acceptedMsg: 'File accepted.',
     };
 
     // Destructuring
@@ -40,7 +44,11 @@ export class Uploader extends Component {
       imageSrc,
       imageMin,
       imageMax,
-      maxKB
+      maxMB,
+      errorTag,
+      invalidMsg,
+      unacceptedMsg,
+      acceptedMsg,
     } = this.image;
 
     // Destructuring
@@ -61,66 +69,102 @@ export class Uploader extends Component {
     this.imageMax = imageMax;
 
     // const image file size
-    this.maxKB = maxKB;
+    this.maxMB = maxMB;
+
+    this.errorTag = errorTag;
+    this.invalidMsg = invalidMsg;
+    this.unacceptedMsg =  unacceptedMsg;
+    this.acceptedMsg =  acceptedMsg;
 
     $('#select-btn').on('click', function () {
       // select button isn't a button, its a label
       // event.preventDefault();
       $('#select-btn').hide();
 
-      // enable submit-image (Upload Image Button)
-      $('#submit-image').prop('disabled', false);
     });
-  }
 
-  displayImageProps = () => {
-    let lnBreak = document.createElement('br');
-    let status = document.getElementById('error').innerHTML = '';
-    // console.log(`status: ${status}`)
-    let para = document.createTextNode('File Name: ' + this.imageName + ', File Size: ' + this.imageSize + ', Width: ' + this.imageWidth + ', Height: ' + this.imageHeight);
+  }
+  componentDidMount(){
+    // disable submit-image button
+    document.getElementById('submit-image').disabled = true
+  }
+  setImageParagraphTag(para, color){
+    // Set Paragraph
+    para = document.createTextNode('File Name: ' + this.imageName + ', File Size: ' + this.imageSize + ', Width: ' + this.imageWidth + ', Height: ' + this.imageHeight);
 
     let listItem = document.createElement('li');
     listItem.setAttribute('id', 'li-id');
+    
 
-    listItem.appendChild(lnBreak);
+    // listItem.appendChild(lnBreak);
     listItem.appendChild(para);
 
     let orderedList = document.createElement('ol');
     this.preview.appendChild(orderedList);
 
     orderedList.appendChild(listItem);
-
+    $('#li-id').css({ 'color': color });
+    // remove canvas if image added
+    this.removeItem('canvas');
+  }
+    checkImageDimensions = () => {
+    let areDimensionsValid = false;
+    let para = document.createTextNode('');
+    // let lnBreak = document.createElement('br');
+    // let status = document.getElementById('error').innerHTML = '';
+    
     // Insert lnBreak before paragraph:
-    listItem.insertBefore(lnBreak, para);
+    // listItem.insertBefore(lnBreak, para);
+
+    // if dimensions valid
     if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
       // console.log("IMAGE IS GOOD");
-      document.getElementById('submit-image').disabled = false
-    } else {
-      para = document.createTextNode(
-        'File Name: ' + this.imageName,
-        'File Size: ' + this.imageSize,
-        'Width: ' + this.imageWidth,
-        'Height: ' + this.imageHeight
-      )
-
-      $('#select-btn').show()
-      // document.getElementById('submit-image').disabled = true
-      $('#li-id').css({ 'color': 'red' })
+      document.getElementById('submit-image').disabled = false;
+      this.setFileMessage(this.errorTag, this.acceptedMsg);
+      areDimensionsValid = true;
+    } 
+    // dimensions not valid
+    else {
+      // $('#select-btn').show()
+      
+      areDimensionsValid = false;
     }
-    // console.log("in imgONLoad")
+    if(areDimensionsValid) {
+      // Set file size with Units:
+      this.imageSize = this.getFormattedFileSize();
+      this.setImageParagraphTag(para, 'black');
+    }
+    else
+    {
+      console.log("****DIMENSIONS NOT VALID****");
+      document.getElementById('submit-image').disabled = true;
+
+      // Set file size with Units:
+      this.imageSize = this.getFormattedFileSize();
+      this.setImageParagraphTag(para, 'red');
+      // para = document.createTextNode(
+      //   'File Name: ' + this.imageName,
+      //   'File Size: ' + this.imageSize,
+      //   'Width: ' + this.imageWidth,
+      //   'Height: ' + this.imageHeight
+      // );
+
+      // $('#li-id').css({ 'color': 'red' });
+      this.setFileMessage(this.errorTag, this.unacceptedMsg)
+    }
+    return areDimensionsValid;
   };
 
   imgOnError = () => {
     if (this.imageWidth <= this.imageMax && this.imageHeight <= this.imageMax) {
-      console.log('NOT A Valid File: ' + this.file.type);
-      var error = document.createElement('p')
-      var node = document.createTextNode('Not a valid file: ' + this.file.type)
-      error.appendChild(node)
-      this.preview.appendChild(error)
-      // document.getElementById('submit-image').disabled = true
+      console.log('NOT A Valid File: ');
+      this.setFileMessage(this.errorTag, this.invalidMsg);
+      document.getElementById('submit-image').disabled = true
       $('#select-btn').show()
       console.log("IMAGE ERROR ONLOAD")
     }
+    // Remove Canvas and Paragraph for wrong dimensions or no file.
+    this.removeCanvas();
     console.log("in imgONERROR")
   }; // oneerror
 
@@ -137,22 +181,33 @@ export class Uploader extends Component {
 
   // Check whether the file type of the input file is valid
   isFileTypeValid = (file) => {
-    for (var i = 0; i < this.fileTypes.length; i++) {
-      if (file.type === this.fileTypes[i]) {
-        // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
-        console.log("File Length = " + this.fileTypes.length);
-        return true
+    console.log("FILE :", file);
+    if (file) {
+      for (var i = 0; i < this.fileTypes.length; i++) {
+        if (file.type === this.fileTypes[i]) {
+          // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
+          // console.log("File Length = " + this.fileTypes.length);
+          return true
+        }
       }
     }
-    return false
+    else
+      return false
   }
 
-  
+  removeCanvas() {
+    var canvasElement = this.preview.getElementsByTagName('canvas');
+      if (canvasElement.length >= 1) {
+      this.removeItem('canvas');
+      this.removeItem('ol');
+      }
+  }
 
   getFileInfo = () => {
     this.input = document.querySelector('#image-input');
     console.log("getFileInfo: File Information", this.input.files[0]);
     this.file = this.input.files[0];
+    console.log("FIle:", this.file);
   };
 
   appendImage(img, canvas) {
@@ -170,13 +225,18 @@ export class Uploader extends Component {
       this.preview.appendChild(canvas);
     }
   }
-  displayImage = (img) => {
+  displayImage = (img, areDimensionsValid) => {
     var canvasElement = this.preview.getElementsByTagName('canvas');
     var canvas = document.createElement('canvas');
     // console.log("CANVASELEMENT", canvasElement);
-    if (canvasElement.length === 0) {
+    if (!areDimensionsValid) {
+
+    }
+    // No Image added to canvas
+    else if (canvasElement.length === 0) {
       this.appendImage(img, canvas)
     }
+    // Image added to canvas
     else {
       this.removeItem('canvas');
       this.appendImage(img, canvas);
@@ -238,8 +298,8 @@ export class Uploader extends Component {
     var _URL = window.URL || window.webkitURL;
     let img;
     this.preview = document.querySelector('.preview');
-    var blob = this.input.files[0];
-    if (blob) {
+    if (this.isFileSelected()) {
+      var blob = this.input.files[0];
       img = new Image();
       try {
         const result = await this.loadImage(img, blob);
@@ -253,12 +313,12 @@ export class Uploader extends Component {
         this.imageSize = result.imageSize;
         this.imageName = result.imageName;
 
+        // remove OL tag
         this.removeItem('ol');
-        this.displayImageProps();
-        // console.log("PREVIEW", this.preview.getElementsByTagName("OL"));
+        var areDimensionsValid = this.checkImageDimensions();
 
         // Create Canvas and load image
-        this.displayImage(img);
+        this.displayImage(img, areDimensionsValid);
       }
       catch (err) {
         console.log("failure ", err);
@@ -268,25 +328,9 @@ export class Uploader extends Component {
     }// if
   };
 
-  // Sets message of preview tag
-  enableSubmitBtn = () => {
-    var $ptag = $('.preview #file-msg').text()
-    if ($ptag === 'File not accepted.') {
-      // disable submit-btn
-      // $('#submit-btn').prop('disabled', true)
-      // console.log("Image not processed");
-    }
-  };
-
-  returnFileSize = (number) => {
-    if (number < 1024) {
-      return number + 'bytes'
-    } else if (number >= 1024 && number < 1048576) {
-      return (number / 1024).toFixed(1) + 'KB'
-    } else if (number >= 1048576) {
-      return (number / 1048576).toFixed(1) + 'MB'
-    }
-  };
+  setFileMessage = (tag, message) => {
+    document.getElementById(tag).innerHTML = message; 
+  }
 
   convertImageFromUrlToBase64String = (url) => {
     var img = new Image()
@@ -318,108 +362,91 @@ export class Uploader extends Component {
 
   }// convertImage
 
-  setFormattedFileSize() {
+  getFormattedFileSize() {
     let curFiles = this.input.files;
-    if (this.isFileTypeValid(curFiles[0])) {
-      // this.fileName = curFiles[0].name;
-      this.fileSize = this.returnFileSize(curFiles[0].size);
-    }
+      return this.returnFileSize(curFiles[0].size);
   }
-    submitImageHandler = (event) => {
-    // Don't refresh the page!
-    event.preventDefault();
-    console.log("****submitImageclicked");
-    // alert("submitImageClicked");
-    // checks image dimension and file size
-    let isInputValid = false
+  isFileSelected() {
+    let curFiles = this.input? this.input.files: null;
+    return curFiles;
+  }
+  submitImageHandler = (event) => {
+    // if file selected
+    if (this.isFileSelected()) {
+      // Don't refresh the page!
+      event.preventDefault();
+      console.log("****submitImageclicked");
+      // alert("submitImageClicked");
+      // checks image dimension and file size
+      let isInputValid = false
 
-    // this.updateImageDisplay();
-    // Set file size with Units:
-    this.setFormattedFileSize();
-    /***************************************
-    *Disable Select Button, and Enable submit Button for Error Handling
-    ****************************************/
-    $('#select-btn').attr('disabled', 'disabled')
+      // this.updateImageDisplay();
+      // // Set file size with Units:
+      // this.setFormattedFileSize();
+      
 
-    // set preview message and enable submitBtn
-    this.enableSubmitBtn()
-
-    /***********************************************************************/
-
-    // Check Image Dimensions
-    if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
-      isInputValid = true
-    } else {
-      isInputValid = false
-    }
-
-    // Check File Size
-    // console.log("FileName:", this.fileName);
-    console.log("FileName:", this.imageName);
-    console.log("SubmitImageHandler: FileSize =:", this.fileSize);
-    // console.log("FileSize:", this.imageSize);
-
-    // Get Unit of Measure
-    var unit = this.fileSize.slice(-2).toLowerCase();
-    // var unit = 'KB'
-
-    // Get FileSize
-    var fileSizeNumber = this.fileSize.replace(/[^\d.-]/g, '');
-
-    console.log("FILESIZE = " + fileSizeNumber + "Unit = " + unit);
-    console.log("Max File Size:", this.maxKB);
-
-    if (unit === 'mb') {
-      console.log("max file size:", this.maxKB, ", actual file size:", fileSizeNumber);
-      if (fileSizeNumber <= this.maxKB) {
-        isInputValid = true
-      } else {
-        isInputValid = false
-      }
-    }
-    else if (unit === 'kb') {
-      if (fileSizeNumber <= this.maxKB * 1000) {
+      // Check Image Dimensions
+      if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
         isInputValid = true
       } else {
         isInputValid = false
       }
 
-    }
+      // Check Image Size
+      console.log("FileName:", this.imageName);
+      console.log("FileSize:", this.imageSize);
 
-    // If input is not valid do not accept image and do nothing
-    console.log("Is Input File Valid:", isInputValid);
-    if (!isInputValid) {
-      var fileMsg = document.getElementById('file-msg')
-      if (fileMsg) {
-        document.getElementById('file-msg').innerHTML = 'File not accepted.'
-      } else {
-        var error = document.createElement('p')
-        error.setAttribute('id', 'file-msg')
-        var node = document.createTextNode('File not accepted.')
-        error.appendChild(node)
-        this.preview.appendChild(error)
+      // Get Unit of Measure
+      var unit = this.imageSize.slice(-2).toLowerCase();
+
+      // Get FileSize
+      var fileSizeNumber = this.imageSize.replace(/[^\d.-]/g, '');
+
+      console.log("FILESIZE = " + fileSizeNumber + ", Unit = " + unit);
+      console.log("Max File Size:", this.maxMB);
+
+      if (unit === 'mb') {
+        console.log("max file size:", this.maxMB, ", actual file size:", fileSizeNumber);
+        if (fileSizeNumber <= this.maxMB) {
+          isInputValid = true
+        } else {
+          isInputValid = false
+        }
+      }
+      else if (unit === 'kb') {
+        if (fileSizeNumber <= this.maxMB * 1000) {
+          isInputValid = true
+        } else {
+          isInputValid = false
+        }
       }
 
-      // document.getElementById('submit-btn').disabled = true
+      // If input is not valid do not accept image and do nothing
+      console.log("Is Input File Valid:", isInputValid);
+      if (!isInputValid) {
+        var fileMsg = document.getElementById(this.errorTag)
+        if (fileMsg) {
+          this.setFileMessage(this.errorTag, this.unacceptedMsg);
+        } else {
+          this.setFileMessage(this.errorTag, this.acceptedMsg);
+        }
 
-      // show select image:
-      $('#select-btn').show()
+        // show select image:
+        $('#select-btn').show()
+      } else {
+        // console.log ("Image is acceptable");
+        var imageUrl = this.imageSrc;
 
-      // disable submit-image (Upload Image Button)
-      // $('#submit-image').prop('disabled', true)
+        /******************************************************    Converts image to base64String
+        ****************************************************/
+        this.convertImageFromUrlToBase64String(imageUrl);
+      }// else
+      // remove canvas after submit
+      this.removeCanvas();
+    } // if file selected
 
-      // Disable submit-btn button
-      // $('#submit-btn').attr('disabled', 'disabled');
-      // disable submit-btn
-      // $('#submit-btn').prop('disabled', true);
-      // document.getElementById('submit-btn').disabled = true
-    } else {
-      // console.log ("Image is acceptable");
-      var imageUrl = this.imageSrc;
-      /******************************************************    Converts image to base64String
-      ****************************************************/
-      this.convertImageFromUrlToBase64String(imageUrl);
-    }// else
+    // disable submit-btn
+    document.getElementById('submit-image').disabled = true
   };// submit-Image on click
 
   render() {
@@ -435,9 +462,9 @@ export class Uploader extends Component {
                 htmlFor="image-input">Select image (PNG, JPG)</label>
               <ol>
                 <b>Requirements:</b> <br></br>
-                <li><b>Filesize:</b> &#60; 2MB</li>
+                <li><b>Filesize:</b> &#60; {this.maxMB}MB</li>
                 <li><b>Dimensions: </b></li>
-                Min: 200, Max: 800
+                Min: {this.imageMin}, Max: {this.imageMax}
                             </ol>
 
               {/* THESE ARE THE BUTTONS */}
@@ -450,7 +477,6 @@ export class Uploader extends Component {
                 onChange={
                   (event) => {
                     this.selectImage(event)
-                    // this.updateImageDisplay(event)
                   }
                 }
               />
@@ -462,7 +488,6 @@ export class Uploader extends Component {
                 id="submit-image"
                 type="submit"
                 onClick={
-                  // this.submitMe
                   this.submitImageHandler
                 }
               >Upload Image</button>
@@ -472,8 +497,8 @@ export class Uploader extends Component {
             <div className="col-lg-4 name-container kb-box">
               <div className="preview">
                 <h4>Image Preview</h4>
-                <p id="error">No file currently selected for upload</p>
-                <p id="file-msg"></p>
+                {/* <p id="error">No file currently selected for upload</p> */}
+                <p id="file-msg">No file currently selected for upload</p>
               </div>
             </div>
           </div>
