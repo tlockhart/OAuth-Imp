@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
 import $ from 'jquery';
 import styles from './styles.css';
+import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected } from './utils/helpers';
 
 export class Uploader extends Component {
   // render() {
@@ -73,8 +74,8 @@ export class Uploader extends Component {
 
     this.errorTag = errorTag;
     this.invalidMsg = invalidMsg;
-    this.unacceptedMsg =  unacceptedMsg;
-    this.acceptedMsg =  acceptedMsg;
+    this.unacceptedMsg = unacceptedMsg;
+    this.acceptedMsg = acceptedMsg;
 
     $('#select-btn').on('click', function () {
       // select button isn't a button, its a label
@@ -84,100 +85,23 @@ export class Uploader extends Component {
     });
 
   }
-  componentDidMount(){
+  componentDidMount() {
     // disable submit-image button
     document.getElementById('submit-image').disabled = true
   }
-  setImageParagraphTag(para, color){
-    // Set Paragraph
-    para = document.createTextNode('File Name: ' + this.imageName + ', File Size: ' + this.imageSize + ', Width: ' + this.imageWidth + ', Height: ' + this.imageHeight);
-
-    let listItem = document.createElement('li');
-    listItem.setAttribute('id', 'li-id');
-    
-
-    // listItem.appendChild(lnBreak);
-    listItem.appendChild(para);
-
-    let orderedList = document.createElement('ol');
-    this.preview.appendChild(orderedList);
-
-    orderedList.appendChild(listItem);
-    $('#li-id').css({ 'color': color });
-    // remove canvas if image added
-    this.removeItem('canvas');
-  }
-    checkImageDimensions = () => {
-    let areDimensionsValid = false;
-    let para = document.createTextNode('');
-    // let lnBreak = document.createElement('br');
-    // let status = document.getElementById('error').innerHTML = '';
-    
-    // Insert lnBreak before paragraph:
-    // listItem.insertBefore(lnBreak, para);
-
-    // if dimensions valid
-    if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
-      // console.log("IMAGE IS GOOD");
-      document.getElementById('submit-image').disabled = false;
-      this.setFileMessage(this.errorTag, this.acceptedMsg);
-      areDimensionsValid = true;
-    } 
-    // dimensions not valid
-    else {
-      // $('#select-btn').show()
-      
-      areDimensionsValid = false;
-    }
-    if(areDimensionsValid) {
-      // Set file size with Units:
-      this.imageSize = this.getFormattedFileSize();
-      this.setImageParagraphTag(para, 'black');
-    }
-    else
-    {
-      console.log("****DIMENSIONS NOT VALID****");
-      document.getElementById('submit-image').disabled = true;
-
-      // Set file size with Units:
-      this.imageSize = this.getFormattedFileSize();
-      this.setImageParagraphTag(para, 'red');
-      // para = document.createTextNode(
-      //   'File Name: ' + this.imageName,
-      //   'File Size: ' + this.imageSize,
-      //   'Width: ' + this.imageWidth,
-      //   'Height: ' + this.imageHeight
-      // );
-
-      // $('#li-id').css({ 'color': 'red' });
-      this.setFileMessage(this.errorTag, this.unacceptedMsg)
-    }
-    return areDimensionsValid;
-  };
 
   imgOnError = () => {
     if (this.imageWidth <= this.imageMax && this.imageHeight <= this.imageMax) {
       console.log('NOT A Valid File: ');
-      this.setFileMessage(this.errorTag, this.invalidMsg);
+      setFileMessage(this.errorTag, this.invalidMsg);
       document.getElementById('submit-image').disabled = true
       $('#select-btn').show()
       console.log("IMAGE ERROR ONLOAD")
     }
     // Remove Canvas and Paragraph for wrong dimensions or no file.
-    this.removeCanvas();
+    removeCanvas(this.preview);
     console.log("in imgONERROR")
   }; // oneerror
-
-  // Returns formatted version of file size
-  returnFileSize = (number) => {
-    if (number < 1024) {
-      return number + 'bytes'
-    } else if (number >= 1024 && number < 1048576) {
-      return (number / 1024).toFixed(1) + 'KB'
-    } else if (number >= 1048576) {
-      return (number / 1048576).toFixed(1) + 'MB'
-    }
-  }
 
   // Check whether the file type of the input file is valid
   isFileTypeValid = (file) => {
@@ -195,14 +119,6 @@ export class Uploader extends Component {
       return false
   }
 
-  removeCanvas() {
-    var canvasElement = this.preview.getElementsByTagName('canvas');
-      if (canvasElement.length >= 1) {
-      this.removeItem('canvas');
-      this.removeItem('ol');
-      }
-  }
-
   getFileInfo = () => {
     this.input = document.querySelector('#image-input');
     console.log("getFileInfo: File Information", this.input.files[0]);
@@ -210,21 +126,6 @@ export class Uploader extends Component {
     console.log("FIle:", this.file);
   };
 
-  appendImage(img, canvas) {
-    img.onload = () => {
-      console.log("APPEND_IMG:", img);
-      console.log("APPEND_IMG Width:", img.width, "IMG HT:", img.height);
-
-      // Set canvas dimension to match image
-      canvas.width = img.width
-      canvas.height = img.height
-      var context = canvas.getContext('2d');
-
-      // Draw image to canvas
-      context.drawImage(img, 0, 0);
-      this.preview.appendChild(canvas);
-    }
-  }
   displayImage = (img, areDimensionsValid) => {
     var canvasElement = this.preview.getElementsByTagName('canvas');
     var canvas = document.createElement('canvas');
@@ -234,12 +135,12 @@ export class Uploader extends Component {
     }
     // No Image added to canvas
     else if (canvasElement.length === 0) {
-      this.appendImage(img, canvas)
+      appendImage(img, canvas, this.preview)
     }
     // Image added to canvas
     else {
-      this.removeItem('canvas');
-      this.appendImage(img, canvas);
+      removeItem('canvas', this.preview);
+      appendImage(img, canvas, this.preview);
     }
   };
 
@@ -275,19 +176,6 @@ export class Uploader extends Component {
     })
   }
 
-  removeItem = (element) => {
-    /************************/
-    let item = this.preview.getElementsByTagName(`${element}`);
-    const isItemCreated = item.length ? true : false;
-    console.log("item Length", item.length);
-    console.log("is item created", isItemCreated);
-    console.log("no item", item);
-    if (isItemCreated) {
-      this.preview.removeChild(item[0]);
-    }
-    /************************/
-  };
-
   //  Select an image
   selectImage = async (event) => {
     event.preventDefault();
@@ -298,7 +186,7 @@ export class Uploader extends Component {
     var _URL = window.URL || window.webkitURL;
     let img;
     this.preview = document.querySelector('.preview');
-    if (this.isFileSelected()) {
+    if (isFileSelected(this.input)) {
       var blob = this.input.files[0];
       img = new Image();
       try {
@@ -314,8 +202,10 @@ export class Uploader extends Component {
         this.imageName = result.imageName;
 
         // remove OL tag
-        this.removeItem('ol');
-        var areDimensionsValid = this.checkImageDimensions();
+        removeItem('ol', this.preview);
+        var areDimensionsValid = checkImageDimensions(this.imageWidth, this.imageMin, this.imageHeight, this.imageMax);
+
+        this.imageSize = setFileSize(areDimensionsValid, this.errorTag, this.acceptedMsg, this.unacceptedMsg, this.imageName, this.imageSize, this.input.files, this.preview, this.imageWidth, this.imageHeight);
 
         // Create Canvas and load image
         this.displayImage(img, areDimensionsValid);
@@ -327,11 +217,8 @@ export class Uploader extends Component {
       console.log("IMAGE NAME", this.file);
     }// if
   };
-
-  setFileMessage = (tag, message) => {
-    document.getElementById(tag).innerHTML = message; 
-  }
-
+/* Base64 Decoder: Remove the metadata
+https://www.base64decode.net/base64-image-decoder */
   convertImageFromUrlToBase64String = (url) => {
     var img = new Image()
     img.crossOrigin = 'Anonymous'
@@ -340,6 +227,8 @@ export class Uploader extends Component {
       var canvas = document.createElement('canvas')
       canvas.width = img.width
       canvas.height = img.height
+      // canvas.width = this.imageWidth
+      // canvas.height = this.imageHeight
 
       // Get a canvas reference to draw to the canvas
       var context = canvas.getContext('2d')
@@ -355,35 +244,19 @@ export class Uploader extends Component {
     // Setting the img.src will call img.onload when the src is loaded
     img.src = url// url is the img src
     // console.log("IMG:", img, "Name:", this.fileName);
-    console.log("IMG:", img, "Name:", this.imageName);
-    console.log("IMG SRC:", url);
-    console.log("IMG SRC:", this.imageSrc);
-    // console.log("BASE64:", dataUrl);
-
+    // console.log("IMG:", img, "Name:", this.imageName);
+    // console.log("IMG SRC:", url);
+    // console.log("IMG SRC:", this.imageSrc);
   }// convertImage
 
-  getFormattedFileSize() {
-    let curFiles = this.input.files;
-      return this.returnFileSize(curFiles[0].size);
-  }
-  isFileSelected() {
-    let curFiles = this.input? this.input.files: null;
-    return curFiles;
-  }
   submitImageHandler = (event) => {
     // if file selected
-    if (this.isFileSelected()) {
+    if (isFileSelected(this.input)) {
       // Don't refresh the page!
       event.preventDefault();
-      console.log("****submitImageclicked");
-      // alert("submitImageClicked");
+
       // checks image dimension and file size
       let isInputValid = false
-
-      // this.updateImageDisplay();
-      // // Set file size with Units:
-      // this.setFormattedFileSize();
-      
 
       // Check Image Dimensions
       if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
@@ -426,9 +299,9 @@ export class Uploader extends Component {
       if (!isInputValid) {
         var fileMsg = document.getElementById(this.errorTag)
         if (fileMsg) {
-          this.setFileMessage(this.errorTag, this.unacceptedMsg);
+          setFileMessage(this.errorTag, this.unacceptedMsg);
         } else {
-          this.setFileMessage(this.errorTag, this.acceptedMsg);
+          setFileMessage(this.errorTag, this.acceptedMsg);
         }
 
         // show select image:
@@ -442,7 +315,7 @@ export class Uploader extends Component {
         this.convertImageFromUrlToBase64String(imageUrl);
       }// else
       // remove canvas after submit
-      this.removeCanvas();
+      removeCanvas(this.preview);
     } // if file selected
 
     // disable submit-btn
@@ -465,7 +338,7 @@ export class Uploader extends Component {
                 <li><b>Filesize:</b> &#60; {this.maxMB}MB</li>
                 <li><b>Dimensions: </b></li>
                 Min: {this.imageMin}, Max: {this.imageMax}
-                            </ol>
+              </ol>
 
               {/* THESE ARE THE BUTTONS */}
               {/* Choose file image-input Button */}

@@ -21,6 +21,12 @@
 //     ];
 // };
 
+   // let lnBreak = document.createElement('br');
+    // let status = document.getElementById('error').innerHTML = '';
+
+    // Insert lnBreak before paragraph:
+    // listItem.insertBefore(lnBreak, para);
+
 // export let setDimensions = (event) => {
 //   event.preventDefault();
 //     var _URL = window.URL || window.webkitURL;
