@@ -137,7 +137,7 @@ exports.getFileInfo = () => {
   let input = document.querySelector('#image-input');
   // console.log("getFileInfo: File Information", input.files[0]);
   // console.log("FIle:", input.files[0]);
- return input;
+  return input;
 };
 
 exports.displayImage = (img, areDimensionsValid, preview) => {
@@ -192,49 +192,47 @@ exports.loadImage = (img, blob) => {
 
 /* Base64 Decoder: Remove the metadata
 https://www.base64decode.net/base64-image-decoder */
-  exports.convertImageFromUrlToBase64String = (url) => {
-    var img = new Image()
-    img.crossOrigin = 'Anonymous'
-    var dataUrl;
+exports.convertImageFromUrlToBase64String = async (url) => {
+  var img = new Image()
+  img.crossOrigin = 'Anonymous'
+  var dataUrl;
+  return new Promise(function (resolve, reject) {
+    // Setting the img.src will call img.onload when the src is loaded
+    img.src = url;// url is the img src
+
     img.onload = function () {
-      var canvas = document.createElement('canvas')
-      canvas.width = img.width
-      canvas.height = img.height
+      var canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
       // canvas.width = this.imageWidth
       // canvas.height = this.imageHeight
-
       // Get a canvas reference to draw to the canvas
-      var context = canvas.getContext('2d')
-
+      var context = canvas.getContext('2d');
       // Draw image to the canvas
-      context.drawImage(img, 0, 0)
-
+      context.drawImage(img, 0, 0);
       // Return a data URI containing a representation of the image in jpg format
       dataUrl = canvas.toDataURL('image/jpg');
-      console.log("convertImageFromUrlToBase64String-DataURL:", dataUrl);
-    }
-
-    // Setting the img.src will call img.onload when the src is loaded
-    img.src = url// url is the img src
-
-    // console.log("IMG:", img, "Name:", this.fileName);
-    // console.log("IMG:", img, "Name:", this.imageName);
-    // console.log("IMG SRC:", url);
-    // console.log("IMG SRC:", this.imageSrc);
-  }// convertImage
+      resolve(dataUrl);
+    };
+    // reject promis onError
+    img.onerror = () => {
+      reject("rejected");
+    };
+  }); // promise
+};// convertImage
 
 // Check whether the file type of the input file is valid
-  // isFileTypeValid = (file) => {
-  //   console.log("FILE :", file);
-  //   if (file) {
-  //     for (var i = 0; i < this.fileTypes.length; i++) {
-  //       if (file.type === this.fileTypes[i]) {
-  //         // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
-  //         // console.log("File Length = " + this.fileTypes.length);
-  //         return true
-  //       }
-  //     }
-  //   }
-  //   else
-  //     return false
-  // }
+exports.isFileTypeValid = (file, fileTypes) => {
+    console.log("FILEType :", file.type);
+    if (file) {
+      for (var i = 0; i < fileTypes.length; i++) {
+        if (file.type === fileTypes[i]) {
+          // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
+          // console.log("File Length = " + this.fileTypes.length);
+          return true;
+        }
+      }
+    }
+    else
+      return false;
+  };

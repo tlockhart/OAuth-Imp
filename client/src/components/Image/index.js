@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
 import $ from 'jquery';
 import styles from './styles.css';
-import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, convertImageFromUrlToBase64String } from './utils/helpers';
+import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, convertImageFromUrlToBase64String, isFileTypeValid } from './utils/helpers';
 
 export class Uploader extends Component {
   // render() {
@@ -15,7 +15,7 @@ export class Uploader extends Component {
       canvasPreview: null,
       fileTypes: [
         'image/jpeg',
-        'image/pjpeg',
+        'image/jpg',
         'image/png'
       ],
       imageName: '',
@@ -101,7 +101,7 @@ export class Uploader extends Component {
     var _URL = window.URL || window.webkitURL;
     let img;
     this.preview = document.querySelector('.preview');
-    if (isFileSelected(this.input)) {
+    if (isFileSelected(this.input) && isFileTypeValid(this.file, this.fileTypes)) {
       var blob = this.input.files[0];
       img = new Image();
       try {
@@ -133,7 +133,7 @@ export class Uploader extends Component {
     }// if
   };
 
-  submitImageHandler = (event) => {
+  submitImageHandler = async (event) => {
     // if file selected
     if (isFileSelected(this.input)) {
       // Don't refresh the page!
@@ -196,9 +196,9 @@ export class Uploader extends Component {
 
         /******************************************************    Converts image to base64String
         ****************************************************/
-       convertImageFromUrlToBase64String(imageUrl);
+       let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
        console.log("In the out");
-      //  console.log("Converted Image: ", base64StringImage);
+       console.log("Converted Image: ", base64StringImage);
       }// else
       // remove canvas after submit
       removeCanvas(this.preview);
