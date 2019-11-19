@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
 import $ from 'jquery';
 import styles from './styles.css';
-import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, convertImageFromUrlToBase64String, isFileTypeValid } from './utils/helpers';
+import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, convertImageFromUrlToBase64String, isFileTypeValid } from './utils/helpers';
 
 export class Uploader extends Component {
   // render() {

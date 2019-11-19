@@ -222,9 +222,9 @@ exports.convertImageFromUrlToBase64String = async (url) => {
 };// convertImage
 
 // Check whether the file type of the input file is valid
-exports.isFileTypeValid = (file, fileTypes) => {
-    console.log("FILEType :", file.type);
+exports.isFileTypeValid = (file, fileTypes) => {  
     if (file) {
+      console.log("FILEType :", file.type);
       for (var i = 0; i < fileTypes.length; i++) {
         if (file.type === fileTypes[i]) {
           // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
