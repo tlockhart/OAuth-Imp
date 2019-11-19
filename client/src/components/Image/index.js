@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
 import $ from 'jquery';
 import styles from './styles.css';
-import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage } from './utils/helpers';
+import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, convertImageFromUrlToBase64String } from './utils/helpers';
 
 export class Uploader extends Component {
   // render() {
@@ -90,82 +90,13 @@ export class Uploader extends Component {
     document.getElementById('submit-image').disabled = true
   }
 
-  // imgOnError = () => {
-  //   if (this.imageWidth <= this.imageMax && this.imageHeight <= this.imageMax) {
-  //     console.log('NOT A Valid File: ');
-  //     setFileMessage(this.errorTag, this.invalidMsg);
-  //     document.getElementById('submit-image').disabled = true
-  //     $('#select-btn').show()
-  //     console.log("IMAGE ERROR ONLOAD")
-  //   }
-  //   // Remove Canvas and Paragraph for wrong dimensions or no file.
-  //   removeCanvas(this.preview);
-  //   console.log("in imgONERROR")
-  // }; // oneerror
-
-  // getFileInfo = () => {
-  //   this.input = document.querySelector('#image-input');
-  //   console.log("getFileInfo: File Information", this.input.files[0]);
-  //   this.file = this.input.files[0];
-  //   console.log("FIle:", this.file);
-  // };
-
-  // displayImage = (img, areDimensionsValid) => {
-  //   var canvasElement = this.preview.getElementsByTagName('canvas');
-  //   var canvas = document.createElement('canvas');
-  //   // console.log("CANVASELEMENT", canvasElement);
-  //   if (!areDimensionsValid) {
-
-  //   }
-  //   // No Image added to canvas
-  //   else if (canvasElement.length === 0) {
-  //     appendImage(img, canvas, this.preview)
-  //   }
-  //   // Image added to canvas
-  //   else {
-  //     removeItem('canvas', this.preview);
-  //     appendImage(img, canvas, this.preview);
-  //   }
-  // };
-
-  loadImage = (img, blob) => {
-    console.log("IMG", img, "BLOB", blob);
-    return new Promise(function (resolve, reject) {
-      // define source
-      img.src = URL.createObjectURL(blob);
-      // resolve promise onLoad
-      img.onload = () => {
-        console.log('LOADIMAGE_IMG.WIDTH', img.width);
-        // this.imageWidth = img.width;
-        console.log('LOADIMAGE_IMG.HEIGHT', img.height);
-        // this.imageHeight = img.height;
-        console.log('LOADIMAGE_BLOB.SIZE', blob.size);
-        // this.imageSize = blob.size;
-        console.log('LOADIMAGE_BLOB.Name', blob.name);
-        console.log("IMAGE", img, "size", img.size);
-
-        const imageProps = {
-          imageName: blob.name,
-          imageHeight: img.height,
-          imageWidth: img.width,
-          imageSize: blob.size,
-          imageSrc: img.src
-        }
-        resolve(imageProps);
-      }
-      // reject promis onError
-      img.onerror = () => {
-        reject("rejected")
-      }
-    })
-  }
-
   //  Select an image
   selectImage = async (event) => {
     event.preventDefault();
 
     // Set reference to #image-input div
-    this.file = getFileInfo();
+    this.input = getFileInfo();
+    this.file = this.input.files[0];
 
     var _URL = window.URL || window.webkitURL;
     let img;
@@ -174,7 +105,7 @@ export class Uploader extends Component {
       var blob = this.input.files[0];
       img = new Image();
       try {
-        const result = await this.loadImage(img, blob);
+        const result = await loadImage(img, blob);
         console.log("RESULT", result);
 
         // Set variables
@@ -201,37 +132,6 @@ export class Uploader extends Component {
       console.log("IMAGE NAME", this.file);
     }// if
   };
-/* Base64 Decoder: Remove the metadata
-https://www.base64decode.net/base64-image-decoder */
-  convertImageFromUrlToBase64String = (url) => {
-    var img = new Image()
-    img.crossOrigin = 'Anonymous'
-    var dataUrl;
-    img.onload = function () {
-      var canvas = document.createElement('canvas')
-      canvas.width = img.width
-      canvas.height = img.height
-      // canvas.width = this.imageWidth
-      // canvas.height = this.imageHeight
-
-      // Get a canvas reference to draw to the canvas
-      var context = canvas.getContext('2d')
-
-      // Draw image to the canvas
-      context.drawImage(img, 0, 0)
-
-      // Return a data URI containing a representation of the image in jpg format
-      dataUrl = canvas.toDataURL('image/jpg');
-      console.log("convertImageFromUrlToBase64String-DataURL:", dataUrl);
-    }
-
-    // Setting the img.src will call img.onload when the src is loaded
-    img.src = url// url is the img src
-    // console.log("IMG:", img, "Name:", this.fileName);
-    // console.log("IMG:", img, "Name:", this.imageName);
-    // console.log("IMG SRC:", url);
-    // console.log("IMG SRC:", this.imageSrc);
-  }// convertImage
 
   submitImageHandler = (event) => {
     // if file selected
@@ -296,7 +196,9 @@ https://www.base64decode.net/base64-image-decoder */
 
         /******************************************************    Converts image to base64String
         ****************************************************/
-        this.convertImageFromUrlToBase64String(imageUrl);
+       convertImageFromUrlToBase64String(imageUrl);
+       console.log("In the out");
+      //  console.log("Converted Image: ", base64StringImage);
       }// else
       // remove canvas after submit
       removeCanvas(this.preview);

@@ -135,9 +135,9 @@ exports.imgOnError = (preview, imageWidth, imageMax, imageHeight, errorTag, inva
 
 exports.getFileInfo = () => {
   let input = document.querySelector('#image-input');
-  console.log("getFileInfo: File Information", input.files[0]);
-  console.log("FIle:", this.file);
- return input.files[0];
+  // console.log("getFileInfo: File Information", input.files[0]);
+  // console.log("FIle:", input.files[0]);
+ return input;
 };
 
 exports.displayImage = (img, areDimensionsValid, preview) => {
@@ -157,6 +157,72 @@ exports.displayImage = (img, areDimensionsValid, preview) => {
     this.appendImage(img, canvas, preview);
   }
 };
+
+exports.loadImage = (img, blob) => {
+  console.log("IMG", img, "BLOB", blob);
+  return new Promise(function (resolve, reject) {
+    // define source
+    img.src = URL.createObjectURL(blob);
+    // resolve promise onLoad
+    img.onload = () => {
+      console.log('LOADIMAGE_IMG.WIDTH', img.width);
+      // this.imageWidth = img.width;
+      console.log('LOADIMAGE_IMG.HEIGHT', img.height);
+      // this.imageHeight = img.height;
+      console.log('LOADIMAGE_BLOB.SIZE', blob.size);
+      // this.imageSize = blob.size;
+      console.log('LOADIMAGE_BLOB.Name', blob.name);
+      console.log("IMAGE", img, "size", img.size);
+
+      const imageProps = {
+        imageName: blob.name,
+        imageHeight: img.height,
+        imageWidth: img.width,
+        imageSize: blob.size,
+        imageSrc: img.src
+      }
+      resolve(imageProps);
+    }
+    // reject promis onError
+    img.onerror = () => {
+      reject("rejected")
+    }
+  })
+};
+
+/* Base64 Decoder: Remove the metadata
+https://www.base64decode.net/base64-image-decoder */
+  exports.convertImageFromUrlToBase64String = (url) => {
+    var img = new Image()
+    img.crossOrigin = 'Anonymous'
+    var dataUrl;
+    img.onload = function () {
+      var canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      // canvas.width = this.imageWidth
+      // canvas.height = this.imageHeight
+
+      // Get a canvas reference to draw to the canvas
+      var context = canvas.getContext('2d')
+
+      // Draw image to the canvas
+      context.drawImage(img, 0, 0)
+
+      // Return a data URI containing a representation of the image in jpg format
+      dataUrl = canvas.toDataURL('image/jpg');
+      console.log("convertImageFromUrlToBase64String-DataURL:", dataUrl);
+    }
+
+    // Setting the img.src will call img.onload when the src is loaded
+    img.src = url// url is the img src
+
+    // console.log("IMG:", img, "Name:", this.fileName);
+    // console.log("IMG:", img, "Name:", this.imageName);
+    // console.log("IMG SRC:", url);
+    // console.log("IMG SRC:", this.imageSrc);
+  }// convertImage
+
 // Check whether the file type of the input file is valid
   // isFileTypeValid = (file) => {
   //   console.log("FILE :", file);
