@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
 import $ from 'jquery';
 import styles from './styles.css';
-import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected } from './utils/helpers';
+import { setFileMessage, setImageParagraphTag, removeItem, removeCanvas, getFormattedFileSize, returnFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage } from './utils/helpers';
 
 export class Uploader extends Component {
   // render() {
@@ -90,59 +90,43 @@ export class Uploader extends Component {
     document.getElementById('submit-image').disabled = true
   }
 
-  imgOnError = () => {
-    if (this.imageWidth <= this.imageMax && this.imageHeight <= this.imageMax) {
-      console.log('NOT A Valid File: ');
-      setFileMessage(this.errorTag, this.invalidMsg);
-      document.getElementById('submit-image').disabled = true
-      $('#select-btn').show()
-      console.log("IMAGE ERROR ONLOAD")
-    }
-    // Remove Canvas and Paragraph for wrong dimensions or no file.
-    removeCanvas(this.preview);
-    console.log("in imgONERROR")
-  }; // oneerror
+  // imgOnError = () => {
+  //   if (this.imageWidth <= this.imageMax && this.imageHeight <= this.imageMax) {
+  //     console.log('NOT A Valid File: ');
+  //     setFileMessage(this.errorTag, this.invalidMsg);
+  //     document.getElementById('submit-image').disabled = true
+  //     $('#select-btn').show()
+  //     console.log("IMAGE ERROR ONLOAD")
+  //   }
+  //   // Remove Canvas and Paragraph for wrong dimensions or no file.
+  //   removeCanvas(this.preview);
+  //   console.log("in imgONERROR")
+  // }; // oneerror
 
-  // Check whether the file type of the input file is valid
-  isFileTypeValid = (file) => {
-    console.log("FILE :", file);
-    if (file) {
-      for (var i = 0; i < this.fileTypes.length; i++) {
-        if (file.type === this.fileTypes[i]) {
-          // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
-          // console.log("File Length = " + this.fileTypes.length);
-          return true
-        }
-      }
-    }
-    else
-      return false
-  }
+  // getFileInfo = () => {
+  //   this.input = document.querySelector('#image-input');
+  //   console.log("getFileInfo: File Information", this.input.files[0]);
+  //   this.file = this.input.files[0];
+  //   console.log("FIle:", this.file);
+  // };
 
-  getFileInfo = () => {
-    this.input = document.querySelector('#image-input');
-    console.log("getFileInfo: File Information", this.input.files[0]);
-    this.file = this.input.files[0];
-    console.log("FIle:", this.file);
-  };
+  // displayImage = (img, areDimensionsValid) => {
+  //   var canvasElement = this.preview.getElementsByTagName('canvas');
+  //   var canvas = document.createElement('canvas');
+  //   // console.log("CANVASELEMENT", canvasElement);
+  //   if (!areDimensionsValid) {
 
-  displayImage = (img, areDimensionsValid) => {
-    var canvasElement = this.preview.getElementsByTagName('canvas');
-    var canvas = document.createElement('canvas');
-    // console.log("CANVASELEMENT", canvasElement);
-    if (!areDimensionsValid) {
-
-    }
-    // No Image added to canvas
-    else if (canvasElement.length === 0) {
-      appendImage(img, canvas, this.preview)
-    }
-    // Image added to canvas
-    else {
-      removeItem('canvas', this.preview);
-      appendImage(img, canvas, this.preview);
-    }
-  };
+  //   }
+  //   // No Image added to canvas
+  //   else if (canvasElement.length === 0) {
+  //     appendImage(img, canvas, this.preview)
+  //   }
+  //   // Image added to canvas
+  //   else {
+  //     removeItem('canvas', this.preview);
+  //     appendImage(img, canvas, this.preview);
+  //   }
+  // };
 
   loadImage = (img, blob) => {
     console.log("IMG", img, "BLOB", blob);
@@ -181,7 +165,7 @@ export class Uploader extends Component {
     event.preventDefault();
 
     // Set reference to #image-input div
-    this.getFileInfo();
+    this.file = getFileInfo();
 
     var _URL = window.URL || window.webkitURL;
     let img;
@@ -208,11 +192,11 @@ export class Uploader extends Component {
         this.imageSize = setFileSize(areDimensionsValid, this.errorTag, this.acceptedMsg, this.unacceptedMsg, this.imageName, this.imageSize, this.input.files, this.preview, this.imageWidth, this.imageHeight);
 
         // Create Canvas and load image
-        this.displayImage(img, areDimensionsValid);
+        displayImage(img, areDimensionsValid, this.preview);
       }
       catch (err) {
         console.log("failure ", err);
-        this.imgOnError()
+        imgOnError(this.preview, this.imageWidth, this.imageMax, this.imageHeight, this.errorTag, this.invalidMsg)
       }
       console.log("IMAGE NAME", this.file);
     }// if

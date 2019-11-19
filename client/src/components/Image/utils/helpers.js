@@ -80,7 +80,7 @@ exports.appendImage = (img, canvas, preview) => {
 
 exports.checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax) => {
   let areDimensionsValid = false;
-  let para = document.createTextNode('');
+  // let para = document.createTextNode('');
 
   // if dimensions valid
   if (imageWidth >= imageMin && imageWidth <= imageMax && imageHeight >= imageMin && imageHeight <= imageMax) {
@@ -119,3 +119,56 @@ exports.isFileSelected = (input) => {
   let curFiles = input ? input.files : null;
   return curFiles;
 };
+
+exports.imgOnError = (preview, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
+  if (imageWidth <= imageMax && imageHeight <= imageMax) {
+    console.log('NOT A Valid File: ');
+    this.setFileMessage(errorTag, invalidMsg);
+    document.getElementById('submit-image').disabled = true
+    // $('#select-btn').show()
+    console.log("IMAGE ERROR ONLOAD")
+  }
+  // Remove Canvas and Paragraph for wrong dimensions or no file.
+  this.removeCanvas(preview);
+  console.log("in imgONERROR")
+}; // oneerror
+
+exports.getFileInfo = () => {
+  let input = document.querySelector('#image-input');
+  console.log("getFileInfo: File Information", input.files[0]);
+  console.log("FIle:", this.file);
+ return input.files[0];
+};
+
+exports.displayImage = (img, areDimensionsValid, preview) => {
+  var canvasElement = preview.getElementsByTagName('canvas');
+  var canvas = document.createElement('canvas');
+  // console.log("CANVASELEMENT", canvasElement);
+  if (!areDimensionsValid) {
+
+  }
+  // No Image added to canvas
+  else if (canvasElement.length === 0) {
+    this.appendImage(img, canvas, preview)
+  }
+  // Image added to canvas
+  else {
+    this.removeItem('canvas', preview);
+    this.appendImage(img, canvas, preview);
+  }
+};
+// Check whether the file type of the input file is valid
+  // isFileTypeValid = (file) => {
+  //   console.log("FILE :", file);
+  //   if (file) {
+  //     for (var i = 0; i < this.fileTypes.length; i++) {
+  //       if (file.type === this.fileTypes[i]) {
+  //         // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
+  //         // console.log("File Length = " + this.fileTypes.length);
+  //         return true
+  //       }
+  //     }
+  //   }
+  //   else
+  //     return false
+  // }
