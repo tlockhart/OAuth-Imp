@@ -1,6 +1,6 @@
 // exports.setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, imageHeight, preview, removeItem)
 
-exports.setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, imageHeight, preview) => {
+exports.setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, imageHeight, previewCanvas) => {
   // Set Paragraph
   para = document.createTextNode('File Name: ' + imageName + ', File Size: ' + imageSize + ', Width: ' + imageWidth + ', Height: ' + imageHeight);
 
@@ -12,33 +12,34 @@ exports.setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, i
   listItem.appendChild(para);
 
   let orderedList = document.createElement('ol');
-  preview.appendChild(orderedList);
+  previewCanvas.appendChild(orderedList);
 
   orderedList.appendChild(listItem);
   // $('#li-id').css({ 'color': color });
-  document.getElementById('li-id').style.color = color;
+  // document.getElementById('li-id').style.color = color;
+  listItem.style.color = color;
   // remove canvas if image added
-  this.removeItem('canvas', preview);
+  this.removeItem('canvas', previewCanvas);
 };
 
-exports.removeItem = (element, preview) => {
+exports.removeItem = (element, previewCanvas) => {
   /************************/
-  let item = preview.getElementsByTagName(`${element}`);
+  let item = previewCanvas.getElementsByTagName(`${element}`);
   const isItemCreated = item.length ? true : false;
   console.log("item Length", item.length);
   console.log("is item created", isItemCreated);
   console.log("no item", item);
   if (isItemCreated) {
-    preview.removeChild(item[0]);
+    previewCanvas.removeChild(item[0]);
   }
   /************************/
 };
 
-exports.removeCanvas = (preview) => {
-  var canvasElement = preview.getElementsByTagName('canvas');
+exports.removeCanvas = (previewCanvas) => {
+  var canvasElement = previewCanvas.getElementsByTagName('canvas');
   if (canvasElement.length >= 1) {
-    this.removeItem('canvas', preview);
-    this.removeItem('ol', preview);
+    this.removeItem('canvas', previewCanvas);
+    this.removeItem('ol', previewCanvas);
   }
 };
 
@@ -62,7 +63,7 @@ exports.returnFileSize = (number) => {
   }
 };
 
-exports.appendImage = (img, canvas, preview) => {
+exports.appendImage = (img, canvas, previewCanvas) => {
   img.onload = () => {
     // console.log("APPEND_IMG:", img);
     // console.log("APPEND_IMG Width:", img.width, "IMG HT:", img.height);
@@ -74,17 +75,18 @@ exports.appendImage = (img, canvas, preview) => {
 
     // Draw image to canvas
     context.drawImage(img, 0, 0);
-    preview.appendChild(canvas);
+    previewCanvas.appendChild(canvas);
   };
 };
 
-exports.checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax) => {
+exports.checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, submitImageButton) => {
   let areDimensionsValid = false;
   // let para = document.createTextNode('');
 
   // if dimensions valid
   if (imageWidth >= imageMin && imageWidth <= imageMax && imageHeight >= imageMin && imageHeight <= imageMax) {
-    document.getElementById('submit-image').disabled = false;
+    // document.getElementById('submit-image').disabled = false;
+    submitImageButton.disabled = false;
     areDimensionsValid = true;
   }
   // dimensions not valid
@@ -94,13 +96,13 @@ exports.checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax) => 
   return areDimensionsValid;
 };
 
-exports.setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, imageName, imageSize, files, preview, imageWidth, imageHeight) => {
+exports.setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, imageName, imageSize, files, previewCanvas, imageWidth, imageHeight) => {
   let para = document.createTextNode('');
   if (areDimensionsValid) {
     // Set file size with Units:
     imageSize = this.getFormattedFileSize(files);
     // setImageParagraphTag(para, 'black');
-    this.setImageParagraphTag(para, 'black', imageName, imageSize, imageWidth, imageHeight, preview);
+    this.setImageParagraphTag(para, 'black', imageName, imageSize, imageWidth, imageHeight, previewCanvas);
     this.setFileMessage(errorTag, acceptedMsg);
   }
   else {
@@ -109,7 +111,7 @@ exports.setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg,
 
     // Set file size with Units:
     imageSize = this.getFormattedFileSize(files);
-    this.setImageParagraphTag(para, 'red', imageName, imageSize, imageWidth, imageHeight, preview);
+    this.setImageParagraphTag(para, 'red', imageName, imageSize, imageWidth, imageHeight, previewCanvas);
     this.setFileMessage(errorTag, unacceptedMsg)
   }
   return imageSize;
@@ -120,7 +122,7 @@ exports.isFileSelected = (input) => {
   return curFiles;
 };
 
-exports.imgOnError = (preview, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
+exports.imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
   if (imageWidth <= imageMax && imageHeight <= imageMax) {
     console.log('NOT A Valid File: ');
     this.setFileMessage(errorTag, invalidMsg);
@@ -129,7 +131,7 @@ exports.imgOnError = (preview, imageWidth, imageMax, imageHeight, errorTag, inva
     console.log("IMAGE ERROR ONLOAD")
   }
   // Remove Canvas and Paragraph for wrong dimensions or no file.
-  this.removeCanvas(preview);
+  this.removeCanvas(previewCanvas);
   console.log("in imgONERROR")
 }; // oneerror
 
@@ -140,8 +142,8 @@ exports.getFileInfo = () => {
   return input;
 };
 
-exports.displayImage = (img, areDimensionsValid, preview) => {
-  var canvasElement = preview.getElementsByTagName('canvas');
+exports.displayImage = (img, areDimensionsValid, previewCanvas) => {
+  var canvasElement = previewCanvas.getElementsByTagName('canvas');
   var canvas = document.createElement('canvas');
   // console.log("CANVASELEMENT", canvasElement);
   if (!areDimensionsValid) {
@@ -149,12 +151,12 @@ exports.displayImage = (img, areDimensionsValid, preview) => {
   }
   // No Image added to canvas
   else if (canvasElement.length === 0) {
-    this.appendImage(img, canvas, preview)
+    this.appendImage(img, canvas, previewCanvas)
   }
   // Image added to canvas
   else {
-    this.removeItem('canvas', preview);
-    this.appendImage(img, canvas, preview);
+    this.removeItem('canvas', previewCanvas);
+    this.appendImage(img, canvas, previewCanvas);
   }
 };
 

@@ -12,7 +12,9 @@ export class Uploader extends Component {
     this.image = {
       input: null,
       file: null,
-      canvasPreview: null,
+      previewCanvas: null,
+      fileMsg: null,
+      submitImage: null,
       fileTypes: [
         'image/jpeg',
         'image/jpg',
@@ -36,7 +38,10 @@ export class Uploader extends Component {
     let {
       input,
       file,
-      canvasPreview,
+      previewCanvas,
+      fileMsg,
+      submitImage,
+
       fileTypes,
       imageName,
       imageWidth,
@@ -55,7 +60,6 @@ export class Uploader extends Component {
     // Destructuring
     this.input = input;
     this.file = file;
-    this.preview = canvasPreview;
     this.fileTypes = fileTypes;
 
     this.imageName = imageName;
@@ -77,6 +81,12 @@ export class Uploader extends Component {
     this.unacceptedMsg = unacceptedMsg;
     this.acceptedMsg = acceptedMsg;
 
+    // COMPONENTS:
+    this.previewCanvasElement = previewCanvas;
+    this.fileMsgElement = fileMsg;
+    this.submitImageElement = submitImage;
+    // this.previewCanvasElement = null;
+
     $('#select-btn').on('click', function () {
       // select button isn't a button, its a label
       // event.preventDefault();
@@ -87,7 +97,10 @@ export class Uploader extends Component {
   }
   componentDidMount() {
     // disable submit-image button
-    document.getElementById('submit-image').disabled = true
+    this.submitImageElement = document.getElementById('submit-image');
+    this.submitImageElement.disable = true;
+    this.fileMsgElement = document.getElementById(this.errorTag)
+    this.previewCanvasElement = document.querySelector('.preview');
   }
 
   //  Select an image
@@ -100,7 +113,7 @@ export class Uploader extends Component {
 
     var _URL = window.URL || window.webkitURL;
     let img;
-    this.preview = document.querySelector('.preview');
+    // this.previewCanvasElement = document.querySelector('.preview');
     if (isFileSelected(this.input) && isFileTypeValid(this.file, this.fileTypes)) {
       var blob = this.input.files[0];
       img = new Image();
@@ -117,17 +130,17 @@ export class Uploader extends Component {
         this.imageName = result.imageName;
 
         // remove OL tag
-        removeItem('ol', this.preview);
-        var areDimensionsValid = checkImageDimensions(this.imageWidth, this.imageMin, this.imageHeight, this.imageMax);
+        removeItem('ol', this.previewCanvasElement);
+        var areDimensionsValid = checkImageDimensions(this.imageWidth, this.imageMin, this.imageHeight, this.imageMax, this.submitImageElement);
 
-        this.imageSize = setFileSize(areDimensionsValid, this.errorTag, this.acceptedMsg, this.unacceptedMsg, this.imageName, this.imageSize, this.input.files, this.preview, this.imageWidth, this.imageHeight);
+        this.imageSize = setFileSize(areDimensionsValid, this.errorTag, this.acceptedMsg, this.unacceptedMsg, this.imageName, this.imageSize, this.input.files, this.previewCanvasElement, this.imageWidth, this.imageHeight);
 
         // Create Canvas and load image
-        displayImage(img, areDimensionsValid, this.preview);
+        displayImage(img, areDimensionsValid, this.previewCanvasElement);
       }
       catch (err) {
         console.log("failure ", err);
-        imgOnError(this.preview, this.imageWidth, this.imageMax, this.imageHeight, this.errorTag, this.invalidMsg)
+        imgOnError(this.previewCanvasElement, this.imageWidth, this.imageMax, this.imageHeight, this.errorTag, this.invalidMsg)
       }
       console.log("IMAGE NAME", this.file);
     }// if
@@ -181,8 +194,8 @@ export class Uploader extends Component {
       // If input is not valid do not accept image and do nothing
       console.log("Is Input File Valid:", isInputValid);
       if (!isInputValid) {
-        var fileMsg = document.getElementById(this.errorTag)
-        if (fileMsg) {
+        // var fileMsg = document.getElementById(this.errorTag)
+        if (this.fileMsgElement) {
           setFileMessage(this.errorTag, this.unacceptedMsg);
         } else {
           setFileMessage(this.errorTag, this.acceptedMsg);
@@ -201,11 +214,12 @@ export class Uploader extends Component {
        console.log("Converted Image: ", base64StringImage);
       }// else
       // remove canvas after submit
-      removeCanvas(this.preview);
+      removeCanvas(this.previewCanvasElement);
     } // if file selected
 
     // disable submit-btn
-    document.getElementById('submit-image').disabled = true
+    // document.getElementById('submit-image').disabled = true
+    this.submitImageElement.disabled = true;
   };// submit-Image on click
 
   render() {
