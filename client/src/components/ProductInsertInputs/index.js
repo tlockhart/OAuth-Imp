@@ -39,7 +39,7 @@ let ProductInsertForm = (props) => {
                     />
                     <br></br>
                     {/* <div > */}
-                    {/* MDB REACT COMPONENT */}
+                    {/* MDB REACT COMPONENT: BROWSE IMAGE BUTTON*/}
                     <div className="custom-file">
                         <input
                             type="file"
@@ -58,15 +58,18 @@ let ProductInsertForm = (props) => {
                             {props.productImage}
                         </label>
                     </div>
+                    {/************Currently Used: SUBMIT IMAGE UPLOAD ************** /}
                     {/* insert button */}
                     <label htmlFor="formGroupExampleInput" />
-                    <MDBBtn color="blue-grey" onClick={props.insertClickHandler}>Insert</MDBBtn>
+                    <MDBBtn color="blue-grey" onClick={props.insertClickHandler}>Submit Image</MDBBtn>
                     <h3 className="mt-5">{props.message ? props.message : ''}</h3>
-                    {/************************* Image Upload */}
-                    {/* SUPERHERO API IMAGE UPLOAD */}
-                    <Uploader/>
+                    {/*****************************image end ************** /}
 
-                    {/*****************************image end */}
+
+                    {/************Currently Used: Image Upload ************** /}
+                    {/* SUPERHERO API IMAGE UPLOAD */}
+                    <Uploader imageName="props.productImage"/>
+                    {/*****************************image end ************** /}
 
                     
 

@@ -113,7 +113,6 @@ export class Uploader extends Component {
 
     var _URL = window.URL || window.webkitURL;
     let img;
-    // this.previewCanvasElement = document.querySelector('.preview');
     if (isFileSelected(this.input) && isFileTypeValid(this.file, this.fileTypes)) {
       var blob = this.input.files[0];
       img = new Image();
@@ -194,7 +193,6 @@ export class Uploader extends Component {
       // If input is not valid do not accept image and do nothing
       console.log("Is Input File Valid:", isInputValid);
       if (!isInputValid) {
-        // var fileMsg = document.getElementById(this.errorTag)
         if (this.fileMsgElement) {
           setFileMessage(this.errorTag, this.unacceptedMsg);
         } else {
@@ -209,20 +207,20 @@ export class Uploader extends Component {
 
         /******************************************************    Converts image to base64String
         ****************************************************/
-       let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
-       console.log("In the out");
-       console.log("Converted Image: ", base64StringImage);
+        let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
+        console.log("In the out");
+        console.log("Converted Image: ", base64StringImage);
       }// else
       // remove canvas after submit
       removeCanvas(this.previewCanvasElement);
     } // if file selected
 
     // disable submit-btn
-    // document.getElementById('submit-image').disabled = true
     this.submitImageElement.disabled = true;
   };// submit-Image on click
 
   render() {
+    let imageName = this.props.imageName;
     return (
       <React.Fragment>
         <div className="container">
@@ -245,13 +243,19 @@ export class Uploader extends Component {
               <input
                 type="file"
                 id="image-input"
-                name="image-input"
+                // name="image-input"
+                name = {imageName}
                 accept=".png, .jpeg, .jpg"
                 onChange={
                   (event) => {
                     this.selectImage(event)
                   }
                 }
+                // onClick={
+                //   (event) => {
+                //     this.selectImage(event)
+                //   }
+                // }
               />
               {/* UPLOAD IDENTITY BUTTON */}
               <button

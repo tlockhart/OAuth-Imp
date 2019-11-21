@@ -200,14 +200,16 @@ exports.convertImageFromUrlToBase64String = async (url) => {
   var dataUrl;
   return new Promise(function (resolve, reject) {
     // Setting the img.src will call img.onload when the src is loaded
+
+    // Pull Width/Height from URL and store in img objec
     img.src = url;// url is the img src
 
     img.onload = function () {
       var canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
-      // canvas.width = this.imageWidth
-      // canvas.height = this.imageHeight
+      console.log("IMGWIDTH:", img.width, "IMGHEIGHT:", img.height);
+
       // Get a canvas reference to draw to the canvas
       var context = canvas.getContext('2d');
       // Draw image to the canvas
@@ -224,17 +226,19 @@ exports.convertImageFromUrlToBase64String = async (url) => {
 };// convertImage
 
 // Check whether the file type of the input file is valid
-exports.isFileTypeValid = (file, fileTypes) => {  
-    if (file) {
-      console.log("FILEType :", file.type);
-      for (var i = 0; i < fileTypes.length; i++) {
-        if (file.type === fileTypes[i]) {
-          // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
-          // console.log("File Length = " + this.fileTypes.length);
-          return true;
-        }
+exports.isFileTypeValid = (file, fileTypes) => {
+  if (file) {
+    console.log("FILEType :", file.type);
+    for (var i = 0; i < fileTypes.length; i++) {
+      if (file.type === fileTypes[i]) {
+        // console.log("File Length = "+this.fileTypes.length, "FileTypes", this.fileTypes[i]);
+        // console.log("File Length = " + this.fileTypes.length);
+        return true;
       }
+      // else
+      //   return false;
     }
-    else
-      return false;
-  };
+  }
+  else
+    return false;
+};
