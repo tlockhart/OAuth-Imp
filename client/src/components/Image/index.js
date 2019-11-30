@@ -2,105 +2,61 @@ import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
 import $ from 'jquery';
 import styles from './styles.css';
-import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, convertImageFromUrlToBase64String, isFileTypeValid } from './utils/helpers';
+import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, getFileInfo, displayImage, loadImage, isFileTypeValid } from './utils/helpers';
 
 export class Uploader extends Component {
   // render() {
   constructor(props) {
     super(props);
 
-    this.image = {
-      input: null,
-      file: null,
-      previewCanvas: null,
-      fileMsg: null,
-      submitImage: null,
-      fileTypes: [
-        'image/jpeg',
-        'image/jpg',
-        'image/png'
-      ],
-      imageName: '',
-      imageWidth: 0,
-      imageHeight: 0,
-      imageSize: 0,
-      imageSrc: '',
-      imageMin: 200,
-      imageMax: 450,
-      maxMB: 2,
-      errorTag: 'file-msg',
-      invalidMsg: 'Not a valid file.',
-      unacceptedMsg: 'File not accepted.',
-      acceptedMsg: 'File accepted.',
-    };
-
     // Destructuring
-    let {
-      input,
-      file,
-      previewCanvas,
-      fileMsg,
-      submitImage,
+    console.log("ImageUploader", this.props);
+    console.log("ImageUploader", props);
 
-      fileTypes,
-      imageName,
-      imageWidth,
-      imageHeight,
-      imageSize,
-      imageSrc,
-      imageMin,
-      imageMax,
-      maxMB,
-      errorTag,
-      invalidMsg,
-      unacceptedMsg,
-      acceptedMsg,
-    } = this.image;
-
-    // Destructuring
-    this.input = input;
-    this.file = file;
-    this.fileTypes = fileTypes;
-
-    this.imageName = imageName;
-    // Image Dimensions
-    this.imageWidth = imageWidth;
-    this.imageHeight = imageHeight;
-    this.imageSize = imageSize;
-    this.imageSrc = imageSrc;
-
-    // const image dimension size
-    this.imageMin = imageMin;
-    this.imageMax = imageMax;
-
-    // const image file size
-    this.maxMB = maxMB;
-
-    this.errorTag = errorTag;
-    this.invalidMsg = invalidMsg;
-    this.unacceptedMsg = unacceptedMsg;
-    this.acceptedMsg = acceptedMsg;
-
-    // COMPONENTS:
-    this.previewCanvasElement = previewCanvas;
-    this.fileMsgElement = fileMsg;
-    this.submitImageElement = submitImage;
-    // this.previewCanvasElement = null;
-
-    $('#select-btn').on('click', function () {
-      // select button isn't a button, its a label
-      // event.preventDefault();
-      $('#select-btn').hide();
-
-    });
-
+    // this.state = {image: this.props.image};
+    /****************/
+    this.state = { image: this.props.image };
+    console.log("STATE", this.state.image);
   }
+
+  setProp = (key, value) => {
+    // copy current state
+    var image = this.state.image;
+    // update props
+    image[key] = value;
+    console.log("image: ", image);
+    // Update state with new value
+    this.setState({image: image});
+    console.log("Key:", [key]);
+    console.log("Value:", value);
+    console.log(`Image ${key}:`, this.state.image[key]);
+  };
+
   componentDidMount() {
     // disable submit-image button
-    this.submitImageElement = document.getElementById('submit-image');
-    this.submitImageElement.disable = true;
-    this.fileMsgElement = document.getElementById(this.errorTag)
-    this.previewCanvasElement = document.querySelector('.preview');
+    let submitImageElement = document.getElementById('submit-image');
+    submitImageElement.disable = true;
+    this.setProp("submitImageElement", submitImageElement);
+
+
+    // this.fileMsgElement = document.getElementById(this.errorTag)
+    // const fileMsgElement = document.getElementById(this.errorTag);
+    this.setProp("fileMsgElement", document.getElementById(this.errorTag));
+
+    // this.previewCanvasElement = document.querySelector('.preview');
+    // const previewCanvasElement = document.querySelector('.preview');
+    this.setProp("previewCanvasElement", document.querySelector('.preview'));
+
+    console.log("ImageUploaderStateMounted", this.state.image.imageMin);
+
+    // Why is the image props not prining?
+    console.log("ImageUploaderState", this.state.image.fileTypes);
+
+    // COMPONENTS:
+    // this.previewCanvasElement = previewCanvas;
+    // this.fileMsgElement = fileMsg;
+    // this.submitImageElement = submitImage;
+
   }
 
   //  Select an image
@@ -108,13 +64,16 @@ export class Uploader extends Component {
     event.preventDefault();
 
     // Set reference to #image-input div
-    this.input = getFileInfo();
-    this.file = this.input.files[0];
+    // this.image.input = getFileInfo();
+    this.setProp("input", getFileInfo());
+
+    // this.image.file = this.image.input.files[0];
+    this.setProp("file", this.state.image.input.files[0]);
 
     var _URL = window.URL || window.webkitURL;
     let img;
-    if (isFileSelected(this.input) && isFileTypeValid(this.file, this.fileTypes)) {
-      var blob = this.input.files[0];
+    if (isFileSelected(this.state.image.input) && isFileTypeValid(this.state.image.file, this.state.image.fileTypes)) {
+      var blob = this.state.image.input.files[0];
       img = new Image();
       try {
         const result = await loadImage(img, blob);
@@ -122,110 +81,53 @@ export class Uploader extends Component {
 
         // Set variables
         img.src = result.imageSrc;
-        this.imageSrc = result.imageSrc;
-        this.imageWidth = result.imageWidth;
-        this.imageHeight = result.imageHeight;
-        this.imageSize = result.imageSize;
-        this.imageName = result.imageName;
+        // this.image.imageSrc = result.imageSrc;
+        this.setProp("imageSrc", result.imageSrc);
+        // this.image.imageWidth = result.imageWidth;
+        this.setProp("imageWidth", result.imageWidth);
+        // this.image.imageHeight = result.imageHeight;
+        this.setProp("imageHeight", result.imageHeight);
+        // this.image.imageSize = result.imageSize;
+        this.setProp("imageSize", result.imageSize);
+        // this.image.imageName = result.imageName;
+        this.setProp("imageName", result.imageName);
 
         // remove OL tag
-        removeItem('ol', this.previewCanvasElement);
-        var areDimensionsValid = checkImageDimensions(this.imageWidth, this.imageMin, this.imageHeight, this.imageMax, this.submitImageElement);
+        removeItem('ol', this.state.image.previewCanvasElement);
+        var areDimensionsValid = checkImageDimensions(this.state.image.imageWidth, this.state.image.imageMin, this.state.image.imageHeight, this.state.image.imageMax, this.state.image.submitImageElement);
 
-        this.imageSize = setFileSize(areDimensionsValid, this.errorTag, this.acceptedMsg, this.unacceptedMsg, this.imageName, this.imageSize, this.input.files, this.previewCanvasElement, this.imageWidth, this.imageHeight);
+        // this.image.imageSize = setFileSize(areDimensionsValid, this.state.image.errorTag, this.state.image.acceptedMsg, this.state.image.unacceptedMsg, this.state.image.imageName, this.state.image.imageSize, this.state.image.input.files, this.state.previewCanvasElement, this.state.image.imageWidth, this.state.image.imageHeight);
+        this.setProp("imageSize", setFileSize(areDimensionsValid, this.state.image.errorTag, this.state.image.acceptedMsg, this.state.image.unacceptedMsg, this.state.image.imageName, this.state.image.imageSize, this.state.image.input.files, this.state.image.previewCanvasElement, this.state.image.imageWidth, this.state.image.imageHeight));
 
         // Create Canvas and load image
-        displayImage(img, areDimensionsValid, this.previewCanvasElement);
+        displayImage(img, areDimensionsValid, this.state.image.previewCanvasElement);
       }
       catch (err) {
         console.log("failure ", err);
-        imgOnError(this.previewCanvasElement, this.imageWidth, this.imageMax, this.imageHeight, this.errorTag, this.invalidMsg)
+        imgOnError(this.state.image.previewCanvasElement, this.state.image.imageWidth, this.state.image.imageMax, this.state.image.imageHeight, this.state.image.errorTag, this.state.image.invalidMsg)
       }
-      console.log("IMAGE NAME", this.file);
+      console.log("IMAGE NAME", this.state.image.file);
     }// if
+    else {
+      removeCanvas(this.state.image.previewCanvasElement);
+      setFileMessage(this.state.image.errorTag, this.state.image.unacceptedMsg);
+    }
   };
 
-  submitImageHandler = async (event) => {
-    // if file selected
-    if (isFileSelected(this.input)) {
-      // Don't refresh the page!
-      event.preventDefault();
-
-      // checks image dimension and file size
-      let isInputValid = false
-
-      // Check Image Dimensions
-      if (this.imageWidth >= this.imageMin && this.imageWidth <= this.imageMax && this.imageHeight >= this.imageMin && this.imageHeight <= this.imageMax) {
-        isInputValid = true
-      } else {
-        isInputValid = false
-      }
-
-      // Check Image Size
-      console.log("FileName:", this.imageName);
-      console.log("FileSize:", this.imageSize);
-
-      // Get Unit of Measure
-      var unit = this.imageSize.slice(-2).toLowerCase();
-
-      // Get FileSize
-      var fileSizeNumber = this.imageSize.replace(/[^\d.-]/g, '');
-
-      console.log("FILESIZE = " + fileSizeNumber + ", Unit = " + unit);
-      console.log("Max File Size:", this.maxMB);
-
-      if (unit === 'mb') {
-        console.log("max file size:", this.maxMB, ", actual file size:", fileSizeNumber);
-        if (fileSizeNumber <= this.maxMB) {
-          isInputValid = true
-        } else {
-          isInputValid = false
-        }
-      }
-      else if (unit === 'kb') {
-        if (fileSizeNumber <= this.maxMB * 1000) {
-          isInputValid = true
-        } else {
-          isInputValid = false
-        }
-      }
-
-      // If input is not valid do not accept image and do nothing
-      console.log("Is Input File Valid:", isInputValid);
-      if (!isInputValid) {
-        if (this.fileMsgElement) {
-          setFileMessage(this.errorTag, this.unacceptedMsg);
-        } else {
-          setFileMessage(this.errorTag, this.acceptedMsg);
-        }
-
-        // show select image:
-        $('#select-btn').show()
-      } else {
-        // console.log ("Image is acceptable");
-        var imageUrl = this.imageSrc;
-
-        /******************************************************    Converts image to base64String
-        ****************************************************/
-        let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
-        console.log("In the out");
-        console.log("Converted Image: ", base64StringImage);
-      }// else
-      // remove canvas after submit
-      removeCanvas(this.previewCanvasElement);
-    } // if file selected
-
-    // disable submit-btn
-    this.submitImageElement.disabled = true;
-  };// submit-Image on click
-
   render() {
-    let imageName = this.props.imageName;
+    let imageName = this.state.image.imageName;
+    let imageMin = this.state.image.imageMin;
+    let imageMaxMB = this.state.image.maxMB;
+    let imageMax = this.state.image.imageMax;
+    let image = this.state.image;
+    // console.log("ImageUploaderStateRendering", this.image.imageMin);
+    console.log("ImageUploaderStateRendering", imageMin);
     return (
       <React.Fragment>
         <div className="container">
           <div className="row">
-            <div className="image-input-wrapper col-lg-4">
+            {/* <div className="image-input-wrapper col-lg-4"> */}
+            <div className="image-input-wrapper">
               {/* IMAGE INPUT LABEL */}
               <label
                 className="btn btn-info upload-btn"
@@ -233,30 +135,29 @@ export class Uploader extends Component {
                 htmlFor="image-input">Select image (PNG, JPG)</label>
               <ol>
                 <b>Requirements:</b> <br></br>
-                <li><b>Filesize:</b> &#60; {this.maxMB}MB</li>
+                <li><b>Filesize:</b> &#60; {imageMaxMB}MB</li>
                 <li><b>Dimensions: </b></li>
-                Min: {this.imageMin}, Max: {this.imageMax}
+                Min: {this.state.imageMin}, Max: {imageMax}
               </ol>
 
               {/* THESE ARE THE BUTTONS */}
               {/* Choose file image-input Button */}
               <input
                 type="file"
+                className="standard-file-input"
                 id="image-input"
-                // name="image-input"
-                name = {imageName}
+                name="image-input"
+                // name = {this.props.imageName}
                 accept=".png, .jpeg, .jpg"
                 onChange={
                   (event) => {
                     this.selectImage(event)
                   }
                 }
-                // onClick={
-                //   (event) => {
-                //     this.selectImage(event)
-                //   }
-                // }
               />
+               {/* <label className="standard-file-label" id="img-select-label" htmlFor="image-input">
+                            {this.props.imageName}
+                        </label> */}
               {/* UPLOAD IDENTITY BUTTON */}
               <button
                 className="btn btn-info"
@@ -264,20 +165,20 @@ export class Uploader extends Component {
                 // disabled="disabled"
                 id="submit-image"
                 type="submit"
-                onClick={
-                  this.submitImageHandler
-                }
+                onClick={(event)=>this.props.submitImageHandler(event,image)}
               >Upload Image</button>
             </div>
 
             {/* **************************Image Display */}
-            <div className="col-lg-4 name-container kb-box">
+            {/* <div className="col-lg-4 name-container kb-box"> */}
+            <div className="name-container">
               <div className="preview">
                 <h4>Image Preview</h4>
                 {/* <p id="error">No file currently selected for upload</p> */}
                 <p id="file-msg">No file currently selected for upload</p>
               </div>
             </div>
+            <br></br>
           </div>
         </div>
       </React.Fragment>

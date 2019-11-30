@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 
 // Import Server-Side Utilities:
-import API from '../utils/API';
+// import API from '../utils/API';
 
 // Import module to get/set variables from/in the LocalStorage
-import dataStore from '../utils/dataStore';
+import dataStore from '../../utils/dataStore';
 
 // Import Components
-import ProductInsertInputs from "../components/ProductInsertInputs";
-import credentialStore from '../utils/credentialStore';
-import { insertProduct, performDBAction } from '../utils/productStore';
+import ProductInsertInputs from "../../components/ProductInsertInputs";
+import credentialStore from '../../utils/credentialStore';
+import { insertProduct, performDBAction } from '../../utils/productStore';
+import { submitImageHandler } from "./utils/actionHelpers";
+import { setFileMessage, removeCanvas, isFileSelected,  convertImageFromUrlToBase64String } from './utils/imageHelpers';
 
 const moment = require('moment');
 
@@ -31,15 +33,160 @@ class ProductInsertContainer extends Component {
             isUserAuthorized: true,
             message: '',
             // imgLabelContent: '',
-            productImage: '',
+            // productImageName: '',
             // imglabelInnerHTML: 'CF'
+
+            // Image imputs for Image Uploader component
+            image: {
+                input: null,
+                file: null,
+                previewCanvas: null,
+                fileMsg: null,
+                submitImage: null,
+                fileTypes: [
+                    'image/jpeg',
+                    'image/jpg',
+                    'image/png'
+                ],
+                imageName: '',
+                imageWidth: 0,
+                imageHeight: 0,
+                imageSize: 0,
+                imageSrc: '',
+                imageMin: 200,
+                imageMax: 450,
+                maxMB: 2,
+                errorTag: 'file-msg',
+                invalidMsg: 'Not a valid file.',
+                unacceptedMsg: 'File not accepted.',
+                acceptedMsg: 'File accepted.',
+                fileMsgElement: '',
+                previewCanvasElement: '',
+                submitImageElement: ''
+            }
         };
+
+
 
         this.changeHandler = this.changeHandler.bind(this);
         // this.insertClickHandler = this.insertClickHandler.bind(this);
         this.productImageClickHandler = this.productImageClickHandler.bind(this);
-    } // constructor
+        this.submitImageHandler = this.submitImageHandler.bind(this);
 
+        this.message = this.message.bind(this);
+    } // constructor
+    /*************************************** */
+    //set
+    // setBrowseLabel(event);
+    /****************************************** */
+    async submitImageHandler(event, img) {
+        // Don't refresh the page!
+        event.preventDefault();
+        
+        let {
+            input,
+            imageWidth,
+            imageHeight,
+            imageMin,
+            imageMax,
+            imageName,
+            imageSize,
+            maxMB,
+            errorTag,
+            acceptedMsg,
+            unacceptedMsg,
+            fileMsgElement,
+            previewCanvasElement,
+            submitImageElement,
+            imageSrc } = img;
+
+        // set img props
+        this.setState({ image: img });
+        // if file selected
+        if (isFileSelected(input)) {
+            console.log("ActionHelper file selected");
+
+            // checks image dimension and file size
+            let isInputValid = false
+
+            // Check Image Dimensions
+            if (imageWidth >= imageMin && imageWidth <= imageMax && imageHeight >= imageMin && imageHeight <= imageMax) {
+                isInputValid = true
+            } else {
+                isInputValid = false
+            }
+
+            // Check Image Size
+            console.log("FileName:", imageName);
+            console.log("FileSize:", imageSize);
+
+            // Get Unit of Measure
+            var unit = imageSize.slice(-2).toLowerCase();
+
+            // Get FileSize
+            var fileSizeNumber = imageSize.replace(/[^\d.-]/g, '');
+
+            console.log("FILESIZE = " + fileSizeNumber + ", Unit = " + unit);
+            console.log("Max File Size:", maxMB);
+
+            if (unit === 'mb') {
+                console.log("max file size:", maxMB, ", actual file size:", fileSizeNumber);
+                if (fileSizeNumber <= maxMB) {
+                    isInputValid = true
+                } else {
+                    isInputValid = false
+                }
+            }
+            else if (unit === 'kb') {
+                if (fileSizeNumber <= maxMB * 1000) {
+                    isInputValid = true
+                } else {
+                    isInputValid = false
+                }
+            }
+
+            // If input is not valid do not accept image and do nothing
+            console.log("Is Input File Valid:", isInputValid);
+            if (!isInputValid) {
+                if (fileMsgElement) {
+                    setFileMessage(errorTag, unacceptedMsg);
+                } else {
+                    setFileMessage(errorTag, acceptedMsg);
+                }
+
+                // show select image:
+                // $('#select-btn').show()
+            } else {
+                // console.log ("Image is acceptable");
+                var imageUrl = imageSrc;
+
+                /******************************************************    Converts image to base64String
+                ****************************************************/
+                let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
+                console.log("In the out");
+                console.log("Converted Image: ", base64StringImage);
+            }// else
+            // remove canvas after submit
+            removeCanvas(previewCanvasElement);
+            var image = this.state.image;
+
+            /*****************************/
+            // 11/27/2019: Reset image Name
+            /*******************************/
+            // image.imageName = "No File Chosen";
+            // this.setState({image: image});
+            // setBrowseLabel(event);
+            this.productImageClickHandler(event);
+        } // if file selected
+
+        console.log("SubmitImageHandler: file NOT selected");
+        // disable submit-btn
+        submitImageElement.disabled = true;
+    }// submit-Image on click
+
+    /***************************************************/
+
+    // submitImageHandler = () => {submitImageHandler};
     async setStateVariables(access_token, refresh_token, expiration, email, message) {
         /************************************************
          * SET State VARIABLES FROM LocalStorage
@@ -86,11 +233,15 @@ class ProductInsertContainer extends Component {
              * Pass item info from click button
              * *****************************************/
             const { name, value } = this.props.location.state;
+            var image = this.state.image;
+            image.imageName = "Choose File";
             this.setState({
                 // productId: product_id,
                 placeholderName: name,
                 placeholderValue: `$ ${value}`,
-                productImage: "Choose File",
+                //11/27/2019
+                // productImageName: "Choose File",
+                image: image
             });
         }
     }
@@ -156,8 +307,9 @@ class ProductInsertContainer extends Component {
     }
 
     async insertClickHandler(event) {
+        event.preventDefault();
         try {
-            event.preventDefault();
+            
             let name = this.state.productName;
             let value = this.state.productValue;
 
@@ -262,64 +414,98 @@ class ProductInsertContainer extends Component {
             this.setState({ message: "User is logged out" });
         }
     }
-    productImageClickHandler(event) {
-        try {
-            event.preventDefault();
-            // console.log("imgLabelContent:", JSON.stringify(localProp));
-            // let {imgLabelContent} = localProp;
-            console.log("IMG Select EVENT INFO", event.target);
-            const element = event.target;
-            const imgInputInfo = element.files[0];
-            const fileName = element.files[0].name.toString();
 
-            /*********************************/
-            const labelElement = element.labels[0];
-            let labelValue = labelElement.textContent;
-            // let labelValue = labelElement.textContent;
-            console.log("labelElement:", labelElement);
-            console.log("LabelValue:", labelValue);
-            console.log("FILENAME:", fileName);
-            /*********************************/
-
-            this.setState({
-                productImage: fileName
+    // Handles changing input text when an image is clicked
+    // productImageClickHandler(event){
+    productImageClickHandler(event, element = document.getElementById("image-input")) {
+        event.preventDefault();
+        // const element = event.target;
+        const labelElement = element.labels[0];
+        let labelValue = labelElement.textContent;
+        const imgInputInfo = element.files[0];
+        // Upload Image has not target, so set the labelValue to choose file
+        if (!event.target) {
+            var image = this.state.image;
+                image.imageName = "No File Chosen";
+                console.log("ELSE: IMAGENAME:", image.imageName);
+                this.setState({
+                    image: image
                 });
-            console.log("ProductImage:", this.state.productImage);
-            
-
-            // console.log("LABELS:", element.labels);
-
-            // console.log("imgLabelContent2-2:", imgLabelContent2);
-            // console.log("imglabelInnerHTML-2:", imglabelInnerHTML);
-            // element.htmlFor = fileName;;
-
-           
-            // console.log("event.target:", event.target);
-
-
-        } catch (err) {
-            console.log("SELECT IMG ERR", err);
+                labelValue = this.state.image.imageName;
+                console.log("LabelElement:", labelElement);
+                console.log("LabelValue:", labelValue);
+                // console.log("FILENAME:", fileName);
+                return;
         }
+        // Alternative upload button
+        if (imgInputInfo) {
+            // try {
+                /*********************************/              
+                console.log("IMG Select EVENT INFO", event.target);
+                const fileName = element.files[0].name.toString();
+                
+                // let labelValue = labelElement.textContent;
+                
+                console.log("LabelValue:", labelValue);
+                console.log("FILENAME:", fileName);
+                
+                // 11/27/2019
+                var image = this.state.image;
+                image.imageName = fileName;
+                console.log("IF: IMAGENAME:", image.imageName);
+                this.setState({
+                    // productImageName: fileName
+                    image: image
+                });
+                // console.log("ProductImageName:", this.state.productImageName);
+                console.log("ProductImageName:", this.state.image.imageName);
+                labelValue = this.state.image.imageName;
+                console.log("labelElement:", labelElement);
+                console.log("labelValue:", labelValue);
+                /*********************************/ 
+            // } catch (err) {
+            //     console.log("SELECT IMG ERR", err);
+            // }
+        }
+        else {          
+            var image = this.state.image;
+                image.imageName = "No File Chosen";
+                console.log("ELSE: IMAGENAME:", image.imageName);
+                this.setState({
+                    // productImageName: fileName
+                    image: image
+                });
+                labelValue = this.state.imageName;
+        }        
     }
-
+    message = () => {
+        console.log("Message method called");
+    }
     render() {
         let { imgLabelContent } = this.state;
-        return (
-            <React.Fragment>
-                <ProductInsertInputs
-                    changeHandler={this.changeHandler}
-                    insertClickHandler={this.insertClickHandler}
-                    productImageClickHandler={this.productImageClickHandler}
-                    // imgLabelContent = {imgLabelContent}
-                    productImage = {this.state.productImage}
-                    productName={this.state.productName}
-                    productValue={this.state.productValue}
-                    placeholderName={this.state.placeholderName}
-                    placeholderValue={this.state.placeholderValue}
-                    message={this.state.message}
-                />
-            </React.Fragment>
-        )
+        if (this.state.image) {
+            return (
+
+                <React.Fragment>
+                    <ProductInsertInputs
+                        changeHandler={this.changeHandler}
+                        insertClickHandler={this.insertClickHandler}
+                        productImageClickHandler={this.productImageClickHandler}
+                        // imgLabelContent = {imgLabelContent}
+                        // productImageName={this.state.productImageName}
+                        productImageName={this.state.image.imageName}
+                        productName={this.state.productName}
+                        productValue={this.state.productValue}
+                        placeholderName={this.state.placeholderName}
+                        placeholderValue={this.state.placeholderValue}
+                        message={this.state.message}
+                        //Image props for image/Upload component
+                        image={this.state.image}
+                        submitImageHandler={this.submitImageHandler}
+                    />
+                </React.Fragment>
+            )
+        }
     }
 } // class
 

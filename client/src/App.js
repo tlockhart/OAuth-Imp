@@ -16,7 +16,7 @@ import HomeContainer from './pages/HomeContainer';
 import ProductsListContainer from './pages/ProductsListContainer';
 import ProductViewContainer from './pages/ProductViewContainer';
 import ProductUpdateContainer from './pages/ProductUpdateContainer';
-import ProductInsertContainer from './pages/ProductInsertContainer';
+import ProductInsertContainer from './pages/ProductInsertContainer/';
 import RegistrationContainer from './pages/RegistrationContainer';
 import LoginContainer from './pages/LoginContainer';
 

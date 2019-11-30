@@ -1,3 +1,38 @@
+/* Leave enough space fro sticky footer in the root */
+html,
+
+body {
+
+height: 100%;
+
+position: relative;
+
+}
+
+
+#root {
+
+min-height: 100%;
+
+display: block;
+
+position: relative;
+
+/* padding-bottom: 56px;  */
+padding-bottom: 124px; 
+
+}
+
+footer {
+
+position: absolute;
+
+bottom: 0;
+
+width: 100%;
+
+}
+
 .App {
   text-align: center;
 }
