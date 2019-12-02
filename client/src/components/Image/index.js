@@ -24,9 +24,12 @@ export class Uploader extends Component {
     var image = this.state.image;
     // update props
     image[key] = value;
+    // PROBLEM
+    /*******************/
     console.log("image: ", image);
+    /*******************/
     // Update state with new value
-    this.setState({image: image});
+    this.setState({ image: image });
     console.log("Key:", [key]);
     console.log("Value:", value);
     console.log(`Image ${key}:`, this.state.image[key]);
@@ -36,38 +39,29 @@ export class Uploader extends Component {
     // disable submit-image button
     let submitImageElement = document.getElementById('submit-image');
     submitImageElement.disable = true;
+
     this.setProp("submitImageElement", submitImageElement);
-
-
-    // this.fileMsgElement = document.getElementById(this.errorTag)
-    // const fileMsgElement = document.getElementById(this.errorTag);
     this.setProp("fileMsgElement", document.getElementById(this.errorTag));
-
-    // this.previewCanvasElement = document.querySelector('.preview');
-    // const previewCanvasElement = document.querySelector('.preview');
     this.setProp("previewCanvasElement", document.querySelector('.preview'));
 
     console.log("ImageUploaderStateMounted", this.state.image.imageMin);
 
     // Why is the image props not prining?
     console.log("ImageUploaderState", this.state.image.fileTypes);
-
-    // COMPONENTS:
-    // this.previewCanvasElement = previewCanvas;
-    // this.fileMsgElement = fileMsg;
-    // this.submitImageElement = submitImage;
-
   }
 
   //  Select an image
   selectImage = async (event) => {
     event.preventDefault();
 
-    // Set reference to #image-input div
-    // this.image.input = getFileInfo();
-    this.setProp("input", getFileInfo());
+    //Handle image name display;
+    /*******************************************/
+    await this.props.productImageClickHandler(event, document.getElementById(this.state.image.submitBtnId));
+    /*******************************************/
 
-    // this.image.file = this.image.input.files[0];
+    // Set reference to #image-input div
+    this.setProp("input", getFileInfo(this.state.image.submitBtnId));
+
     this.setProp("file", this.state.image.input.files[0]);
 
     var _URL = window.URL || window.webkitURL;
@@ -96,7 +90,6 @@ export class Uploader extends Component {
         removeItem('ol', this.state.image.previewCanvasElement);
         var areDimensionsValid = checkImageDimensions(this.state.image.imageWidth, this.state.image.imageMin, this.state.image.imageHeight, this.state.image.imageMax, this.state.image.submitImageElement);
 
-        // this.image.imageSize = setFileSize(areDimensionsValid, this.state.image.errorTag, this.state.image.acceptedMsg, this.state.image.unacceptedMsg, this.state.image.imageName, this.state.image.imageSize, this.state.image.input.files, this.state.previewCanvasElement, this.state.image.imageWidth, this.state.image.imageHeight);
         this.setProp("imageSize", setFileSize(areDimensionsValid, this.state.image.errorTag, this.state.image.acceptedMsg, this.state.image.unacceptedMsg, this.state.image.imageName, this.state.image.imageSize, this.state.image.input.files, this.state.image.previewCanvasElement, this.state.image.imageWidth, this.state.image.imageHeight));
 
         // Create Canvas and load image
@@ -126,61 +119,66 @@ export class Uploader extends Component {
       <React.Fragment>
         <div className="container">
           <div className="row">
-            {/* <div className="image-input-wrapper col-lg-4"> */}
-            <div className="image-input-wrapper">
-              {/* IMAGE INPUT LABEL */}
-              <label
-                className="btn btn-info upload-btn"
-                id="select-btn"
-                htmlFor="image-input">Select image (PNG, JPG)</label>
-              <ol>
-                <b>Requirements:</b> <br></br>
-                <li><b>Filesize:</b> &#60; {imageMaxMB}MB</li>
-                <li><b>Dimensions: </b></li>
-                Min: {this.state.imageMin}, Max: {imageMax}
-              </ol>
-
-              {/* THESE ARE THE BUTTONS */}
-              {/* Choose file image-input Button */}
-              <input
-                type="file"
-                className="standard-file-input"
-                id="image-input"
-                name="image-input"
-                // name = {this.props.imageName}
-                accept=".png, .jpeg, .jpg"
-                onChange={
-                  (event) => {
-                    this.selectImage(event)
+            <div className="col-4">
+              {/*************TEST ELEMENT******************/}
+              {/* MDB REACT COMPONENT: BROWSE IMAGE BUTTON*/}
+              <div className="custom-file">
+                <input
+                  type="file"
+                  className="custom-file-input"
+                  id="inputGroupFile01"
+                  aria-describedby="inputGroupFileAddon01"
+                  name="this.props.image.imageName"
+                  accept=".png, .jpeg, .jpg"
+                  onChange={
+                    (event) => {
+                      this.selectImage(event)
+                    }
                   }
-                }
-              />
-               {/* <label className="standard-file-label" id="img-select-label" htmlFor="image-input">
-                            {this.props.imageName}
-                        </label> */}
-              {/* UPLOAD IDENTITY BUTTON */}
-              <button
-                className="btn btn-info"
-
-                // disabled="disabled"
-                id="submit-image"
-                type="submit"
-                onClick={(event)=>this.props.submitImageHandler(event,image)}
-              >Upload Image</button>
-            </div>
-
-            {/* **************************Image Display */}
-            {/* <div className="col-lg-4 name-container kb-box"> */}
-            <div className="name-container">
-              <div className="preview">
-                <h4>Image Preview</h4>
-                {/* <p id="error">No file currently selected for upload</p> */}
-                <p id="file-msg">No file currently selected for upload</p>
+                />
+                <label
+                  className="custom-file-label"
+                  id="img-select-label"
+                  htmlFor="inputGroupFile01">
+                  {this.props.image.imageName}
+                </label>
               </div>
-            </div>
-            <br></br>
-          </div>
-        </div>
+              {/********************************/}
+              <div className="image-input-wrapper">
+                {/* SELECT IMAGE (PNG,JPG) LABEL*/}
+                <label
+                  // className="btn btn-info upload-btn"
+                  className="upload-btn"
+                  id="select-btn"
+                  htmlFor="image-input">Select image (PNG, JPG)</label>
+                <ol>
+                  <b>Requirements:</b> <br></br>
+                  <li><b>Filesize:</b> &#60; {imageMaxMB}MB</li>
+                  <li><b>Dimensions: </b></li>
+                  Min: {this.state.imageMin}, Max: {imageMax}
+                </ol>
+                {/* UPLOAD IMAGE BUTTON */}
+                <button
+                  className="btn btn-info"
+                  id="submit-image"
+                  type="submit"
+                  onClick={(event) => this.props.submitImageHandler(event, image)}
+                >Upload Image</button>
+              </div>
+            </div> {/* <!--Column-4--> */}
+
+            <div className="col-4">
+              {/* *******IMAGE PREVIEW CAVAS*********/}
+              <div className="name-container">
+                <div className="preview">
+                  <h4>Image Preview</h4>
+                  <p id="file-msg">No file currently selected for upload</p>
+                </div>
+              </div>
+            </div>{/* <!--col-4> */}
+
+          </div> {/* <!--row--> */}
+        </div> {/* <!--container--> */}
       </React.Fragment>
     )
   }

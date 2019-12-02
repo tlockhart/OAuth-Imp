@@ -34,6 +34,64 @@ exports.products_get_all = (req, res, next) => {
         });
 };
 
+exports.products_insert_product = (req, res, next) => {
+    // console.log("In products_insert_product");
+    // console.log(`**name:${req.body.name}, value: ${req.body.value}`);
+
+    let insertProps = {};
+
+    for (let key of req.body) {
+        // validate that data has been supplied
+        if (key.value) {
+            insertProps[key.propName] = key.value;
+        }
+    }
+    console.log("insertProps:", insertProps);
+    // req.file is availabe with upload
+    // console.log(req.file);
+    // let path = req.file.path.split('\\');
+    // console.log("Path:", path[1]);
+    // create a new product document, to be sent in the request
+    const product = new Product({
+
+        // Create a unique ID
+        _id: new mongoose.Types.ObjectId(),
+        name: insertProps.name,
+        value: insertProps.value,
+        // name: req.body.name,
+        // value: req.body.value,
+        // productImage: 'uploads/' + path[1]
+    });
+
+    // Save the document to the Product Mongodb:
+    product
+        .save()
+        .then(result => {
+            // console.log(result);
+            res.status(201).json({
+                message: 'Created product successfully',
+                createdProduct: {
+                    name: result.name,
+                    value: result.value,
+                    _id: result._id,
+                    request: {
+                        type: 'GET',
+                        url: 'http://localhost:3000/products/'
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({
+                error: error
+            });
+        });
+}; // product_insert_product.
+
+
+
+
 exports.products_create_product = (req, res, next) => {
     // req.file is availabe with upload
     console.log(req.file);

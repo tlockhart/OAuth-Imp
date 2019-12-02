@@ -43,6 +43,7 @@ class ProductInsertContainer extends Component {
                 previewCanvas: null,
                 fileMsg: null,
                 submitImage: null,
+                submitBtnId: "inputGroupFile01",
                 fileTypes: [
                     'image/jpeg',
                     'image/jpg',
@@ -69,7 +70,7 @@ class ProductInsertContainer extends Component {
 
 
         this.changeHandler = this.changeHandler.bind(this);
-        // this.insertClickHandler = this.insertClickHandler.bind(this);
+        this.insertClickHandler = this.insertClickHandler.bind(this);
         this.productImageClickHandler = this.productImageClickHandler.bind(this);
         this.submitImageHandler = this.submitImageHandler.bind(this);
 
@@ -101,7 +102,9 @@ class ProductInsertContainer extends Component {
             imageSrc } = img;
 
         // set img props
-        this.setState({ image: img });
+        this.setState({ 
+            image: img 
+        });
         // if file selected
         if (isFileSelected(input)) {
             console.log("ActionHelper file selected");
@@ -411,14 +414,22 @@ class ProductInsertContainer extends Component {
         } // try
         catch (err) {
             console.log("User is logged out");
-            this.setState({ message: "User is logged out" });
+            this.setState({ 
+                message: "User is logged out" 
+            });
         }
     }
 
     // Handles changing input text when an image is clicked
     // productImageClickHandler(event){
-    productImageClickHandler(event, element = document.getElementById("image-input")) {
+    productImageClickHandler(event, element = document.getElementById(this.state.image.submitBtnId)) {
         event.preventDefault();
+
+        // Display image
+        /**********************/
+        // this.selectImage(event);
+        /**********************/
+
         // const element = event.target;
         const labelElement = element.labels[0];
         let labelValue = labelElement.textContent;

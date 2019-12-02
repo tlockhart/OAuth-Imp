@@ -38,14 +38,17 @@ export let updateProduct = async (url, authToken, refreshToken, expiration = nul
 // Define Call to Server Side utils to post body to the backend server:
 export let insertProduct = async (url, authToken, refreshToken, expiration = null, name, value) => {
     console.log('IN INSERT PRODUCT CALL');
-    let insertResponse = await API.updateProduct(url, authToken, refreshToken, name, value);
+    let insertResponse = await 
+    //12/01/2019:
+    // API.updateProduct(url, authToken, refreshToken, name, value);
+    API.insertProduct(url, authToken, refreshToken, name, value);
 
     // Return results to the calling program
     return insertResponse;
 };
 
 // Delete an item from the db
-export let performDBAction = async (productId, refresh_token, authToken, expired, name = null, value = null, url, cb) => {
+export let performDBAction = async (productId = '', refresh_token, authToken, expired, name = null, value = null, url, cb) => {
     console.log("IN IF");
     console.log('ProductUpdateContainer:refresh_token = ', refresh_token);
 

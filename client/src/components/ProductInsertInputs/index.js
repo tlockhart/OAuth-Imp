@@ -14,9 +14,8 @@ let ProductInsertForm = (props) => {
                 <div className="container-fluid">
                     <h1 className="mt-5">Product Insert Form</h1>
                     <br />
-                    {/* email */}
                     <div className="product-name-value-form-group">
-                        {/* email */}
+                        {/* Product Name */}
                         <label htmlFor="formGroupExampleInput" />
                         <input
                             type="text"
@@ -27,9 +26,7 @@ let ProductInsertForm = (props) => {
                             value={props.productName}
                             onChange={props.changeHandler}
                         />
-                        {/* <h2>{props.email}</h2> */}
-
-                        {/* password */}
+                        {/* Product Value */}
                         <label htmlFor="formGroupExampleInput" />
                         <input
                             type="text"
@@ -40,45 +37,16 @@ let ProductInsertForm = (props) => {
                             value={props.productValue}
                             onChange={props.changeHandler}
                         />
-                        {/************Currently Used: SUBMIT PRODUCT/VALUE UPLOAD ************** /}
-                    {/* insert button */}
+                        {/******SUBMIT BUTTON: PRODUCT/VALUE UPLOAD*********/}
                         <label htmlFor="formGroupExampleInput" />
                         <MDBBtn color="blue-grey" onClick={props.insertClickHandler}>Submit</MDBBtn>
                         <h3 className="mt-5">{props.message ? props.message : ''}</h3>
-                        {/* {/*****************************image end ************** /} */}
                     </div>
-                    {/*************TEST ELEMENT******************/}
-                    {/* MDB REACT COMPONENT: BROWSE IMAGE BUTTON*/}
-                    <div className="custom-file">
-                        <input
-                            type="file"
-                            className="custom-file-input"
-                            id="inputGroupFile01"
-                            aria-describedby="inputGroupFileAddon01"
-                            name="props.productImage"
-                            // ref={node => this.productImage = node}
-                            onChange={
-                                (event) => {
-                                    props.productImageClickHandler(event, document.getElementById("inputGroupFile01"))
-                                }
-                            }
-                        />
-                        <label 
-                            className="custom-file-label" 
-                            id="img-select-label" 
-                            htmlFor="inputGroupFile01">
-                            {props.productImageName}
-                        </label>
-                        {/* <br></br> */}
-                    </div>
-                    
-                    {/********************************/}
-
                     {/*************Currently Used: Image Upload **************/}
                     {/* SUPERHERO API IMAGE UPLOAD */}
                     <div role="main" className="product-image-form-group">
                     <br></br>
-                        <Uploader imageName={props.productImageName} image={props.image} submitImageHandler={props.submitImageHandler} />
+                        <Uploader image={props.image} submitImageHandler={props.submitImageHandler} productImageClickHandler = {props.productImageClickHandler}/>
                     </div>
                     {/*****************************image end ***************/}  
                 </div>

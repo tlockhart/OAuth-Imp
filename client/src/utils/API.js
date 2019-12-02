@@ -35,7 +35,7 @@ export default {
          ************************************************************/
         return post;
     },
-    // products list
+    // products list GET
     getProducts: async (baseURL) => {
         if (baseURL) {
             console.log("In API.getProducts", baseURL);
@@ -144,6 +144,42 @@ export default {
              * Send the results back to the calling program
              ************************************************************/
             return patch;
+        }
+    },
+    // /:productId
+    insertProduct: async (baseURL, authToken, refreshToken, name, value) => {
+        if (baseURL) {
+            console.log("in API.insertProduct, baseURL:", baseURL);
+            console.log('authToken:', authToken);
+            console.log('refreshToken', refreshToken);
+            console.log('name', name, 'value', value);
+
+            const data =
+                [
+                    {
+                        'propName': 'name',
+                        'value': name
+                    },
+                    {
+                        'propName': 'value',
+                        'value': value
+                    }
+                ];
+            /*************************************************************
+             *  package and send the body to the endpoint
+             ************************************************************/
+            const insert = await axios.post(baseURL, data, {
+                headers:
+                {
+                    Authorization: authToken,
+                    'Content-Type': 'application/json',
+                    'refreshtoken': refreshToken
+                }
+            });
+            /*************************************************************
+             * Send the results back to the calling program
+             ************************************************************/
+            return insert;
         }
     },
 }; 

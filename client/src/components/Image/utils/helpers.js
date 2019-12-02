@@ -135,8 +135,8 @@ exports.imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag
   console.log("in imgONERROR")
 }; // oneerror
 
-exports.getFileInfo = () => {
-  let input = document.querySelector('#image-input');
+exports.getFileInfo = (elementId) => {
+  let input = document.querySelector(`#${elementId}`);
   // console.log("getFileInfo: File Information", input.files[0]);
   // console.log("FIle:", input.files[0]);
   return input;
