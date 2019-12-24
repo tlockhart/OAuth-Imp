@@ -19,9 +19,9 @@ const port = process.env.PORT || 3001;
 // // Start server listening on port
 // server.listen(port);
 // console.log(`server listening at http://localhost:${port}`);
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static('client/build'));
-}
+// if (process.env.NODE_ENV === 'production') {
+// 	app.use(express.static('client/build'));
+// }
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "./client/build/index.html"));
