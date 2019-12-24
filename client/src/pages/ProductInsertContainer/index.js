@@ -6,7 +6,7 @@ import dataStore from '../../utils/dataStore';
 import ProductInsertForm from "../../components/ProductInsertForm";
 import credentialStore from '../../utils/credentialStore';
 import { insertProduct, performDBAction } from '../../utils/productStore';
-import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpers';
+import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpersa';
 
 class ProductInsertContainer extends Component {
     constructor(props) {
