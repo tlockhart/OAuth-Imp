@@ -36,7 +36,7 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/user');
 
-//Connect to MongoDB
+//Connect to MongoDB1
 mongoose.connect(
     // 'mongodb+srv:'+'//'+
     //  process.env.MONGO_ATLAS_ID + ':' + process.env.MONGO_ATLAS_PW +
