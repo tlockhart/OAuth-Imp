@@ -1,3 +1,5 @@
+const path = require('path');
+
 // import dotenv
 require("dotenv").config();
 
