@@ -8,11 +8,8 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
-// const routes = require("./routes");
-// Import product routes.  
-const productRoutes = require('./api/routes/products');
-const orderRoutes = require('./api/routes/orders');
-const userRoutes = require('./api/routes/user');
+const routes = require("./api/routes");
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -22,10 +19,7 @@ const port = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Addroutes, both api and view
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
-app.use('/user', userRoutes);
+
 
 // catch errors:
 // app.use((req, res, next) => {
@@ -46,7 +40,7 @@ app.use('/user', userRoutes);
 
 // Add routes, both API and view
 // ************************************************
-// app.use(routes);
+app.use(routes);
 
 //Connect to MongoDB
 // ************************************************
