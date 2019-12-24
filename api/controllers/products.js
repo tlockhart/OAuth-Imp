@@ -37,20 +37,22 @@ exports.products_get_all = (req, res, next) => {
 exports.products_insert_product = (req, res, next) => {
     // console.log("In products_insert_product");
     // console.log(`**name:${req.body.name}, value: ${req.body.value}`);
+    // console.log("Controller: REQFILE: ", req.file);
+    // console.log("Controller: REQFILE1: ", req.files['productImage'][0]);
 
     let insertProps = {};
 
+    // Populate Properties to insert:
     for (let key of req.body) {
         // validate that data has been supplied
         if (key.value) {
             insertProps[key.propName] = key.value;
+            // console.log("PRODUCTS: KEY/VALUE:", key.propName, " = ", key.value);
         }
     }
-    console.log("insertProps:", insertProps);
-    // req.file is availabe with upload
-    // console.log(req.file);
-    // let path = req.file.path.split('\\');
-    // console.log("Path:", path[1]);
+    // console.log("insertProps:", insertProps);
+ 
+
     // create a new product document, to be sent in the request
     const product = new Product({
 
@@ -58,6 +60,9 @@ exports.products_insert_product = (req, res, next) => {
         _id: new mongoose.Types.ObjectId(),
         name: insertProps.name,
         value: insertProps.value,
+        productImage: insertProps.productImage,
+        // image: insertProps.productImage,
+        // url: 
         // name: req.body.name,
         // value: req.body.value,
         // productImage: 'uploads/' + path[1]
@@ -68,6 +73,7 @@ exports.products_insert_product = (req, res, next) => {
         .save()
         .then(result => {
             // console.log(result);
+            console.log("in controller result:", result);
             res.status(201).json({
                 message: 'Created product successfully',
                 createdProduct: {

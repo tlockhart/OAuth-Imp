@@ -147,12 +147,15 @@ export default {
         }
     },
     // /:productId
-    insertProduct: async (baseURL, authToken, refreshToken, name, value) => {
+    insertProduct: async (baseURL, authToken, refreshToken, name, value, image) => {
+    // insertProduct: async (baseURL, authToken, refreshToken, name, value, imageUrl, imageFile, imageSrc) => {
+        var base64Image = image.base64Str;
         if (baseURL) {
-            console.log("in API.insertProduct, baseURL:", baseURL);
+            // console.log("in API.insertProduct, baseURL:", baseURL);
+            // console.log("API: INSERT TOKEN: INSERT PRODUCT IMAGE:", "*", imageUrl, "*");
             console.log('authToken:', authToken);
             console.log('refreshToken', refreshToken);
-            console.log('name', name, 'value', value);
+            // console.log("API: INSERT TOKEN:", 'name:', name, ',value:', value,'base64', image.base64Str);
 
             const data =
                 [
@@ -163,6 +166,10 @@ export default {
                     {
                         'propName': 'value',
                         'value': value
+                    },
+                    {
+                        'propName': 'productImage',
+                        'value': base64Image
                     }
                 ];
             /*************************************************************

@@ -1,19 +1,12 @@
 import React, { Component } from "react";
-
-// Import Server-Side Utilities:
-// import API from '../utils/API';
-
 // Import module to get/set variables from/in the LocalStorage
 import dataStore from '../../utils/dataStore';
 
 // Import Components
-import ProductInsertInputs from "../../components/ProductInsertInputs";
+import ProductInsertForm from "../../components/ProductInsertForm";
 import credentialStore from '../../utils/credentialStore';
 import { insertProduct, performDBAction } from '../../utils/productStore';
-import { submitImageHandler } from "./utils/actionHelpers";
-import { setFileMessage, removeCanvas, isFileSelected,  convertImageFromUrlToBase64String } from './utils/imageHelpers';
-
-const moment = require('moment');
+import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpers';
 
 class ProductInsertContainer extends Component {
     constructor(props) {
@@ -24,6 +17,7 @@ class ProductInsertContainer extends Component {
             productId: '',
             productName: '',
             productValue: '',
+            productImage: '',
             placeholderName: '',
             placeholderValue: '',
             authToken: '',
@@ -38,12 +32,14 @@ class ProductInsertContainer extends Component {
 
             // Image imputs for Image Uploader component
             image: {
-                input: null,
-                file: null,
-                previewCanvas: null,
-                fileMsg: null,
-                submitImage: null,
-                submitBtnId: "inputGroupFile01",
+                base64Str: '',
+                input: '',
+                file: '',
+                previewCanvas: undefined,
+                productImage: undefined,
+                fileMsg: undefined,
+                submitImage: undefined,
+                submitBtnId: "image-input",
                 fileTypes: [
                     'image/jpeg',
                     'image/jpg',
@@ -63,27 +59,142 @@ class ProductInsertContainer extends Component {
                 acceptedMsg: 'File accepted.',
                 fileMsgElement: '',
                 previewCanvasElement: '',
-                submitImageElement: ''
+                submitImageElement: '',
+                name: "productImage",
+                className: "custom-file-input",
+                type: "file"
             }
+
         };
-
-
 
         this.changeHandler = this.changeHandler.bind(this);
         this.insertClickHandler = this.insertClickHandler.bind(this);
         this.productImageClickHandler = this.productImageClickHandler.bind(this);
         this.submitImageHandler = this.submitImageHandler.bind(this);
-
+        this.selectImage = this.selectImage.bind(this);
+        this.setImageProp = this.setImageProp.bind(this);
         this.message = this.message.bind(this);
     } // constructor
-    /*************************************** */
-    //set
-    // setBrowseLabel(event);
-    /****************************************** */
+
+    setElementRef() {
+        this.setImageProp("fileMsgElement", document.getElementById(this.errorTag));
+
+        console.log("ImageUploaderStateMounted", this.state.image.imageMin);
+
+        // Why is the image props not prining?
+        console.log("ImageUploaderState", this.state.image.fileTypes);
+    }
+
+    //  Select an image
+    /*********** */
+    async selectImage(event, imageSelectRef, previewCanvasRef) {
+        event.preventDefault();
+
+        console.log("SELECTIMAGE imageSelectRef:", imageSelectRef.current, "previewCanvasRef:", previewCanvasRef.current);
+
+        // Get Reference to the canvas
+        let previewCanvasElement = previewCanvasRef.current;
+        let inputElement = imageSelectRef.current;
+
+        this.setImageProp("previewCanvasElement", previewCanvasElement);
+        this.setImageProp("input", inputElement);
+
+        // 12/12: Create copy of image props
+        let image = this.state.image;
+        console.log("In Contanier: imagebtn:", image.submitBtnId, "file:", image.input, "file2", image.file);
+
+        // 12/12: Handle image name display;
+        /*******************************************/
+        await this.productImageClickHandler(event);
+        /*******************************************/
+
+        //12/12: copy image.input  to state.image
+        this.setState({ image: image });
+
+        // this.setImageProp("input", image.file);
+        console.log("FILE INPUT: ", this.state.image.input);
+
+        this.setImageProp("file", this.state.image.file);
+
+        // var _URL = window.URL || window.webkitURL;
+
+        let img;
+
+        if (isFileSelected(image.input) && isFileTypeValid(image.file, image.fileTypes)) {
+            // this.setImageProp("file", image.input.files[0]); 
+            var blob = image.input.files[0];
+
+            // save image back to prop
+
+            img = new Image();
+            try {
+                const result = await loadImage(img, blob);
+                console.log("RESULT", result);
+
+                // Set variables
+                img.src = result.imageSrc;
+                this.setImageProp("imageSrc", result.imageSrc);
+                this.setImageProp("imageWidth", result.imageWidth);
+                this.setImageProp("imageHeight", result.imageHeight);
+                this.setImageProp("imageSize", result.imageSize);
+                this.setImageProp("imageName", result.imageName);
+
+                console.log("DISPLAYIMAGE PREVIEW CANVAS:", image.previewCanvasElement, "*", "state:", this.state.image.previewCanvasElement);
+
+                // remove OL tag
+                removeItem('ol', image.previewCanvasElement);
+                var areDimensionsValid = checkImageDimensions(image.imageWidth, image.imageMin, image.imageHeight, image.imageMax, image.submitImageElement);
+
+                this.setImageProp("imageSize", setFileSize(areDimensionsValid, image.errorTag, image.acceptedMsg, image.unacceptedMsg, image.imageName, image.imageSize, image.input.files, image.previewCanvasElement, image.imageWidth, image.imageHeight));
+
+                // Create Canvas and load image
+                displayImage(img, areDimensionsValid, image.previewCanvasElement);
+
+                //12/12/09: set new image prop values
+                this.setState({ image });
+            }
+            catch (err) {
+                console.log("failure ", err);
+                imgOnError(image.previewCanvasElement, image.imageWidth, image.imageMax, image.imageHeight, image.errorTag, image.invalidMsg);
+            }
+            console.log("IMAGE NAME", this.imageName);
+        }// if
+        else {
+            // if(image.previewCanvasElement) {
+            removeCanvas(image.previewCanvasElement);
+            setFileMessage(image.errorTag, image.unacceptedMsg);
+            // }
+        }
+    }
+    /*********** */
+    setImageProp(key, value) {
+        // copy current state
+        // var image = this.state.image;
+
+        // 12/12/09: Make a copy of props
+        var image = this.state.image;
+        console.log("setImageProp", image, "Key", key, "Value", value);
+        // update props
+        image[key] = value;
+        // PROBLEM
+        /*******************/
+        console.log("image: ", image);
+        /*******************/
+        // 12/12/09: Update state with new value
+        this.setState({ image: image });
+
+        console.log("Key:", [key]);
+        console.log("Value:", value);
+        console.log(`Image ${key}:`, this.state.image[key]);
+    }
     async submitImageHandler(event, img) {
         // Don't refresh the page!
         event.preventDefault();
-        
+        // event.persist();
+        console.log("IN SUBMITIMAGEHANDLER");
+
+        //local copy of image
+        let image;
         let {
             input,
             imageWidth,
@@ -98,12 +209,12 @@ class ProductInsertContainer extends Component {
             unacceptedMsg,
             fileMsgElement,
             previewCanvasElement,
-            submitImageElement,
             imageSrc } = img;
 
+
         // set img props
-        this.setState({ 
-            image: img 
+        this.setState({
+            image: img
         });
         // if file selected
         if (isFileSelected(input)) {
@@ -168,10 +279,17 @@ class ProductInsertContainer extends Component {
                 let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
                 console.log("In the out");
                 console.log("Converted Image: ", base64StringImage);
+                // copy image state to local variable
+                image = this.state.image;
+                // update base64Str
+                image.base64Str = base64StringImage;
+                // update image state variable
+                this.setState({ image });
+                console.log("IMAGE STATE UPDATED: ", this.state.image.base64Str);
             }// else
             // remove canvas after submit
             removeCanvas(previewCanvasElement);
-            var image = this.state.image;
+            // var image = this.state.image;
 
             /*****************************/
             // 11/27/2019: Reset image Name
@@ -179,12 +297,14 @@ class ProductInsertContainer extends Component {
             // image.imageName = "No File Chosen";
             // this.setState({image: image});
             // setBrowseLabel(event);
-            this.productImageClickHandler(event);
+            await this.productImageClickHandler(event);
         } // if file selected
 
         console.log("SubmitImageHandler: file NOT selected");
         // disable submit-btn
-        submitImageElement.disabled = true;
+
+        // 12/22/2019
+        // submitImageElement.disabled = true;
     }// submit-Image on click
 
     /***************************************************/
@@ -224,7 +344,7 @@ class ProductInsertContainer extends Component {
     }
 
     componentDidMount() {
-        // if (this.props.match.params.product_id && this.props.location.state) {
+        this.setElementRef();
         if (this.props.location.state) {
             /******************************************
              *  Get id off the URL Dynamic Segment
@@ -238,6 +358,7 @@ class ProductInsertContainer extends Component {
             const { name, value } = this.props.location.state;
             var image = this.state.image;
             image.imageName = "Choose File";
+            // image.imageName = "";
             this.setState({
                 // productId: product_id,
                 placeholderName: name,
@@ -272,16 +393,44 @@ class ProductInsertContainer extends Component {
     /************************************
     * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
     ************************************/
-    async stageDBAction(id, name, value, url, cb) {
+//    stageDBAction(null, name, value, image, this.baseURL, insertProduct);
+// this.stageDBAction(null, name, value, image, this.baseURL, insertProduct);
+    async stageDBAction(id, name, value, image, url, cb) {
+        // var image = imageRef;
+        console.log("STAGEDBACTION BASE64: ", image.base64Str);
         console.log("Start performDBAction");
+        // console.log("ProductInsertContainer: stageDBACTION: FILE", file);
 
         //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
-        let results = await performDBAction(id, this.state.refresh_token, this.state.authToken, this.state.hasTimeExpired, name, value, url, cb);
+        let results = await performDBAction(
+            id,
+            this.state.refresh_token,
+            this.state.authToken,
+            this.state.hasTimeExpired,
+            name,
+            value,
+            image,
+            url,
+            cb);
+        // let results = await performDBAction(
+        //     id,
+        //     this.state.refresh_token,
+        //     this.state.authToken,
+        //     this.state.hasTimeExpired,
+        //     name,
+        //     value,
+        //     image,
+        //     url,
+        //     file,
+        //     imageSrc,
+        //     cb);
+
+        console.log("PRODUCTINSERTCONTAINER performDBAction RESULTS:", results);
 
         /************************************
          * Set placeholder text if data was insertd
          ****************************************/
-        if (results.message = "Action Completed") {
+        if (results.message === "Action Completed") {
             if (name) {
                 this.setState({ placeholderName: name });
             }
@@ -311,10 +460,15 @@ class ProductInsertContainer extends Component {
 
     async insertClickHandler(event) {
         event.preventDefault();
+        console.log("PRODUCTINSERTCONTAINER: insertCLICKHANDLER CLICKED");
+        // console.log("INSERTCONTAINER - REQFILE: ", req.file);
+
         try {
-            
+
             let name = this.state.productName;
             let value = this.state.productValue;
+            // let image = this.state.image.image;
+            let image = this.state.image;
 
             /************************************************************************
              * Reset state variables representing view input after submit
@@ -325,29 +479,29 @@ class ProductInsertContainer extends Component {
             this.setState({ placeholderValue: '' });
 
             /************************************
-             * STEP1: Get Data out of local Storage
+             * STEP1 of 8: Get Data out of local Storage
              ************************************/
             let { access_token, refresh_token, expiration, email, message } = await dataStore.getLocalStorage();
             /*************************************/
 
             /******************************************
-             * STEP2: SET STATE VARIABLES With data returned from localStorage
+             * STEP2 of 8: SET STATE VARIABLES With data returned from localStorage
              *******************************/
             await this.setStateVariables(access_token, refresh_token, expiration, email, message);
 
             console.log("HasTIMEExpired", this.state.hasTimeExpired);
             /******************************************
-             * STEP3: Determine if Token Refresh is needed
+             * STEP3 of 8: Determine if Token Refresh is needed
              *******************************/
             if (this.state.hasTimeExpired) {
                 console.log("ProductInsertContainer refresh-token: ", this.state.refresh_token);
 
                 /***************************************
-                 * STEP3: RefreshTokens: If tokens have expired
+                 * STEP4 of 8: RefreshTokens: If tokens have expired
                  * **************************************/
                 try {
                     /*********************************
-                     * STEP4: Call credendentialStore to get refreshTokens and all other 
+                     * STEP5 of 8: Call credendentialStore to get refreshTokens and all other 
                      * credentials from the API, AND SET LOCAL STORAGE WITH RESULTS
                      *********************************/
                     let results = await credentialStore.get(this.state.refresh_token, this.refreshURL, this.state.authToken, this.state.email, this.state.hasTimeExpired);
@@ -357,7 +511,7 @@ class ProductInsertContainer extends Component {
                         console.log("NEW ACCESS TOKENS HAVE BEEN RECEIVED RESULTS:", results);
 
                         /*********************************************
-                         * STEP5: SET STATE VARIABLES RECEIVED FROM CREDENTIAL STORE
+                         * STEP6 of 8: SET STATE VARIABLES RECEIVED FROM CREDENTIAL STORE
                          ********************************************/
                         let { access_token,
                             refresh_token,
@@ -376,6 +530,8 @@ class ProductInsertContainer extends Component {
                     else {
                         console.log("I NEVER MADE IT TO IF");
                     }
+                    //12/08: 
+                    // this.refs.form.getDOMNode().dispatchEvent(new Event("submit"));
                 }
                 catch (err) {
                     // Clear all localStorage, due to invalid Refresh token
@@ -406,113 +562,134 @@ class ProductInsertContainer extends Component {
 
                 console.log('ProductInsertContainer:refresh_token = ', this.state.refresh_token);
 
+                /**************************************
+                * Step 7 of 8: ConvertImage to base64:
+                * *************************************/
+                // 12/22/2019: CONVERT IMAGE TO BASEURL
+                /**************************************/
+                await this.submitImageHandler(event, this.state.image);
+                console.log("base64 still here:", this.state.image.base64Str);
+
                 /***********************************************
-                 * Step6: PERFORM A DB ACTION IF TOKENS R VALID 
+                 * Step8 of 8: PERFORM A DB ACTION IF TOKENS R VALID 
                  **********************************************/
-                await this.stageDBAction(this.state.productId, name, value, this.baseURL, insertProduct);
+                // let file = this.state.image.file;
+                // let file = this.state.image.input.files[0];
+                // const imageSrc = this.state.image.imageSrc;
+                // console.log("*ProductInsertContainer: InsertClickHandler: FILE", file, "SOURCE", imageSrc);
+                // 12/15
+                // await this.stageDBAction(this.state.productId, name, value, image, '/products/product/update/', file, imageSrc, updateProduct);
+                // await this.stageDBAction(this.state.productId, name, value, image, this.baseURL, file, imageSrc, insertProduct);
+                await this.stageDBAction(this.state.productId, name, value, image, this.baseURL, insertProduct);
             } // if
+
         } // try
         catch (err) {
-            console.log("User is logged out");
-            this.setState({ 
-                message: "User is logged out" 
+            console.log(err, "User is logged out");
+            this.setState({
+                message: "User is logged out"
             });
         }
     }
 
     // Handles changing input text when an image is clicked
     // productImageClickHandler(event){
-    productImageClickHandler(event, element = document.getElementById(this.state.image.submitBtnId)) {
+    productImageClickHandler(event) {
         event.preventDefault();
+        let element = document.getElementById(this.state.image.submitBtnId)
 
         // Display image
         /**********************/
         // this.selectImage(event);
         /**********************/
 
+        // 12/12
+        let imageSelectorLabel = document.querySelector("#img-select-label")
+        console.log("QUERY SELECTOR", imageSelectorLabel.innerHTML);
+
         // const element = event.target;
-        const labelElement = element.labels[0];
+        console.log("Image Selector Element", element);
+        let labelElement = element.labels[0];
         let labelValue = labelElement.textContent;
         const imgInputInfo = element.files[0];
-        // Upload Image has not target, so set the labelValue to choose file
+        let image;
+
+        // Upload Image has NO target, so set the labelValue to choose file
         if (!event.target) {
-            var image = this.state.image;
-                image.imageName = "No File Chosen";
-                console.log("ELSE: IMAGENAME:", image.imageName);
-                this.setState({
-                    image: image
-                });
-                labelValue = this.state.image.imageName;
-                console.log("LabelElement:", labelElement);
-                console.log("LabelValue:", labelValue);
-                // console.log("FILENAME:", fileName);
-                return;
+            // 12/07: copy and update image
+            image = this.state.image;
+            // update imageName for no event
+            image.imageName = "No File Chosen";
+            console.log("ELSE: IMAGENAME:", image.imageName);
+            this.setState({
+                image: image
+            });
+            labelValue = this.state.image.imageName;
+            console.log("LabelElement:", labelElement);
+            console.log("LabelValue:", labelValue);
+            // console.log("ProductImageClickHandler: FILENAME:", fileName);
         }
-        // Alternative upload button
+        // If File selected, Set File and FileName
         if (imgInputInfo) {
-            // try {
-                /*********************************/              
-                console.log("IMG Select EVENT INFO", event.target);
-                const fileName = element.files[0].name.toString();
-                
-                // let labelValue = labelElement.textContent;
-                
-                console.log("LabelValue:", labelValue);
-                console.log("FILENAME:", fileName);
-                
-                // 11/27/2019
-                var image = this.state.image;
-                image.imageName = fileName;
-                console.log("IF: IMAGENAME:", image.imageName);
-                this.setState({
-                    // productImageName: fileName
-                    image: image
-                });
-                // console.log("ProductImageName:", this.state.productImageName);
-                console.log("ProductImageName:", this.state.image.imageName);
-                labelValue = this.state.image.imageName;
-                console.log("labelElement:", labelElement);
-                console.log("labelValue:", labelValue);
-                /*********************************/ 
-            // } catch (err) {
-            //     console.log("SELECT IMG ERR", err);
-            // }
+            console.log("IMG Select EVENT INFO", event.target);
+            const fileName = element.files[0].name.toString();
+
+            let labelValue = labelElement.textContent;
+            console.log("PRODUCTIMAGECLICKHANDLER:", element.baseURL);
+            console.log("LabelValue:", labelValue);
+            console.log("FILENAME:", fileName);
+
+            // 11/27/2019: copy and update image
+            image = this.state.image;
+            image.imageName = fileName;
+            console.log("IF: IMAGENAME:", image.imageName);
+
+            // 12/07/2019
+            image.file = imgInputInfo;
+            console.log("ProductImageClickHandler file:", this.state.image.file);
+            this.setState({
+                image: image
+            });
+            console.log("ProductImageClickHandler Image Path:", imgInputInfo);
+            console.log("ProductImageName:", this.state.image.imageName);
+            labelValue = this.state.image.imageName;
+            console.log("labelElement:", labelElement);
+            console.log("labelValue:", labelValue);
         }
-        else {          
-            var image = this.state.image;
-                image.imageName = "No File Chosen";
-                console.log("ELSE: IMAGENAME:", image.imageName);
-                this.setState({
-                    // productImageName: fileName
-                    image: image
-                });
-                labelValue = this.state.imageName;
-        }        
+        // If no file chosen go here
+        else {
+            image = this.state.image;
+            image.imageName = "No File Chosen";
+            console.log("ELSE: IMAGENAME:", image.imageName);
+            this.setImageProp(
+                image, image
+            );
+            labelValue = this.state.imageName;
+        }
     }
+
     message = () => {
         console.log("Message method called");
     }
     render() {
-        let { imgLabelContent } = this.state;
         if (this.state.image) {
             return (
 
                 <React.Fragment>
-                    <ProductInsertInputs
+                    <ProductInsertForm
                         changeHandler={this.changeHandler}
                         insertClickHandler={this.insertClickHandler}
-                        productImageClickHandler={this.productImageClickHandler}
-                        // imgLabelContent = {imgLabelContent}
-                        // productImageName={this.state.productImageName}
                         productImageName={this.state.image.imageName}
                         productName={this.state.productName}
                         productValue={this.state.productValue}
+                        productImage={this.state.productImage}
                         placeholderName={this.state.placeholderName}
                         placeholderValue={this.state.placeholderValue}
                         message={this.state.message}
-                        //Image props for image/Upload component
                         image={this.state.image}
                         submitImageHandler={this.submitImageHandler}
+                        selectImage={this.selectImage}
+                        setImageProp={this.setImageProp}
                     />
                 </React.Fragment>
             )

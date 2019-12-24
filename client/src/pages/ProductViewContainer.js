@@ -12,9 +12,9 @@ import ProductViewItem from "../components/ProductViewItem";
 
 
 class ProductViewContainer extends Component {
+    _productListComponents = [];
     constructor(props) {
         super(props);
-        let _productListComponents = [];
         this.state = {
             products: '',
         };

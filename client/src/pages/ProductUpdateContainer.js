@@ -1,17 +1,12 @@
 import React, { Component } from "react";
 
-// Import Server-Side Utilities:
-import API from '../utils/API';
-
 // Import module to get/set variables from/in the LocalStorage
 import dataStore from '../utils/dataStore';
 
 // Import Components
-import ProductUpdateInputs from "../components/ProductUpdateInputs";
+import ProductUpdateForm from "../components/ProductUpdateForm";
 import credentialStore from '../utils/credentialStore';
 import { updateProduct, performDBAction } from '../utils/productStore';
-
-const moment = require('moment');
 
 class ProductUpdateContainer extends Component {
     constructor(props) {
@@ -112,16 +107,30 @@ class ProductUpdateContainer extends Component {
     /************************************
     * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
     ************************************/
-    async stageDBAction(id, name, value, url, cb) {
+    async stageDBAction(
+        id, 
+        name, 
+        value, 
+        url, 
+        image = null, 
+        cb) {
         console.log("Start performDBAction");
-
-        //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
-        let results = await performDBAction(id, this.state.refresh_token, this.state.authToken, this.state.hasTimeExpired, name, value, url, cb);
+            //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
+        let results = await performDBAction(
+            id, 
+            this.state.refresh_token, 
+            this.state.authToken, 
+            this.state.hasTimeExpired, 
+            name,
+            value,
+            null,
+            url,
+            cb);
 
         /************************************
          * Set placeholder text if data was updated
          ****************************************/
-        if (results.message = "Action Completed") {
+        if (results.message === "Action Completed") {
             if (name) {
                 this.setState({ placeholderName: name });
             }
@@ -248,7 +257,15 @@ class ProductUpdateContainer extends Component {
                 /***********************************************
                  * Step6: PERFORM A DB ACTION IF TOKENS R VALID 
                  **********************************************/
-                await this.stageDBAction(this.state.productId, name, value, this.baseURL, updateProduct);
+                //id, name, value, url, file = null, imageSrc = null, cb
+                
+                await this.stageDBAction(
+                    this.state.productId, 
+                    name, 
+                    value, 
+                    this.baseURL, 
+                    null,  
+                    updateProduct);
             } // if
         } // try
         catch (err) {
@@ -260,7 +277,7 @@ class ProductUpdateContainer extends Component {
     render() {
         return (
             <React.Fragment>
-                <ProductUpdateInputs
+                <ProductUpdateForm
                     changeHandler={this.changeHandler}
                     updateClickHandler={this.updateClickHandler}
                     productName={this.state.productName}

@@ -10,13 +10,16 @@ let ProductListItem = (props) => {
   let value = props.value;
   let valueText = `$: ${value}`;
   let id = props.id;
-  // let key = props.key;
-  // console.log('in productLIst:', props);
+  let productImage = props.productImage;
+  let regex = /['"']+/g;
+  var formattedImage = productImage.replace(regex, '');
 
   return (
     <div className="container-fluid text-center" id={id}>
       <div className="row">
         <div className="col">
+          <br></br>
+          <img src={formattedImage} alt={`product ${id}`}/>
           <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
           <p>{valueText}<br /></p>
           <LinkActionBtn to={
@@ -41,8 +44,8 @@ let ProductListItem = (props) => {
             }
           }
             buttonName={"Update"} />
-            
-            <LinkActionBtn to={
+
+          <LinkActionBtn to={
             {
               pathname: `/product/insert`,
               state: {
@@ -53,9 +56,9 @@ let ProductListItem = (props) => {
           }
             buttonName={"Insert"} />
 
-          <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event =>props.filterClickHandler(event)} id={id}/>
+          <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
 
-          <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event=>props.deleteClickHandler(event)} id={id} />
+          <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)} id={id} />
           <hr />
         </div>
       </div>

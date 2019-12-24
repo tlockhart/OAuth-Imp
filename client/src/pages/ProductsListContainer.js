@@ -93,7 +93,14 @@ class ProductsListContainer extends Component {
 
         // Set productsList from response data
         let productItemArray = products.map((product) => {
-            return (<ProductListItem key={product._id} id={product._id} name={product.name} value={product.value} filterClickHandler={(event) => this.filterClickHandler(event)} deleteClickHandler={(event) => this.deleteClickHandler(event)} />)
+            return (
+            <ProductListItem 
+                key={product._id} 
+                id={product._id} 
+                name={product.name} 
+                value={product.value}
+                productImage = {product.productImage} 
+                filterClickHandler={(event) => this.filterClickHandler(event)} deleteClickHandler={(event) => this.deleteClickHandler(event)} />)
         });
 
         // Set products state property to array of ProductListItems
@@ -117,7 +124,7 @@ class ProductsListContainer extends Component {
         /******************************************
          *  10/02: ProductsLIst has nothing in it
          ****************************************/
-        console.log("productListData:Filter:", JSON.stringify(this.productListData));
+        // console.log("productListData:Filter:", JSON.stringify(this.productListData));
         // Using Setters and getters
         let filteredList = this.productListData.filter((product) => {
             console.log("PRODUCT ID: ", product._id);
@@ -132,17 +139,28 @@ class ProductsListContainer extends Component {
                 };
                 return data;
             }
+            return;
         });
         this.productListData = filteredList;
         console.log("FIltered LiST", this.productListData);
+        
     }
     /************************************
      * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
      ************************************/
+    //productId, this.deleteURL, deleteProduct
     async stageDBAction(id, url, cb) {
         console.log("Start performDBAction");
-
-        let results = await performDBAction(id, this.state.refresh_token, this.state.authToken, this.state.hasTimeExpired, null, null, url, cb);
+        let results = await performDBAction(
+            id, 
+            this.state.refresh_token, 
+            this.state.authToken, 
+            this.state.hasTimeExpired, 
+            null,
+            null,
+            null,
+            url,
+            cb);
 
         // console.log("RESULTS1: ", JSON.stringify(results));
         // console.log("RESULTS2: ", results);

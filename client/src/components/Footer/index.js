@@ -1,6 +1,6 @@
 import React from 'react';
 import './style.css';
-import { MDBCol, MDBContainer, MDBRow, MDBFooter } from "mdbreact";
+import { MDBContainer, MDBFooter } from "mdbreact";
 
 let Footer = () => {
     return (
