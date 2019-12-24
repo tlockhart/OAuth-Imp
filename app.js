@@ -55,7 +55,7 @@ mongoose.connect(
 app.use(morgan('dev'));
 
 // Make uploads folder publicly available:
-app.use('/uploads', express.static('uploads'));
+// app.use('/uploads', express.static('uploads'));
 
 // app.use(bodyParser.urlencoded({extended: false})); // parse simple body and url encoded data, not extended bodies with rich data
 // app.use(bodyParser.json()); // parse json data, and make it easily readable
