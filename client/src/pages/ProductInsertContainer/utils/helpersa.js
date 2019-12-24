@@ -91,7 +91,7 @@ export let checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, 
   // if dimensions valid
   if (imageWidth >= imageMin && imageWidth <= imageMax && imageHeight >= imageMin && imageHeight <= imageMax) {
     // document.getElementById('submit-image').disabled = false;
-    submitImageButton.disabled = false;
+    // submitImageButton.disabled = false;
     areDimensionsValid = true;
   }
   // dimensions not valid
