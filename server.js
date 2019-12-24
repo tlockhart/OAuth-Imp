@@ -6,18 +6,24 @@ require("dotenv").config();
 // import required modules
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require("./api/routes");
-
 const app = express();
 const port = process.env.PORT || 3001;
 
 
 // Define middleware here
 // ************************************************
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({limit: '50mb',extended: true }));
+app.use(express.json({limit: '50mb'}));
+
+// Serve up static assets
+//***************************** */
+if (process.env.NODE_ENV === 'production') {
+    	app.use(express.static('client/build'));
+    }
 
 
 
