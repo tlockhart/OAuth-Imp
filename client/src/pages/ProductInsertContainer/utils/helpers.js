@@ -1,4 +1,4 @@
-let setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, imageHeight, previewCanvas) => {
+exports.setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, imageHeight, previewCanvas) => {
   // Set Paragraph
   para = document.createTextNode('File Name: ' + imageName + ', File Size: ' + imageSize + ', Width: ' + imageWidth + ', Height: ' + imageHeight);
 
@@ -19,7 +19,7 @@ let setImageParagraphTag = (para, color, imageName, imageSize, imageWidth, image
   this.removeItem('canvas', previewCanvas);
 };
 
-let removeItem = (element, previewCanvas) => {
+exports.removeItem = (element, previewCanvas) => {
   /************************/
   if (previewCanvas) {
     let item = previewCanvas.getElementsByTagName(`${element}`);
@@ -35,7 +35,7 @@ let removeItem = (element, previewCanvas) => {
 
 };
 
-let removeCanvas = (previewCanvas) => {
+exports.removeCanvas = (previewCanvas) => {
   if (previewCanvas) {
     var canvasElement = previewCanvas.getElementsByTagName('canvas');
     if (canvasElement.length >= 1) {
@@ -47,7 +47,7 @@ let removeCanvas = (previewCanvas) => {
 };
 
 
-let setFileMessage = (tag, message) => {
+exports.setFileMessage = (tag, message) => {
   const errorTag = document.getElementById(tag);
   if (errorTag) {
     document.getElementById(tag).innerHTML = message;
@@ -55,13 +55,13 @@ let setFileMessage = (tag, message) => {
 
 };
 
-let getFormattedFileSize = (files) => {
+exports.getFormattedFileSize = (files) => {
   let curFiles = files;
   return this.returnFileSize(curFiles[0].size);
 };
 
 /*Returns formatted version of file size*/
-let returnFileSize = (number) => {
+exports.returnFileSize = (number) => {
   if (number < 1024) {
     return number + 'bytes'
   } else if (number >= 1024 && number < 1048576) {
@@ -71,7 +71,7 @@ let returnFileSize = (number) => {
   }
 };
 
-let appendImage = (img, canvas, previewCanvas) => {
+exports.appendImage = (img, canvas, previewCanvas) => {
   img.onload = () => {
     // Set canvas dimension to match image
     canvas.width = img.width
@@ -84,7 +84,7 @@ let appendImage = (img, canvas, previewCanvas) => {
   };
 };
 
-let checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, submitImageButton) => {
+exports.checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, submitImageButton) => {
   let areDimensionsValid = false;
   // let para = document.createTextNode('');
 
@@ -101,7 +101,7 @@ let checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, submitI
   return areDimensionsValid;
 };
 
-let setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, imageName, imageSize, files, previewCanvas, imageWidth, imageHeight) => {
+exports.setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, imageName, imageSize, files, previewCanvas, imageWidth, imageHeight) => {
   let para = document.createTextNode('');
   if (areDimensionsValid) {
     // Set file size with Units:
@@ -122,12 +122,12 @@ let setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, ima
   return imageSize;
 };
 
-let isFileSelected = (input) => {
+exports.isFileSelected = (input) => {
   let curFiles = input ? input.files : null;
   return curFiles;
 };
 
-let imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
+exports.imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
   if (imageWidth <= imageMax && imageHeight <= imageMax) {
     console.log('NOT A Valid File: ');
     this.setFileMessage(errorTag, invalidMsg);
@@ -141,7 +141,7 @@ let imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag, in
 }; // oneerror
 
 
-let displayImage = (img, areDimensionsValid, previewCanvas) => {
+exports.displayImage = (img, areDimensionsValid, previewCanvas) => {
   var canvasElement = previewCanvas.getElementsByTagName('canvas');
   var canvas = document.createElement('canvas');
   console.log("DISPLAYIMAGE CANVASELEMENT:", canvasElement);
@@ -159,7 +159,7 @@ let displayImage = (img, areDimensionsValid, previewCanvas) => {
   }
 };
 
-let loadImage = (img, blob) => {
+exports.loadImage = (img, blob) => {
   console.log("IMG", img, "BLOB", blob);
   return new Promise(function (resolve, reject) {
     // define source
@@ -185,7 +185,7 @@ let loadImage = (img, blob) => {
 
 /* Base64 Decoder: Remove the metadata
 https://www.base64decode.net/base64-image-decoder */
-let convertImageFromUrlToBase64String = async (url) => {
+exports.convertImageFromUrlToBase64String = async (url) => {
   var img = new Image()
   img.crossOrigin = 'Anonymous'
   var dataUrl;
@@ -217,7 +217,7 @@ let convertImageFromUrlToBase64String = async (url) => {
 };// convertImage
 
 // Check whether the file type of the input file is valid
-let isFileTypeValid = (file, fileTypes) => {
+exports.isFileTypeValid = (file, fileTypes) => {
   if (file) {
     console.log("FILEType :", file.type);
     for (var i = 0; i < fileTypes.length; i++) {
@@ -234,5 +234,5 @@ let isFileTypeValid = (file, fileTypes) => {
     return false;
 };
 
-export {setImageParagraphTag, removeItem, removeCanvas, setFileMessage, getFormattedFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, 
-  loadImage, convertImageFromUrlToBase64String, isFileTypeValid, returnFileSize};
+// export {setImageParagraphTag, removeItem, removeCanvas, setFileMessage, getFormattedFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, 
+//   loadImage, convertImageFromUrlToBase64String, isFileTypeValid, returnFileSize};

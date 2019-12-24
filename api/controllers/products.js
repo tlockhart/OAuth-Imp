@@ -73,7 +73,7 @@ exports.products_insert_product = (req, res, next) => {
         .save()
         .then(result => {
             // console.log(result);
-            console.log("in controller result:", result);
+            // console.log("in controller result:", result);
             res.status(201).json({
                 message: 'Created product successfully',
                 createdProduct: {

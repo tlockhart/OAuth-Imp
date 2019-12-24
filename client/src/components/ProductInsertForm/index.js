@@ -37,13 +37,8 @@ let ProductInsertForm = (props) => {
                                         value={props.productValue}
                                         onChange={props.changeHandler}
                                     />
-                                    {/******SUBMIT BUTTON: PRODUCT/VALUE UPLOAD*********/}
-                                    <label htmlFor="formGroupSubmitButton" />
-                                    <MDBBtn color="blue-grey" type="submit"
-                                    >Submit</MDBBtn>
-                                    <h3 className="mt-5">{props.message ? props.message : ''}</h3>
 
-                                    <div role="main" className="upload-image-form-group">
+<div role="main" className="upload-image-form-group">
                                         <br></br>
                                         <Uploader image={props.image} 
                                         submitImageHandler={props.submitImageHandler}
@@ -51,9 +46,21 @@ let ProductInsertForm = (props) => {
                                         selectImage = {props.selectImage}
                                         setImageProp = {props.setImageProp} />
                                     </div>
+                                    <MDBCol>
+{/******SUBMIT BUTTON: PRODUCT/VALUE UPLOAD*********/}
+<label htmlFor="formGroupSubmitButton" />
+                                    <MDBBtn color="blue-grey" type="submit"
+                                    >Submit</MDBBtn>
+                                    <h3 className="mt-5">{props.message ? props.message : ''}</h3>
+                        </MDBCol>
+
+                                    
+
+                                    
                                 </div>
                             </form>
                         </MDBCol>
+                        
                     </MDBRow>
 
                 </MDBContainer>

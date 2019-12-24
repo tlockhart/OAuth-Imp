@@ -15,7 +15,7 @@ export let Uploader = (props) => {
   let submitBtnRef = React.createRef();
   return (
     <React.Fragment>
-      <div className="container">
+      {/* <div className="container"> */}
         <div className="row">
           <div className="col-4">
             {/*************TEST ELEMENT******************/}
@@ -61,12 +61,12 @@ export let Uploader = (props) => {
                 Min: {props.imageMin}, Max: {imageMax}
               </ol>
               {/* UPLOAD IMAGE BUTTON */}
-              <button
+              {/* <button
                 className="btn btn-info"
                 id="submit-image"
                 ref={submitBtnRef}
                 onClick={(event) => props.submitImageHandler(event, image, submitBtnRef)}
-              >Upload Image</button>
+              >Upload Image</button> */}
             </div>
           </div> {/* <!--Column-4--> */}
 
@@ -83,7 +83,7 @@ export let Uploader = (props) => {
           </div>{/* <!--col-4> */}
 
         </div> {/* <!--row--> */}
-      </div> {/* <!--container--> */}
+      {/* </div> <!--container--> */}
     </React.Fragment>
   )
   // }
