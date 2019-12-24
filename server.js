@@ -28,21 +28,21 @@ app.use('/orders', orderRoutes);
 app.use('/user', userRoutes);
 
 // catch errors:
-app.use((req, res, next) => {
-    const error = new Error('Not Found');
-    error.status = 404; // No fitting route
-    next(error); // Forward the error request
-});
+// app.use((req, res, next) => {
+//     const error = new Error('Not Found');
+//     error.status = 404; // No fitting route
+//     next(error); // Forward the error request
+// });
 
 //Handle all errors thrown for db failure:
-app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message,
-        }
-    });
-});
+// app.use((error, req, res, next) => {
+//     res.status(error.status || 500);
+//     res.json({
+//         error: {
+//             message: error.message,
+//         }
+//     });
+// });
 
 // Add routes, both API and view
 // ************************************************
