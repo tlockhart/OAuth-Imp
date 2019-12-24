@@ -12,8 +12,17 @@ const port = process.env.PORT || 3001;
 
 
 // create server
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
-// Start server listening on port
-server.listen(port);
-console.log(`server listening at http://localhost:${port}`);
+// // Start server listening on port
+// server.listen(port);
+// console.log(`server listening at http://localhost:${port}`);
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
+
+// Start the API server
+// ************************************************
+app.listen(port, function () {
+    console.log(`🌎  ==> API Server now listening on PORT ${port}!`);
