@@ -14,8 +14,8 @@ const productSchema = new Schema({
     },
     productImage: {
         type: String,
-        // required: true
-        required: false
+        required: true
+        // required: false
     }
 });
 // Schema is layout.  
