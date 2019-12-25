@@ -10,7 +10,7 @@ import dataStore from '../utils/dataStore';
 import API from '../utils/API';
 
 // Import Components
-import LoginForm from "../components/LoginInputs";
+import LoginForm from "../components/LoginForm";
 
 class LoginContainer extends Component {
     constructor(props) {

@@ -2,20 +2,20 @@ import React from 'react';
 import { MDBBtn } from "mdbreact";
 
 
-let RegistrationForm = (props) => {
+let LoginForm = (props) => {
     return (
         <main role="main" className="flex-shrink-0">
             <div className="container">
-                <h1 className="mt-5">Registration Form</h1>
+                <h1 className="mt-5">Login Form</h1>
                 <br />
                 {/* email */}
                 <div className="form-group">
                     {/* email */}
-                    <label htmlFor="formGroupExampleInput" />
+                    <label htmlFor="formGroupEmail" />
                     <input
                         type="text"
                         className="form-control"
-                        id="formGroupExampleInput"
+                        id="formGroupEmail"
                         placeholder="email"
                         name = "email"
                         value = {props.email}
@@ -24,11 +24,11 @@ let RegistrationForm = (props) => {
                     {/* <h2>{props.email}</h2> */}
 
                     {/* password */}
-                    <label htmlFor="formGroupExampleInput" />
+                    <label htmlFor="formGroupPassword" />
                     <input
                         type="text"
                         className="form-control"
-                        id="formGroupExampleInput"
+                        id="formGroupPassword"
                         placeholder="password"
                         name="password"
                         value={props.password}
@@ -37,9 +37,10 @@ let RegistrationForm = (props) => {
                     {/* <h2>{props.password}</h2> */}
 
                     {/* button */}
-                    <label htmlFor="formGroupExampleInput" />
+                    <label htmlFor="formGroupPassword" />
                     <MDBBtn color="blue-grey" onClick={props.clickHandler}>Submit</MDBBtn>
                     <h3 className="mt-5">{props.message? props.message:''}</h3>
+                    <h3 className="mt-5">{props.token? props.token:''}</h3>
                 </div>
                 {/* experiment */}
                 {/* <label htmlFor="formGroupExampleInput">
@@ -72,4 +73,4 @@ let RegistrationForm = (props) => {
     )
 };
 
-export default RegistrationForm;
+export default LoginForm;

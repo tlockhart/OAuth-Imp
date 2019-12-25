@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import API from '../utils/API';
 
 // Import Components
-import RegistrationForm from "../components/Registration";
+import RegistrationForm from "../components/RegistrationForm";
 
 class RegistrationContainer extends Component {
     constructor(props) {
