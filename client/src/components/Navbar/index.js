@@ -4,6 +4,7 @@ import {
   MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon
 } from "mdbreact";
 // import { BrowserRouter as Router } from 'react-router-dom';
+import authenticationStore from '../../utils/authenticationStore'
 
 class NavbarPage extends Component {
   constructor(props) {
@@ -82,6 +83,9 @@ class NavbarPage extends Component {
                   <MDBNavLink to="/user/login">
                     <MDBDropdownItem>Login</MDBDropdownItem>
                   </MDBNavLink>
+                  <MDBNavLink to="#">
+                    <MDBDropdownItem onClick={authenticationStore.resetLocalStorage}>Logout</MDBDropdownItem>
+                  </MDBNavLink>
                 </MDBDropdownMenu>
               </MDBDropdown>
             </MDBNavItem>
@@ -108,6 +112,9 @@ class NavbarPage extends Component {
                   </MDBNavLink>
                   <MDBNavLink to="/user/login">
                     <MDBDropdownItem>Login</MDBDropdownItem>
+                  </MDBNavLink>
+                  <MDBNavLink to="#">
+                    <MDBDropdownItem onClick={authenticationStore.resetLocalStorage}>Logout</MDBDropdownItem>
                   </MDBNavLink>
                 </MDBDropdownMenu>
               </MDBDropdown>

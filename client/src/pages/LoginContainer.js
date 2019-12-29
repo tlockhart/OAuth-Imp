@@ -4,7 +4,7 @@ import React, { Component } from "react";
 // import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
 // Import module to get/set variables from/in the LocalStorage
-import dataStore from '../utils/dataStore';
+import authenticationStore from '../utils/authenticationStore';
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
@@ -78,7 +78,7 @@ class LoginContainer extends Component {
                          });
                         console.log("RES:", res);
 
-                        await dataStore.setLocalStorage(
+                        await authenticationStore.setLocalStorage(
                             access_token,
                             refresh_token,
                             expiration,

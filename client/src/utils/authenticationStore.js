@@ -8,9 +8,9 @@ exports.set = (name, value) => {
 };
 
 exports.get = (name) => {
-    let dataStore_value = localStorage.getItem(name);
-    console.log(name, ':', dataStore_value);
-    let returnValue = dataStore_value ? dataStore_value : '';
+    let authenticationStore_value = localStorage.getItem(name);
+    console.log(name, ':', authenticationStore_value);
+    let returnValue = authenticationStore_value ? authenticationStore_value : '';
     return returnValue;
 };
 
@@ -25,10 +25,10 @@ exports.hasTimeExpired = (() => {
         let data = JSON.parse(this.get('data'));
         let { expiration } = data;
         console.log("expiration", expiration);
-        let dataStore_expiration = expiration;
+        let authenticationStore_expiration = expiration;
 
         // If expiration has been set in locaStorage, use it, else use current time
-        let expirationTime = dataStore_expiration ? dataStore_expiration : currentTime;
+        let expirationTime = authenticationStore_expiration ? authenticationStore_expiration : currentTime;
         // let sessionExpirationTime = moment(expirationTime);
         // let sessionExpirationTime = moment.utc(expirationTime);
         let sessionExpirationTime = expirationTime

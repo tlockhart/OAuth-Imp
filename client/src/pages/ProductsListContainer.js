@@ -10,7 +10,7 @@ import API from '../utils/API';
 // import ProductForm from "../components/ProductsOLD";
 import ProductListItem from "../components/ProductListItem";
 
-import dataStore from "../utils/dataStore";
+import authenticationStore from "../utils/authenticationStore";
 // import tokenStore from '../utils/tokenStore';
 import credentialStore from '../utils/credentialStore';
 import { performDBAction, deleteProduct } from '../utils/productStore';
@@ -54,7 +54,7 @@ class ProductsListContainer extends Component {
    //      ************************************************/
     setStateVariables(access_token, refresh_token, expiration, email, message) {
         let authToken = "Bearer " + access_token;
-        let hasTimeExpired = dataStore.hasTimeExpired();
+        let hasTimeExpired = authenticationStore.hasTimeExpired();
 
         this.setState({
             access_token,
@@ -195,7 +195,7 @@ class ProductsListContainer extends Component {
             /***************************************
              * STEP2: Get Data out of local Storage
              ***************************************/
-            let { access_token, refresh_token, expiration, email, message } = await dataStore.getLocalStorage();
+            let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
 
             /******************************************
              * STEP3: SET STATE VARIABLES With data returned from localStorage

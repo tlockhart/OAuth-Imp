@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 // Import module to get/set variables from/in the LocalStorage
-import dataStore from '../utils/dataStore';
+import authenticationStore from '../utils/authenticationStore';
 
 // Import Components
 import ProductUpdateForm from "../components/ProductUpdateForm";
@@ -45,7 +45,7 @@ class ProductUpdateContainer extends Component {
 
         this.setState({ email });
 
-        let hasTimeExpired = await dataStore.hasTimeExpired();
+        let hasTimeExpired = await authenticationStore.hasTimeExpired();
 
         console.log("Expired?", hasTimeExpired);
         this.setState({ hasTimeExpired });
@@ -175,7 +175,7 @@ class ProductUpdateContainer extends Component {
             /************************************
              * STEP1: Get Data out of local Storage
              ************************************/
-            let { access_token, refresh_token, expiration, email, message } = await dataStore.getLocalStorage();
+            let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
             /*************************************/
 
             /******************************************
@@ -233,7 +233,7 @@ class ProductUpdateContainer extends Component {
                         /***********************************************
                          * Reset Local Storage Variables
                          ************************************************/
-                        await dataStore.resetLocalStorage();
+                        await authenticationStore.resetLocalStorage();
 
                         /*********************************************
                          * SET STATE VARIABLES FROM Local Storage

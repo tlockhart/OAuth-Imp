@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 // Import module to get/set variables from/in the LocalStorage
-import dataStore from '../../utils/dataStore';
+import authenticationStore from '../../utils/authenticationStore';
 
 // Import Components
 import ProductInsertForm from "../../components/ProductInsertForm";
 import credentialStore from '../../utils/credentialStore';
 import { insertProduct, performDBAction } from '../../utils/productStore';
-import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpersa';
+import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpers';
 
 class ProductInsertContainer extends Component {
     constructor(props) {
@@ -324,7 +324,7 @@ class ProductInsertContainer extends Component {
 
         this.setState({ email });
 
-        let hasTimeExpired = await dataStore.hasTimeExpired();
+        let hasTimeExpired = await authenticationStore.hasTimeExpired();
 
         console.log("Expired?", hasTimeExpired);
         this.setState({ hasTimeExpired });
@@ -481,7 +481,7 @@ class ProductInsertContainer extends Component {
             /************************************
              * STEP1 of 8: Get Data out of local Storage
              ************************************/
-            let { access_token, refresh_token, expiration, email, message } = await dataStore.getLocalStorage();
+            let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
             /*************************************/
 
             /******************************************
@@ -541,7 +541,7 @@ class ProductInsertContainer extends Component {
                         /***********************************************
                          * Reset Local Storage Variables
                          ************************************************/
-                        await dataStore.resetLocalStorage();
+                        await authenticationStore.resetLocalStorage();
 
                         /*********************************************
                          * SET STATE VARIABLES FROM Local Storage

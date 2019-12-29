@@ -1,5 +1,5 @@
 import tokenStore from './tokenStore';
-import dataStore from "./dataStore";
+import authenticationStore from "./authenticationStore";
 
 export default {
     get: async (refresh_token, refreshURL, authToken, email, hasTimeExpired) => {
@@ -25,7 +25,7 @@ export default {
                 /***********************************************
                  * Step4: Set Local Storage Variables
                  ************************************************/
-                let { access_token, refresh_token, expiration, email, message } = await dataStore.setLocalStorage(
+                let { access_token, refresh_token, expiration, email, message } = await authenticationStore.setLocalStorage(
                     res.data.access_token,
                     res.data.refresh_token,
                     res.data.expiration,
@@ -55,7 +55,7 @@ export default {
                  * STEP6: Reset Local Storage Variables
                  ************************************************/
                 // console.log("In if 3: baseURL =", baseURL);
-                await dataStore.resetLocalStorage();
+                await authenticationStore.resetLocalStorage();
 
                 /*********************************************
                  * STEP7: SET STATE VARIABLES FROM Local Storage
