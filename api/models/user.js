@@ -13,7 +13,17 @@ const userSchema = new Schema({
     password: {
         type: String, 
         required: true 
-    }
+    },
+    role: {
+        type: String, 
+        required: true,
+        default: "visitor" 
+    },
+    date: {
+        type: Date,
+        // `Date.now()` returns the current unix timestamp as a number
+        default: Date.now
+      }
 });
 
 const User = mongoose.model('User', userSchema);

@@ -16,7 +16,12 @@ const productSchema = new Schema({
         type: String,
         required: true
         // required: false
-    }
+    },
+    date: {
+        type: Date,
+        // `Date.now()` returns the current unix timestamp as a number
+        default: Date.now
+      }
 });
 // Schema is layout.  
 // The model is the object itself, base on the schema that you can create a record for.

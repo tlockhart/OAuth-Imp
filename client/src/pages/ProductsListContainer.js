@@ -90,17 +90,23 @@ class ProductsListContainer extends Component {
     set productListData(data) {
         let products = data;
         console.log("in get", products, "length", products.length);
-
+        let user = {
+            // role: "admin",
+            role: "visitor",
+            data: products
+        };
         // Set productsList from response data
         let productItemArray = products.map((product) => {
             return (
-            <ProductListItem 
-                key={product._id} 
-                id={product._id} 
-                name={product.name} 
-                value={product.value}
-                productImage = {product.productImage} 
-                filterClickHandler={(event) => this.filterClickHandler(event)} deleteClickHandler={(event) => this.deleteClickHandler(event)} />)
+                <ProductListItem
+                    user={user}
+                    key={product._id}
+                    id={product._id}
+                    name={product.name}
+                    value={product.value}
+                    productImage={product.productImage}
+                    filterClickHandler={(event) => this.filterClickHandler(event)} deleteClickHandler={(event) => this.deleteClickHandler(event)} />
+            )
         });
 
         // Set products state property to array of ProductListItems
@@ -143,7 +149,7 @@ class ProductsListContainer extends Component {
         });
         this.productListData = filteredList;
         console.log("FIltered LiST", this.productListData);
-        
+
     }
     /************************************
      * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
@@ -152,10 +158,10 @@ class ProductsListContainer extends Component {
     async stageDBAction(id, url, cb) {
         console.log("Start performDBAction");
         let results = await performDBAction(
-            id, 
-            this.state.refresh_token, 
-            this.state.authToken, 
-            this.state.hasTimeExpired, 
+            id,
+            this.state.refresh_token,
+            this.state.authToken,
+            this.state.hasTimeExpired,
             null,
             null,
             null,
