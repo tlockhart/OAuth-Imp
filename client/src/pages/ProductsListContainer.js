@@ -8,7 +8,7 @@ import API from '../utils/API';
 
 // Import Components
 // import ProductForm from "../components/ProductsOLD";
-import ProductListItem from "../components/ProductListItem";
+import ProductListItem from "../components/ProductListItem/index";
 
 import authenticationStore from "../utils/authenticationStore";
 // import tokenStore from '../utils/tokenStore';
