@@ -12,7 +12,7 @@ import ProductViewItem from "../components/ProductViewItem";
 
 
 class ProductViewContainer extends Component {
-    _productListComponents = [];
+    _productListComponent = [];
     constructor(props) {
         super(props);
         this.state = {
@@ -38,7 +38,8 @@ class ProductViewContainer extends Component {
                 API.getProduct(baseURL)
                     .then(res => {
                         console.log(res);
-                        this.productListComponents = { ...res.data, _id: id };
+                        //setter
+                        this.productListComponent = { ...res.data, _id: id };
                     })
                     .catch(err => console.log(err));
             };
@@ -48,26 +49,27 @@ class ProductViewContainer extends Component {
         }
     }
 
-    set productListComponents(data) {
+    set productListComponent(data) {
         let productData = data;
         console.log("in get", productData, "length", productData.length);
-        this._productListComponents = <ProductViewItem key={productData._id} id={productData._id} name={productData.name} value={productData.value} />;
+        this._productListComponent = <ProductViewItem 
+        image = {productData.productImage} key={productData._id} id={productData._id} name={productData.name} value={productData.value} />;
 
-        this.setState({ products: this._productListComponents });
+        this.setState({ products: this._productListComponent });
         console.log('productListComponent', this.state.products);
     }
 
-    get productListComponents() {
-        return this._productListComponents;
+    get productListComponent() {
+        return this._productListComponent;
     }
 
     render() {
 
-        const ProductListComponents = this.productListComponents;
-        console.log('components:', ProductListComponents);
+        const ProductListComponent = this.productListComponent;
+        console.log('components:', ProductListComponent);
         return (
             <React.Fragment>
-                {ProductListComponents}
+                {ProductListComponent}
             </React.Fragment>
         )
     }

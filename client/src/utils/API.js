@@ -21,7 +21,7 @@ export default {
         return post;
     },
     login: async (data) => {
-        console.log("in login");
+        console.log("in login- Data:", data);
         /*************************************************************
          *  package and send the body to the endpoint
          ************************************************************/
@@ -80,13 +80,15 @@ export default {
     }, // catch
 
     // /:productId
-    deleteProduct: async (baseURL, authToken, refreshToken, expired) => {
+    deleteProduct: async (baseURL, authToken, refreshToken, expired, email) => {
         if (baseURL) {
             const data = {
-                expired
+                expired: expired,
+                email: email,
             };
+            console.log("DATA:", JSON.stringify(data));
             console.log(`API: GOING TO DELETE ROUTE: ${baseURL}`);
-            console.log(`authtoken: ${authToken}, refreshtoken: ${refreshToken}, expired: ${expired}`);
+            console.log(`authtoken: ${authToken}, refreshtoken: ${refreshToken}, expired: ${expired}, email: ${email}, URL: ${baseURL}`);
             /*************************************************************
              *  package and send the body to the endpoint
              ************************************************************/
@@ -98,9 +100,9 @@ export default {
                         Authorization: authToken,
                         'Content-Type': 'application/json',
                         'refreshtoken': refreshToken
-                    }
-                },
-                data);
+                    },
+                    data: data
+                });
             /*************************************************************
              * Send the results back to the calling program
              ************************************************************/
@@ -111,23 +113,35 @@ export default {
     },
 
     // /:productId
-    updateProduct: async (baseURL, authToken, refreshToken, name, value) => {
+    updateProduct: async (baseURL, authToken, refreshToken, name, value, image, expired, email) => {
         if (baseURL) {
             console.log("in API.updateProduct, baseURL:", baseURL);
             console.log('authToken:', authToken);
             console.log('refreshToken', refreshToken);
-            console.log('name', name, 'value', value);
+            console.log('name:', name, 'value:', value, 'expired:', expired );
 
             const data =
                 [
+                    // first set
                     {
                         'propName': 'name',
                         'value': name
                     },
+                    // second set
                     {
                         'propName': 'value',
                         'value': value
-                    }
+                    },
+                    // third set
+                    {
+                        'propName': 'expired',
+                        'value': expired
+                    },
+                    // fourth set
+                    {
+                        'propName': 'email',
+                        'value': email
+                    },
                 ];
             /*************************************************************
              *  package and send the body to the endpoint
@@ -147,7 +161,8 @@ export default {
         }
     },
     // /:productId
-    insertProduct: async (baseURL, authToken, refreshToken, name, value, image) => {
+    insertProduct: async (baseURL, id,
+        email, authToken, refreshToken, name, value, image, expired) => {
     // insertProduct: async (baseURL, authToken, refreshToken, name, value, imageUrl, imageFile, imageSrc) => {
         var base64Image = image.base64Str;
         if (baseURL) {
@@ -170,7 +185,27 @@ export default {
                     {
                         'propName': 'productImage',
                         'value': base64Image
-                    }
+                    },
+                    {
+                        'propName': 'productId',
+                        'value': id
+                    },
+                    {
+                        'propName': 'authToken',
+                        'value': authToken
+                    },
+                    {
+                        'propName': 'refreshToken',
+                        'value': refreshToken
+                    },
+                    {
+                        'propName': 'email',
+                        'value': email
+                    },
+                    {
+                        'propName': 'expired',
+                        'value': expired
+                    },
                 ];
             /*************************************************************
              *  package and send the body to the endpoint

@@ -91,8 +91,8 @@ class ProductsListContainer extends Component {
         let products = data;
         console.log("in get", products, "length", products.length);
         let user = {
-            // role: "admin",
-            role: "visitor",
+            role: "admin",
+            // role: "visitor",
             data: products
         };
         // Set productsList from response data
@@ -135,6 +135,7 @@ class ProductsListContainer extends Component {
         let filteredList = this.productListData.filter((product) => {
             console.log("PRODUCT ID: ", product._id);
             let data = {};
+            // if a new product_id is not equal to the id that is currently on the button event
             if (product._id.toString() !== event_id.toString()) {
                 console.log("MatchingProductID: ", product._id);
                 data = {
@@ -155,10 +156,11 @@ class ProductsListContainer extends Component {
      * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
      ************************************/
     //productId, this.deleteURL, deleteProduct
-    async stageDBAction(id, url, cb) {
+    async stageDBAction(id, email, url, cb) {
         console.log("Start performDBAction");
         let results = await performDBAction(
             id,
+            email,
             this.state.refresh_token,
             this.state.authToken,
             this.state.hasTimeExpired,
@@ -254,7 +256,11 @@ class ProductsListContainer extends Component {
                 /*******************************
                  *STEP 7: PERFORM A DB ACTION IF TOKENS R VALID
                 ********************************/
-                await this.stageDBAction(productId, this.deleteURL, deleteProduct);
+                await this.stageDBAction(
+                    productId, 
+                    this.state.email,
+                    this.deleteURL, 
+                    deleteProduct);
             } // if
 
         }

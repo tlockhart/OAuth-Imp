@@ -109,6 +109,7 @@ class ProductUpdateContainer extends Component {
     ************************************/
     async stageDBAction(
         id, 
+        email,
         name, 
         value, 
         url, 
@@ -116,8 +117,10 @@ class ProductUpdateContainer extends Component {
         cb) {
         console.log("Start performDBAction");
             //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
+            console.log("hasExpired0:", this.state.hasTimeExpired);
         let results = await performDBAction(
             id, 
+            email,
             this.state.refresh_token, 
             this.state.authToken, 
             this.state.hasTimeExpired, 
@@ -127,6 +130,7 @@ class ProductUpdateContainer extends Component {
             url,
             cb);
 
+            console.log("hasExpired1:", this.state.hasTimeExpired);
         /************************************
          * Set placeholder text if data was updated
          ****************************************/
@@ -142,6 +146,8 @@ class ProductUpdateContainer extends Component {
 
         // let parsedResults = JSON.parse(results);
         let { message, refresh_token, isUserAuthorized, hasTimeExpired, productsList } = results;
+
+        console.log("hasExpired2:", hasTimeExpired);
 
         /***************************************************
          * Set State with the results of calling the DB Action
@@ -163,6 +169,7 @@ class ProductUpdateContainer extends Component {
             event.preventDefault();
             let name = this.state.productName;
             let value = this.state.productValue;
+            // let email = this.state.email;
 
             /************************************************************************
              * Reset state variables representing view input after submit
@@ -261,6 +268,7 @@ class ProductUpdateContainer extends Component {
                 
                 await this.stageDBAction(
                     this.state.productId, 
+                    email,
                     name, 
                     value, 
                     this.baseURL, 

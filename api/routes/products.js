@@ -25,9 +25,9 @@ router.get('/', ProductsController.products_get_all);
 //  "productImage": tlockhart.png
 // }
 
-// 12/22
+// 12/22: INSERT
 /**********/
-router.post('/product/insert/', ProductsController.products_insert_product);
+router.post('/product/insert/', checkAuth,ProductsController.products_insert_product);
 
 // localhost:3000/products/5d75802fa50af037b063668d
 router.get('/:productId', ProductsController.products_get_product);

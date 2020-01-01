@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const orderSchema = new Schema({
+const OrderSchema = new Schema({
     // Assign a serial string type to mongoose _id
     _id: mongoose.Schema.Types.ObjectId,
     product: { 
@@ -22,7 +22,7 @@ const orderSchema = new Schema({
 // Schema is layout.  
 // The model is the object itself, base on the schema that you can create a record for.
 
-//Export model, as Product (Not capital letter, because you create an instance of it)
-const Order = mongoose.model('Order', orderSchema);
+// Create the model from the above schema, using mongoose's model method
+const Order = mongoose.model('Order', OrderSchema);
 
 module.exports = Order;

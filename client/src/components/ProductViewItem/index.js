@@ -6,18 +6,23 @@ let ProductItem = (props) => {
   let name = props.name;
   let nameText = `Name: ${name}`;
   let value = props.value;
-  let valueText = `$: ${value}`;
+  let valueText = `Value: $ ${value}`;
   let id = props.id;
+  // let regex = /['"']+/g;
+  let image = props.image;
+  // .replace(regex, '');
   console.log('in productLIst:', props);
 
   return (
     <div className="container-fluid text-center">
       <div className="row">
         <div className="col">
-          <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
-          <p>{valueText}<br /></p>
+        <br></br>
+          <img src={image} alt={`product ${id}`} />
+          <p className="mt-2"><b>{name? nameText: ''}</b></p>
+          <p><b>{value ? valueText: ''}</b><br /></p>
 
-          <LinkActionBtn to={
+          {/* <LinkActionBtn to={
             {
               pathname: `/products/product/update/${id}`,
               state: {
@@ -27,7 +32,7 @@ let ProductItem = (props) => {
               }
             }
           }
-          buttonName={"Update"}/>
+          buttonName={"Update"}/> */}
           <hr />
         </div>
       </div>

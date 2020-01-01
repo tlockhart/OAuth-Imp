@@ -7,7 +7,9 @@ const express = require('express');
 const router = express.Router();
 
 //import user model
-const User = require('../models/user');
+// const User = require('../models/user');
+const User = require('../models/User');
+// const User = require('../models/User');
 
 const UserController = require('../controllers/user');
 

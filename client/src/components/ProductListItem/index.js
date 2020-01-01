@@ -13,9 +13,8 @@ let ProductListItem = (props) => {
   let value = props.value;
   let valueText = `$: ${value}`;
   let id = props.id;
-  let productImage = props.productImage;
   let regex = /['"']+/g;
-  var formattedImage = productImage.replace(regex, '');
+  let productImage = props.productImage.replace(regex, '');
   let user = props.user;
   console.log("USER:", user);
 
@@ -27,39 +26,30 @@ let ProductListItem = (props) => {
       <div className="row">
         <div className="col">
           <br></br>
-          <img src={formattedImage} alt={`product ${id}`} />
+          <img src={productImage} alt={`product ${id}`} />
           <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
           <p>{valueText}<br /></p>
-          <LinkActionBtn to={
-            {
-              pathname: `/products/product/${id}`,
-              state: {
-                name: name,
-                value: value,
-                id: id,
-              }
-            }}
-            buttonName={"View"} />
+
           {/* LINK BUTTON */}
           {/* {(props) => ( */}
-            <Can
-              role={user.role}
-              perform="dashboard-page:visit"
-              // data= {props.user.data}
-              yes={() => (
-                <React.Fragment>
-                  <LinkActionBtn to={
-                    {
-                      pathname: `/products/product/update/${id}`,
-                      state: {
-                        name: name,
-                        value: value,
-                        id: id,
-                      }
+          <Can
+            role={user.role}
+            perform="dashboard-page:visit"
+            // data= {props.user.data}
+            yes={() => (
+              <React.Fragment>
+                <LinkActionBtn to={
+                  {
+                    pathname: `/products/product/update/${id}`,
+                    state: {
+                      name: name,
+                      value: value,
+                      id: id,
                     }
                   }
-                    buttonName={"Update"} />
-                  <LinkActionBtn to={
+                }
+                  buttonName={"Update"} />
+                {/* <LinkActionBtn to={
                     {
                       pathname: `/product/insert`,
                       state: {
@@ -68,18 +58,30 @@ let ProductListItem = (props) => {
                       }
                     }
                   }
-                    buttonName={"Insert"} />
-                  <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)} id={id} />
-                </React.Fragment>
-              )}
-              no= {() => (
+                    buttonName={"Insert"} /> */}
+                <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)} id={id} />
+              </React.Fragment>
+            )}
+            no={() => (
+              <React.Fragment>
+                <LinkActionBtn to={
+                  {
+                    pathname: `/products/product/${id}`,
+                    state: {
+                      name: name,
+                      value: value,
+                      id: id,
+                      image: productImage                    }
+                  }}
+                  buttonName={"View"} />
                 <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
-              )}
-              // {() => <Redirect to="/" />}
-            />
+              </React.Fragment>
+            )}
+          // {() => <Redirect to="/" />}
+          />
           {/* )} */}
 
-         
+
 
 
           <hr />

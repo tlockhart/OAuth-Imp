@@ -393,9 +393,14 @@ class ProductInsertContainer extends Component {
     /************************************
     * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
     ************************************/
-//    stageDBAction(null, name, value, image, this.baseURL, insertProduct);
-// this.stageDBAction(null, name, value, image, this.baseURL, insertProduct);
-    async stageDBAction(id, name, value, image, url, cb) {
+    async stageDBAction(
+        id,
+        email, 
+        name, 
+        value, 
+        image, 
+        url, 
+        cb) {
         // var image = imageRef;
         console.log("STAGEDBACTION BASE64: ", image.base64Str);
         console.log("Start performDBAction");
@@ -404,6 +409,7 @@ class ProductInsertContainer extends Component {
         //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
         let results = await performDBAction(
             id,
+            email,
             this.state.refresh_token,
             this.state.authToken,
             this.state.hasTimeExpired,
@@ -412,18 +418,6 @@ class ProductInsertContainer extends Component {
             image,
             url,
             cb);
-        // let results = await performDBAction(
-        //     id,
-        //     this.state.refresh_token,
-        //     this.state.authToken,
-        //     this.state.hasTimeExpired,
-        //     name,
-        //     value,
-        //     image,
-        //     url,
-        //     file,
-        //     imageSrc,
-        //     cb);
 
         console.log("PRODUCTINSERTCONTAINER performDBAction RESULTS:", results);
 
@@ -573,14 +567,15 @@ class ProductInsertContainer extends Component {
                 /***********************************************
                  * Step8 of 8: PERFORM A DB ACTION IF TOKENS R VALID 
                  **********************************************/
-                // let file = this.state.image.file;
-                // let file = this.state.image.input.files[0];
-                // const imageSrc = this.state.image.imageSrc;
-                // console.log("*ProductInsertContainer: InsertClickHandler: FILE", file, "SOURCE", imageSrc);
                 // 12/15
-                // await this.stageDBAction(this.state.productId, name, value, image, '/products/product/update/', file, imageSrc, updateProduct);
-                // await this.stageDBAction(this.state.productId, name, value, image, this.baseURL, file, imageSrc, insertProduct);
-                await this.stageDBAction(this.state.productId, name, value, image, this.baseURL, insertProduct);
+                await this.stageDBAction(
+                    this.state.productId, 
+                    this.state.email,
+                    name, 
+                    value, 
+                    image, 
+                    this.baseURL, 
+                    insertProduct);
             } // if
 
         } // try

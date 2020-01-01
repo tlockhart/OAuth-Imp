@@ -1,7 +1,7 @@
 import API from './API';
 
 // retrieves all products from the database
-export let retrieveUpdatedProductList = async () => {
+export let retrieveUpdatedProductList = async (email) => {
     /***********************************/
     /*********************
      * STEP9: Get the new updated productsLis
@@ -17,17 +17,22 @@ export let retrieveUpdatedProductList = async () => {
 };
 //url, authToken, refreshToken, name, value, image
 export let deleteProduct = async (
-    url, 
-    accessToken, 
-    refresh_token, 
-    expired, 
-    name = null, 
+    url,
+    productId,
+    email,
+    accessToken,
+    refresh_token,
+    expired,
+    name = null,
     value = null,
-    imageSrc = null,
-    file = null ) => {
+    imageSrc = null
+    ) => {
     console.log('IN DELETE PRODUCT CALL');
-    console.log(`DATA URL: ${url}, ATOKENT: ${accessToken}, RTOKEN: ${refresh_token}, EXPIRED: ${expired}`);
-    let response = await API.deleteProduct(url, accessToken, refresh_token, expired);
+    console.log(`DATA URL: ${url}, ATOKENT: ${accessToken}, RTOKEN: ${refresh_token}, EXPIRED: ${expired}, EMAIL: ${email}`);
+
+    let response = await API.deleteProduct(url, accessToken, refresh_token, expired, email);
+
+    /*NEVER COMES BACK*/
     console.log("deleteProduct: ", response);
 
     // Return response from deleteProduct on the backend
@@ -35,38 +40,40 @@ export let deleteProduct = async (
 };
 
 // Define Call to Server Side utils to post body to the backend server:
-// url, 
-// accessToken, 
-// refresh_token, 
-// expired, 
-// name = null, 
-// value = null,
-// imageSrc = null,
-// file = null 
 export let updateProduct = async (
-    url, 
-    authToken, 
-    refreshToken, 
-    expiration = null, 
-    name, 
-    value, 
-    image = null, 
-    file = null) => {
-    console.log('IN UPDATE PRODUCT CALL');
-    let updateResponse = await API.updateProduct(url, authToken, refreshToken, name, value, image);
+    url,
+    id,
+    email,
+    authToken,
+    refreshToken,
+    expired,
+    name,
+    value,
+    image = null) => {
+    console.log('ProductStore:IN UPDATE PRODUCT CALL', "expired", expired);
+    let updateResponse = await API.updateProduct(url, authToken, refreshToken, name, value, image, expired, email);
 
     // Return results to the calling program
     return updateResponse;
 };
 
 // Define Call to Server Side utils to post body to the backend server:
-export let insertProduct = async (url, authToken, refreshToken, expiration = null, name, value, image) => {
-// export let insertProduct = async (url, authToken, refreshToken, expiration = null, name, value, image, file, imageSrc) => {
+export let insertProduct = async (
+    url,
+    id,
+    email,
+    authToken,
+    refreshToken,
+    expired = null,
+    name,
+    value,
+    image) => {
+    // export let insertProduct = async (url, authToken, refreshToken, expiration = null, name, value, image, file, imageSrc) => {
     console.log('IN INSERT PRODUCT CALL');
     let insertResponse = await
         //12/01/2019:
         // API.updateProduct(url, authToken, refreshToken, name, value);
-        API.insertProduct(url, authToken, refreshToken, name, value, image);
+        API.insertProduct(url, id, email, authToken, refreshToken, name, value, image, expired);
 
     // Return results to the calling program
     return insertResponse;
@@ -75,6 +82,7 @@ export let insertProduct = async (url, authToken, refreshToken, expiration = nul
 // Delete an item from the db
 export let performDBAction = async (
     productId = '',
+    email,
     refresh_token,
     authToken,
     expired,
@@ -83,19 +91,9 @@ export let performDBAction = async (
     image = null,
     url,
     cb) => {
-    // productId = '',
-    // refresh_token,
-    // authToken,
-    // expired,
-    // name = null,
-    // value = null,
-    // image = null,
-    // url,
-    // file = null,
-    // imageSrc = null,
-    // cb) => {
-    // console.log("ProductInsertContainer: performBACTION: FILE", file);
-    console.log("IN IF");
+
+    console.log("ProductStore: PerformDbAction:", "email:", email);
+
     console.log('ProductUpdateContainer:refresh_token = ', refresh_token);
 
     /************************************
@@ -108,23 +106,16 @@ export let performDBAction = async (
         console.log("BEFORE UPDATE CALLED");
 
         let response = await cb(
-            url + productId, 
-            authToken, 
-            refresh_token, 
-            expired, 
-            name, 
+            url + productId,
+            productId,
+            email,
+            authToken,
+            refresh_token,
+            expired,
+            name,
             value,
-            image 
-            );
-            // let response = await cb(
-        //     url + productId, 
-        //     authToken, 
-        //     refresh_token, 
-        //     expired, 
-        //     name, 
-        //     value, 
-        //     imageSrc, 
-        //     file);
+            image
+        );
 
         console.log("AFTER UPDATE CALLED");
 
@@ -136,7 +127,7 @@ export let performDBAction = async (
              *  the updated ProductsListContainer
              ***********************************/
 
-            let productsList = await retrieveUpdatedProductList();
+            let productsList = await retrieveUpdatedProductList(email);
             console.log("retrievedUpdatedProductList:", productsList);
             // products = {
             //     name:"BS0",

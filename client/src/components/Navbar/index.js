@@ -74,18 +74,18 @@ class NavbarPage extends Component {
             <MDBNavItem>
               <MDBDropdown>
                 <MDBDropdownToggle nav caret>
-                  <div className="d-none d-md-inline">Dropdown</div>
+                  <div className="d-none d-md-inline">Admin</div>
                 </MDBDropdownToggle>
                 <MDBDropdownMenu className="dropdown-default">
-                  <MDBNavLink to="/user/registration">
-                    <MDBDropdownItem>Register</MDBDropdownItem>
+                  <MDBNavLink to="/product/insert">
+                    <MDBDropdownItem>Insert</MDBDropdownItem>
                   </MDBNavLink>
-                  <MDBNavLink to="/user/login">
+                  {/* <MDBNavLink to="/user/login">
                     <MDBDropdownItem>Login</MDBDropdownItem>
                   </MDBNavLink>
                   <MDBNavLink to="#">
                     <MDBDropdownItem onClick={authenticationStore.resetLocalStorage}>Logout</MDBDropdownItem>
-                  </MDBNavLink>
+                  </MDBNavLink> */}
                 </MDBDropdownMenu>
               </MDBDropdown>
             </MDBNavItem>
