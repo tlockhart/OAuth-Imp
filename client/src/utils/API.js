@@ -51,6 +51,16 @@ export default {
             return get;
         }
     },
+    // 01/03/2020:
+    getUserInfo: async (baseURL, email) => {
+        
+        if ( email && baseURL ) {
+            let response = await axios.get(baseURL, email);
+            console.log("APIGETUSERINFO: "+JSON.stringify(response));
+            return response;
+        }
+    },
+
     refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
         console.log("API In RefreshToken: ", refreshToken);
         if (url) {

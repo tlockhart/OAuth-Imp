@@ -14,7 +14,7 @@ const ProductsController = require('../controllers/products');
 
 
 // Handle incoming requests from '/products':
-// Second argument is a hander function
+// Second argument is a hand/er function
 // localhost:3000/products/
 router.get('/', ProductsController.products_get_all);
 

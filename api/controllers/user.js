@@ -183,6 +183,18 @@ exports.create_token = async (access_token, refresh_token, email) => {
 //         });
 // };
 
+exports.users_get_user = async (req, res, next) => {
+    let email = req.params.userEmail;
+    User.findOne({ email })
+        .populate("token")
+        .then(userDocument => {
+            console.log("USERCONTROLLER = ID:", userDocument._id, "Role", userDocument.role);
+            res.status(200).json(userDocument);
+        })
+        .catch(() => {
+            res.status(500).json(err);
+        });
+},
 exports.populate_token = async (email) => {
     console.log("populate-Token email:", email);
     let userDocument = await User.findOne({ email }).populate("token");

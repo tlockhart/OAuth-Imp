@@ -36,7 +36,8 @@ class ProductsListContainer extends Component {
             email: '',
             hasTimeExpired: false,
             isUserAuthorized: true,
-            message: ''
+            message: '',
+            user: {}
         };
 
         // this.clickHandler = this.clickHander.bind(this);
@@ -72,6 +73,8 @@ class ProductsListContainer extends Component {
 
 
     componentDidMount() {
+        this.setUserState();
+
         let baseURL = "/products";
 
         let returnProducts = (baseURL) => {
@@ -86,20 +89,54 @@ class ProductsListContainer extends Component {
         // Execute getProducts
         returnProducts(baseURL);
     }
+ 
+    async setUserState() {
+        // set state variables:
+        let stateVariables = await authenticationStore.getLocalStorage();
 
+        this.setState(stateVariables);
+        // let user;
+        let baseURL = `/user/information/${this.state.email}`;
+        console.log("Email=*" + this.state.email + "*");
+
+        // 01/03/2020: Get User role
+        API.getUserInfo(baseURL, this.state.email).then(res => {
+            console.log("BASE URL=", baseURL);
+            console.log("USER RES=", res.data);
+            // set user
+
+            let userObject = {
+                role: res.data.role,
+                // data: products
+            };
+
+            this.setState({ user: userObject });
+        })
+            .catch(err => {
+                console.log("ERROR: Setting ROLE to VISITOR:",err);
+                let userObject = {
+                    role: "visitor",
+                    // data: products
+                };
+                this.setState({ user: userObject });
+            });
+    }
     set productListData(data) {
         let products = data;
         console.log("in get", products, "length", products.length);
-        let user = {
-            role: "admin",
-            // role: "visitor",
-            data: products
-        };
+
+        
+        // 001/03/2020:
+        // let user = {
+        //     role: "admin",
+        //     // role: "visitor",
+        //     data: products
+        // };
         // Set productsList from response data
         let productItemArray = products.map((product) => {
             return (
                 <ProductListItem
-                    user={user}
+                    user={this.state.user}
                     key={product._id}
                     id={product._id}
                     name={product.name}
@@ -116,7 +153,7 @@ class ProductsListContainer extends Component {
                 productListItems: productItemArray
 
             });
-    }
+    } // setProductList
 
     get productListData() {
         return this.state.productListData;
@@ -257,9 +294,9 @@ class ProductsListContainer extends Component {
                  *STEP 7: PERFORM A DB ACTION IF TOKENS R VALID
                 ********************************/
                 await this.stageDBAction(
-                    productId, 
+                    productId,
                     this.state.email,
-                    this.deleteURL, 
+                    this.deleteURL,
                     deleteProduct);
             } // if
 

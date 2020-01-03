@@ -16,7 +16,7 @@ let ProductListItem = (props) => {
   let regex = /['"']+/g;
   let productImage = props.productImage.replace(regex, '');
   let user = props.user;
-  console.log("USER:", user);
+  console.log("PRODUCTLISTITEM-USER:", user);
 
   // const CanUser = Can(props);
   const CanUser = Can;

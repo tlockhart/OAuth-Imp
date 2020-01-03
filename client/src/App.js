@@ -32,7 +32,7 @@ class App extends Component {
 
   handlePageClick = (event) => {
     // Will not allow page to refresh normally, causing the state properties to lag
-    // event.preventDefault(); 
+    event.preventDefault(); 
     console.log("event.target.name", event.target.name);
 
     this.setState({ currentPage: event.target.name });
