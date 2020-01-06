@@ -1,16 +1,137 @@
 import React, { Component } from "react";
 import {
   MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavLink, MDBNavbarToggler, MDBCollapse, MDBDropdown,
-  MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon
+  MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon, NavLink
 } from "mdbreact";
 // import { BrowserRouter as Router } from 'react-router-dom';
-import authenticationStore from '../../utils/authenticationStore'
+import authenticationStore from '../../utils/authenticationStore';
+
 
 class NavbarPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isOpen: false,
+      navItems:
+      {
+        homeActiveTag: (
+          <MDBNavItem active onClick={this.props.handlePageClick}>
+            <MDBNavLink name="Home" to={"/"}>Home</MDBNavLink>
+          </MDBNavItem>
+        ),
+        homeInactiveTag: (
+          <MDBNavItem onClick={this.props.handlePageClick}>
+            <MDBNavLink name="Home" to="/">Home</MDBNavLink>
+          </MDBNavItem>
+        ),
+        productsActiveTag: (
+          <MDBNavItem active onClick={this.props.handlePageClick}>
+            <MDBNavLink name="Products" to="/products" >Products
+            </MDBNavLink>
+          </MDBNavItem>
+        ),
+        productsInactiveTag: (
+          <MDBNavItem onClick={this.props.handlePageClick}>
+            <MDBNavLink name="Products" to="/products">Products
+          </MDBNavLink>
+          </MDBNavItem>
+        ),
+        insertActiveTag: (
+          // <MDBNavbarNav left>
+          <MDBNavItem>
+            <MDBDropdown>
+              <MDBDropdownToggle nav caret>
+                <div className="d-none d-md-inline">Admin</div>
+              </MDBDropdownToggle>
+              <MDBDropdownMenu className="dropdown-default">
+                <NavLink
+                  to="/product/insert"
+
+                >
+                  <MDBDropdownItem active
+                    name="Insert"
+                    onClick={
+                      this.props.handlePageClick}
+                  >Insert</MDBDropdownItem>
+                </NavLink>
+              </MDBDropdownMenu>
+            </MDBDropdown>
+          </MDBNavItem>
+          // </MDBNavbarNav >
+        ),
+        insertInactiveTag: (
+          // <MDBNavbarNav left>
+          <MDBNavItem>
+            <MDBDropdown>
+              <MDBDropdownToggle nav caret>
+                <div className="d-none d-md-inline">Admin</div>
+              </MDBDropdownToggle>
+              <MDBDropdownMenu className="dropdown-default">
+                <NavLink
+                  to="/product/insert"
+                >
+                  <MDBDropdownItem
+                    name="Insert"
+                    onClick={this.props.handlePageClick}
+                  >
+                    Insert
+                    </MDBDropdownItem>
+                </NavLink>
+              </MDBDropdownMenu>
+            </MDBDropdown>
+          </MDBNavItem>
+          // </MDBNavbarNav>
+        ),
+        registrationActiveTag: (
+          <MDBNavLink to="/user/registration">
+            <MDBDropdownItem
+              active
+              name="Registration"
+              onClick={this.props.handlePageClick}
+            >Register</MDBDropdownItem>
+          </MDBNavLink>
+        ),
+        registrationInactiveTag: (
+          <MDBNavLink to="/user/registration">
+            <MDBDropdownItem
+              name="Registration"
+              onClick={this.props.handlePageClick}
+            >Register</MDBDropdownItem>
+          </MDBNavLink>
+        ),
+        loginActiveTag: (
+          <NavLink to="/user/login">
+            <MDBDropdownItem
+              active
+              name="Login"
+              onClick={this.props.handlePageClick}
+            >Login</MDBDropdownItem>
+          </NavLink>
+        ),
+        loginInactiveTag: (
+          <MDBNavLink to="/user/login">
+            <MDBDropdownItem
+              name="Login"
+              onClick={this.props.handlePageClick}
+            >Login</MDBDropdownItem>
+          </MDBNavLink>
+        ),
+        logoutActiveTag: (
+          <MDBNavLink to="#">
+            <MDBDropdownItem
+              active
+              name="Logout"
+              onClick={this.props.handlePageClick}>Logout</MDBDropdownItem>
+          </MDBNavLink>
+        ),
+        logoutInactiveTag: (
+          <MDBNavLink to="#">
+            <MDBDropdownItem
+              name="Logout"
+              onClick={this.props.handlePageClick}>Logout</MDBDropdownItem>
+          </MDBNavLink>
+        )
+      }
     };
   }
 
@@ -18,41 +139,31 @@ class NavbarPage extends Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
-  // activeLink = (value) => {
-  //   // this.props.currentPage = value;
-  //   // console.log("activeLink clicked:", value);
-  //   return (<MDBNavItem active>
-  //     <MDBNavLink to="/" name ="Home" onClick={(event) => this.props.handlePageClick(event)}>Home</MDBNavLink>
-  //   </MDBNavItem>);
-  // }
-  // inactiveLink = (value) => {
-  // this.props.currentPage = value;
-  // console.log("inactiveLink clicked:", value);
-  // return (<MDBNavItem >
-  //   <MDBNavLink to="/products" name="Products" onClick={(event) => this.props.handlePageClick(event)}>Products</MDBNavLink>
-  // </MDBNavItem>)
-  // }
+  componentDidUpdate() {
+    console.log("PROPS name:", this.props.name, ", currentPage:", this.props.currentPage);
+
+    if (this.props.currentPage === "Logout") {
+      // When credentials are cleared force password reset, since no new page is displayed
+      authenticationStore.resetLocalStorage();
+      window.location.reload(false);
+    }
+     
+  }
 
   render() {
 
-    let isHomeActive = this.props.currentPage === '' || this.props.currentPage === "Home" ? true : false;
-    // console.log( "is home active", isHomeActive);
+    let isHomeActive = this.props.currentPage === "Home" || this.props.name === "Home" ? true : false;
 
-    let homeActiveTag = (<MDBNavItem active name="Home" onClick={(event) => this.props.handlePageClick(event)}><MDBNavLink to={"/"} >Home</MDBNavLink></MDBNavItem>);
-
-    let homeInactiveTag = <MDBNavItem>
-      <MDBNavLink to="/" name="Home" onClick={(event) => this.props.handlePageClick(event)}>Home</MDBNavLink>
-    </MDBNavItem>
-
-
-    let isProductsActive = this.props.currentPage === "Products" ? true : false;
+    let isProductsActive = this.props.currentPage === "Products" || this.props.name === "Products" ? true : false;
     // console.log( "is Products active", isProductsActive);
 
-    let productsActiveTag = (<MDBNavItem active name="Products" onClick={(event) => this.props.handlePageClick(event)}><MDBNavLink to="/products" >Products</MDBNavLink></MDBNavItem>);
+    let isInsertActive = this.props.currentPage === "Insert" || this.props.name === "Insert" ? true : false;
 
-    let productsInactiveTag = (<MDBNavItem>
-      <MDBNavLink to="/products" name="Products" onClick={(event) => this.props.handlePageClick(event)}>Products</MDBNavLink>
-    </MDBNavItem>);
+    let isRegistrationActive = this.props.currentPage === "Registration" || this.props.name === "Registration" ? true : false;
+
+    let isLoginActive = this.props.currentPage === "Login" || this.props.name === "Login" ? true : false;
+
+    let isLogoutActive = this.props.currentPage === "Logout" || this.props.name === "Logout" ? true : false;
 
     return (
       // <Router>
@@ -64,32 +175,16 @@ class NavbarPage extends Component {
         <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
           <MDBNavbarNav left>
 
-            {/* {this.props.currentPage === "Home" ? activeLink("Home") : inactiveLink("Home")} */}
+            {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
 
-            {isHomeActive ? homeActiveTag : homeInactiveTag}
+            {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
 
+            {isInsertActive ?
+              this.state.navItems.insertActiveTag :
+              this.state.navItems.insertInactiveTag}
 
-            {isProductsActive ? productsActiveTag : productsInactiveTag}
-
-            <MDBNavItem>
-              <MDBDropdown>
-                <MDBDropdownToggle nav caret>
-                  <div className="d-none d-md-inline">Admin</div>
-                </MDBDropdownToggle>
-                <MDBDropdownMenu className="dropdown-default">
-                  <MDBNavLink to="/product/insert">
-                    <MDBDropdownItem>Insert</MDBDropdownItem>
-                  </MDBNavLink>
-                  {/* <MDBNavLink to="/user/login">
-                    <MDBDropdownItem>Login</MDBDropdownItem>
-                  </MDBNavLink>
-                  <MDBNavLink to="#">
-                    <MDBDropdownItem onClick={authenticationStore.resetLocalStorage}>Logout</MDBDropdownItem>
-                  </MDBNavLink> */}
-                </MDBDropdownMenu>
-              </MDBDropdown>
-            </MDBNavItem>
           </MDBNavbarNav>
+
           <MDBNavbarNav right>
             <MDBNavItem>
               <MDBNavLink className="waves-effect waves-light" to="#!">
@@ -107,15 +202,21 @@ class NavbarPage extends Component {
                   <MDBIcon icon="user" />
                 </MDBDropdownToggle>
                 <MDBDropdownMenu className="dropdown-default" right>
-                  <MDBNavLink to="/user/registration">
-                    <MDBDropdownItem>Register</MDBDropdownItem>
-                  </MDBNavLink>
-                  <MDBNavLink to="/user/login">
-                    <MDBDropdownItem>Login</MDBDropdownItem>
-                  </MDBNavLink>
-                  <MDBNavLink to="#">
-                    <MDBDropdownItem onClick={authenticationStore.resetLocalStorage}>Logout</MDBDropdownItem>
-                  </MDBNavLink>
+                  {
+                    isRegistrationActive ?
+                      this.state.navItems.registrationActiveTag :
+                      this.state.navItems.registrationInactiveTag
+                  }
+                  {
+                    isLoginActive ?
+                      this.state.navItems.loginActiveTag :
+                      this.state.navItems.loginInactiveTag
+                  }
+                  {
+                    isLogoutActive ?
+                      this.state.navItems.logoutActiveTag :
+                      this.state.navItems.logoutInactiveTag
+                  }
                 </MDBDropdownMenu>
               </MDBDropdown>
             </MDBNavItem>

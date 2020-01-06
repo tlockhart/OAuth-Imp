@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import './App.css';
 
 // Handle Routes
-import { BrowserRouter as Router, Route} from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 // Import Components
 // import Navbar from './components/Navbar';
 import Navbar from './components/Navbar';
 // import MainContent from './components/MainContent';
 import Footer from './components/Footer';
+
 
 // Import Pages
 import HomeContainer from './pages/HomeContainer';
@@ -26,24 +27,37 @@ class App extends Component {
 
     this.state = {
       currentPage: '',
-  };
-  // this.handlePageClick = this.handlePageClick.bind(this);
-}
+      name: '',
+    };
 
-  handlePageClick = (event) => {
-    // Will not allow page to refresh normally, causing the state properties to lag
-    event.preventDefault(); 
-    console.log("event.target.name", event.target.name);
+    this.handlePageClick = this.handlePageClick.bind(this);
+  }
 
-    this.setState({ currentPage: event.target.name });
+  handlePageClick(event) {
+    // No preventDefault Here:  It will not allow page to transition to insert form, with a dropdownitem
+    // event.preventDefault();
+
+    this.setState({
+      currentPage: event.target.name,
+      name: event.target.name
+    });
+    console.log("event.target.name:", event.target.name, " EventTarget:", event.target);
+
+    //01/04/2020:
     console.log("PageClicked: ", this.state.currentPage);
-  };
+
+    
+  }
 
   render() {
-    return (  
+    return (
       <Router>
         <div>
-          <Navbar handlePageClick = {(event) => this.handlePageClick(event) } currentPage = {this.state.currentPage}/>
+          <Navbar
+            handlePageClick={this.handlePageClick}
+            navItems={this.state.navItems}
+            currentPage={this.state.currentPage}
+            name={this.state.name} />
           <Route exact path="/" component={HomeContainer} />
           <Route exact path="/user/registration" component={RegistrationContainer} />
           <Route exact path="/user/login" component={LoginContainer} />
@@ -57,7 +71,7 @@ class App extends Component {
         </div>
       </Router>
     );
-  }
+  } // render
 }
 
 export default App;

@@ -6,7 +6,7 @@ let ProductItem = (props) => {
   let name = props.name;
   let nameText = `Name: ${name}`;
   let value = props.value;
-  let valueText = `Value: $ ${value}`;
+  let valueText = `Price: $${value}`;
   let id = props.id;
   // let regex = /['"']+/g;
   let image = props.image;

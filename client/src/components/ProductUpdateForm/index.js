@@ -1,5 +1,5 @@
 import React from 'react';
-import { MDBBtn } from "mdbreact";
+import { MDBBtn, MDBRow, MDBCol } from "mdbreact";
 
 
 let ProductUpdateForm = (props) => {
@@ -12,34 +12,46 @@ let ProductUpdateForm = (props) => {
                 <div className="form-group">
                     {/* email */}
                     <label htmlFor="formGroupName" />
-                    <input
-                        type="text"
-                        className="form-control product-name"
-                        id="formGroupName"
-                        placeholder={props.placeholderName}
-                        name = "productName"
-                        value = {props.productName}
-                        onChange = {props.changeHandler}
-                    />
+                    <MDBRow>
+                        <MDBCol size="1">Name:</MDBCol>
+                        <MDBCol size="11">
+                            <input
+                                type="text"
+                                className="form-control product-name"
+                                id="formGroupName"
+                                placeholder={props.placeholderName}
+                                name="productName"
+                                value={props.productName}
+                                onChange={props.changeHandler}
+                            />
+                        </MDBCol>
+
+                    </MDBRow>
                     {/* <h2>{props.email}</h2> */}
 
                     {/* password */}
                     <label htmlFor="formGroupName" />
-                    <input
-                        type="text"
-                        className="form-control product-value"
-                        id="formGroupValue"
-                        placeholder={props.placeholderValue}
-                        name="productValue"
-                        value={props.productValue}
-                        onChange={props.changeHandler}
-                    />
+                    <MDBRow>
+                        <MDBCol size="1">
+                            Price:
+                            </MDBCol>
+                        <MDBCol>
+                            <input
+                                type="text"
+                                className="form-control product-value"
+                                id="formGroupValue"
+                                placeholder={props.placeholderValue}
+                                name="productValue"
+                                value={props.productValue}
+                                onChange={props.changeHandler}
+                            />
+                        </MDBCol></MDBRow>
                     {/* <h2>{props.password}</h2> */}
 
                     {/* Update button */}
                     <label htmlFor="formGroupName" />
                     <MDBBtn color="blue-grey" onClick={props.updateClickHandler}>Update</MDBBtn>
-                    <h3 className="mt-5">{props.message? props.message:''}</h3>
+                    <h3 className="mt-5">{props.message ? props.message : ''}</h3>
 
                     {/* Delete button */}
                     {/* <label htmlFor="formGroupName" />

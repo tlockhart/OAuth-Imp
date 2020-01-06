@@ -7,8 +7,8 @@ import NoLinkActionBtn from '../NoLinkActionBtn';
 let ProductListItem = (props) => {
   let name = props.name;
   let nameText = `Name: ${name}`;
-  let value = props.value;
-  let valueText = `$: ${value}`;
+  let value = props.value};
+  let valueText = `Price: $${value}`;
   let id = props.id;
   let productImage = props.productImage;
   let regex = /['"']+/g;

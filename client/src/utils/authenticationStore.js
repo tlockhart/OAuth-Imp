@@ -123,5 +123,6 @@ exports.getLocalStorage = (() => {
 });
 
 exports.resetLocalStorage = () => {
+    console.log("LOCAL STORAGE CLEARED");
     localStorage.clear();
 };

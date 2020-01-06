@@ -17,6 +17,18 @@ const ProductSchema = new Schema({
         required: true
         // required: false
     },
+    shippingCost: {
+        type: Number, 
+        required: false 
+    },
+    sellerView: {
+        type: Boolean,
+        default: true
+    },
+    publicView: {
+        type: Boolean,
+        default: false
+    },
     date: {
         type: Date,
         // `Date.now()` returns the current unix timestamp as a number

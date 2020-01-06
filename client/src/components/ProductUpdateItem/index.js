@@ -6,7 +6,7 @@ let ProductUpdateItem = (props) => {
   let name = props.name;
   let nameText = `Name: ${name}`;
   let value = props.value;
-  let valueText = `$: ${value}`;
+  let valueText = `Price: $${value}`;
   let id = props.id;
   console.log('in productLIst:', props);
 

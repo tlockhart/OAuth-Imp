@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 // import "../style.css";
 // import CarouselPage from "../components/Carousel";
-// import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
 // Import Server-Side Utilities:
 import API from '../utils/API';
@@ -72,8 +71,9 @@ class ProductsListContainer extends Component {
     /************************************************/
 
 
-    componentDidMount() {
-        this.setUserState();
+    async componentDidMount() {
+        //01/05:
+        await this.setUserState();
 
         let baseURL = "/products";
 
@@ -87,7 +87,7 @@ class ProductsListContainer extends Component {
         };
 
         // Execute getProducts
-        returnProducts(baseURL);
+        returnProducts(baseURL); 
     }
  
     async setUserState() {
@@ -100,7 +100,7 @@ class ProductsListContainer extends Component {
         console.log("Email=*" + this.state.email + "*");
 
         // 01/03/2020: Get User role
-        API.getUserInfo(baseURL, this.state.email).then(res => {
+        await API.getUserInfo(baseURL, this.state.email).then(res => {
             console.log("BASE URL=", baseURL);
             console.log("USER RES=", res.data);
             // set user
@@ -122,6 +122,7 @@ class ProductsListContainer extends Component {
             });
     }
     set productListData(data) {
+        // this.setUserState();
         let products = data;
         console.log("in get", products, "length", products.length);
 

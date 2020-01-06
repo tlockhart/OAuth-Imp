@@ -11,7 +11,7 @@ let ProductListItem = (props) => {
   let name = props.name;
   let nameText = `Name: ${name}`;
   let value = props.value;
-  let valueText = `$: ${value}`;
+  let valueText = `Price: $${value}`;
   let id = props.id;
   let regex = /['"']+/g;
   let productImage = props.productImage.replace(regex, '');
