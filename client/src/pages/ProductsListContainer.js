@@ -71,9 +71,9 @@ class ProductsListContainer extends Component {
     /************************************************/
 
 
-    async componentDidMount() {
+    componentDidMount() {
         //01/05:
-        await this.setUserState();
+        this.setUserState();
 
         let baseURL = "/products";
 
