@@ -1,19 +1,19 @@
 import React from 'react';
-import { MDBBtn, MDBContainer, MDBRow, MDBCol } from "mdbreact";
+import {  MDBCol } from "mdbreact";
 // import { MDBBtn } from "mdbreact";
 // import $ from 'jquery';
 // import styles from './styles.css';
 
 // export class Uploader extends Component {
 export let Uploader = (props) => {
-  let imageMaxMB = props.image.maxMB;
-  let imageMax = props.image.imageMax;
-  let image = props.image;
+  // let imageMaxMB = props.image.maxMB;
+  // let imageMax = props.image.imageMax;
+  // let image = props.image;
 
   // create ref
   let imageSelectRef = React.createRef();
   let previewCanvasRef = React.createRef();
-  let submitBtnRef = React.createRef();
+  // let submitBtnRef = React.createRef();
   return (
     <React.Fragment>
       <MDBCol size="1">

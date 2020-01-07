@@ -172,7 +172,7 @@ class ProductsListContainer extends Component {
          ****************************************/
         // console.log("productListData:Filter:", JSON.stringify(this.productListData));
         // Using Setters and getters
-        let data = {};
+        // let data = {};
         let filteredList = this.productListData.filter((product) => {
             return (product._id.toString() !== event_id.toString());
         })

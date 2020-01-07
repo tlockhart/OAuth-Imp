@@ -4,7 +4,7 @@ import React from 'react';
 import LinkActionBtn from '../LinkActionBtn';
 import NoLinkActionBtn from '../NoLinkActionBtn';
 import Can from "../Can";
-import { Redirect } from 'react-router';
+// import { Redirect } from 'react-router';
 // import rules from '../../utils/rbac-rule';
 
 let ProductListItem = (props) => {
@@ -19,7 +19,7 @@ let ProductListItem = (props) => {
   console.log("PRODUCTLISTITEM-USER:", user);
 
   // const CanUser = Can(props);
-  const CanUser = Can;
+  // const CanUser = Can;
 
   return (
     <div className="container-fluid text-center" id={id}>

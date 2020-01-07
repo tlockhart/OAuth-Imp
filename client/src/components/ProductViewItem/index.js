@@ -1,6 +1,6 @@
 import React from 'react';
 // import ViewProductBtn from '../ViewProductBtn';
-import LinkActionBtn from '../LinkActionBtn';
+// import LinkActionBtn from '../LinkActionBtn';
 
 let ProductItem = (props) => {
   let name = props.name;
