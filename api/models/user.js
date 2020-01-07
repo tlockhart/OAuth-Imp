@@ -23,12 +23,13 @@ const UserSchema = new Schema({
         // Note the objecID is not defined, anything passed into token must be an id be default
         type: Schema.Types.ObjectId,
         ref: "Token"
-    },
-    date: {
-        type: Date,
-        // `Date.now()` returns the current unix timestamp as a number
-        default: Date.now
     }
+    // ,
+    // date: {
+    //     type: Date,
+    //     // `Date.now()` returns the current unix timestamp as a number
+    //     default: Date.now
+    // }
 });
 
 // Create the model from the above schema, using mongoose's model method

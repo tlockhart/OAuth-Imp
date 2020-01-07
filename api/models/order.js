@@ -12,12 +12,13 @@ const OrderSchema = new Schema({
     quantity: {
         type: Number, 
         default: 1 
-    },
-    date: {
-        type: Date,
-        // `Date.now()` returns the current unix timestamp as a number
-        default: Date.now
-      }
+    }
+    // ,
+    // date: {
+    //     type: Date,
+    //     // `Date.now()` returns the current unix timestamp as a number
+    //     default: Date.now
+    //   }
 });
 // Schema is layout.  
 // The model is the object itself, base on the schema that you can create a record for.
