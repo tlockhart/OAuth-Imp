@@ -87,9 +87,9 @@ class ProductsListContainer extends Component {
         };
 
         // Execute getProducts
-        returnProducts(baseURL); 
+        returnProducts(baseURL);
     }
- 
+
     async setUserState() {
         // set state variables:
         let stateVariables = await authenticationStore.getLocalStorage();
@@ -113,7 +113,7 @@ class ProductsListContainer extends Component {
             this.setState({ user: userObject });
         })
             .catch(err => {
-                console.log("ERROR: Setting ROLE to VISITOR:",err);
+                console.log("ERROR: Setting ROLE to VISITOR:", err);
                 let userObject = {
                     role: "visitor",
                     // data: products
@@ -126,7 +126,7 @@ class ProductsListContainer extends Component {
         let products = data;
         console.log("in get", products, "length", products.length);
 
-        
+
         // 001/03/2020:
         // let user = {
         //     role: "admin",
@@ -170,22 +170,20 @@ class ProductsListContainer extends Component {
          ****************************************/
         // console.log("productListData:Filter:", JSON.stringify(this.productListData));
         // Using Setters and getters
+        let data = {};
         let filteredList = this.productListData.filter((product) => {
-            console.log("PRODUCT ID: ", product._id);
-            let data = {};
-            // if a new product_id is not equal to the id that is currently on the button event
-            if (product._id.toString() !== event_id.toString()) {
-                console.log("MatchingProductID: ", product._id);
-                data = {
+            return (product._id.toString() !== event_id.toString());
+        })
+        .map((product)=>{
+            return data = {
                     name: product.name,
                     value: product.value,
                     _id: product._id,
                     key: product._id
                 };
-                return data;
-            }
-            return;
+
         });
+
         this.productListData = filteredList;
         console.log("FIltered LiST", this.productListData);
 
