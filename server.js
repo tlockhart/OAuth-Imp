@@ -16,6 +16,10 @@ const port = process.env.PORT || 3001;
 
 // Define middleware here
 // ************************************************
+// 12/22/2019: Increase File Size
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(express.urlencoded({limit: '50mb',extended: true }));
 app.use(express.json({limit: '50mb'}));
 
@@ -24,25 +28,6 @@ app.use(express.json({limit: '50mb'}));
 if (process.env.NODE_ENV === 'production') {
     	app.use(express.static('client/build'));
     }
-
-
-
-// catch errors:
-// app.use((req, res, next) => {
-//     const error = new Error('Not Found');
-//     error.status = 404; // No fitting route
-//     next(error); // Forward the error request
-// });
-
-//Handle all errors thrown for db failure:
-// app.use((error, req, res, next) => {
-//     res.status(error.status || 500);
-//     res.json({
-//         error: {
-//             message: error.message,
-//         }
-//     });
-// });
 
 // Add routes, both API and view
 // ************************************************
@@ -67,10 +52,6 @@ mongoose.connect(
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
-
-// 12/22/2019: Increase File Size
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "./client/build/index.html"));
