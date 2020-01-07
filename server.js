@@ -56,9 +56,9 @@ mongoose.connect(
     // '@node-rest-shop-77xp2.mongodb.net/test?retryWrites=true&w=majority', 
     process.env.MONGODB_URI,
     {
-        // useCreateIndex: true,
-        useNewUrlParser: true,
-        // useUnifiedTopology: true
+        useCreateIndex: true,
+        // useNewUrlParser: true,
+        useUnifiedTopology: true
     });
 
 
