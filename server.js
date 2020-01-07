@@ -5,7 +5,7 @@ require("dotenv").config();
 
 // import required modules
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -56,9 +56,9 @@ mongoose.connect(
     // '@node-rest-shop-77xp2.mongodb.net/test?retryWrites=true&w=majority', 
     process.env.MONGODB_URI,
     {
-        useCreateIndex: true,
+        // useCreateIndex: true,
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        // useUnifiedTopology: true
     });
 
 
@@ -69,8 +69,8 @@ mongoose.Promise = global.Promise;
 app.use(morgan('dev'));
 
 // 12/22/2019: Increase File Size
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "./client/build/index.html"));
