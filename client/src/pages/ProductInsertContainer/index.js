@@ -88,7 +88,8 @@ class ProductInsertContainer extends Component {
     //  Select an image
     /*********** */
     async selectImage(event, imageSelectRef, previewCanvasRef) {
-        event.preventDefault();
+        // event.preventDefault();
+        event.persist();
 
         console.log("SELECTIMAGE imageSelectRef:", imageSelectRef.current, "previewCanvasRef:", previewCanvasRef.current);
 
@@ -189,8 +190,8 @@ class ProductInsertContainer extends Component {
     }
     async submitImageHandler(event, img) {
         // Don't refresh the page!
-        event.preventDefault();
-        // event.persist();
+        // event.preventDefault();
+        event.persist();
         console.log("IN SUBMITIMAGEHANDLER");
 
         //local copy of image
@@ -372,7 +373,8 @@ class ProductInsertContainer extends Component {
 
     changeHandler(event) {
         // First disable default behavior
-        event.preventDefault();
+        // event.preventDefault();
+        event.persist();
 
         const {
             name,
@@ -454,6 +456,7 @@ class ProductInsertContainer extends Component {
 
     async insertClickHandler(event) {
         event.preventDefault();
+        // event.persist();
         console.log("PRODUCTINSERTCONTAINER: insertCLICKHANDLER CLICKED");
         // console.log("INSERTCONTAINER - REQFILE: ", req.file);
 
@@ -590,7 +593,8 @@ class ProductInsertContainer extends Component {
     // Handles changing input text when an image is clicked
     // productImageClickHandler(event){
     productImageClickHandler(event) {
-        event.preventDefault();
+        // event.preventDefault();
+        event.persist();
         let element = document.getElementById(this.state.image.submitBtnId)
 
         // Display image

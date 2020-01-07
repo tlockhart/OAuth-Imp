@@ -77,8 +77,8 @@ class ProductsListContainer extends Component {
 
         let baseURL = "/products";
 
-        let returnProducts = (baseURL) => {
-            API.getProducts(baseURL)
+        let returnProducts = async (baseURL) => {
+            await API.getProducts(baseURL)
                 .then(res => {
                     // set this.state.productsList
                     this.productListData = res.data.products;
@@ -135,6 +135,7 @@ class ProductsListContainer extends Component {
         // };
         // Set productsList from response data
         let productItemArray = products.map((product) => {
+            console.log("PI", product.productImage);
             return (
                 <ProductListItem
                     user={this.state.user}
@@ -143,7 +144,8 @@ class ProductsListContainer extends Component {
                     name={product.name}
                     value={product.value}
                     productImage={product.productImage}
-                    filterClickHandler={(event) => this.filterClickHandler(event)} deleteClickHandler={(event) => this.deleteClickHandler(event)} />
+                    filterClickHandler={(event) => this.filterClickHandler(event)} 
+                    deleteClickHandler={(event) => this.deleteClickHandler(event)} />
             )
         });
 
@@ -178,6 +180,7 @@ class ProductsListContainer extends Component {
             return data = {
                     name: product.name,
                     value: product.value,
+                    productImage: product.productImage,
                     _id: product._id,
                     key: product._id
                 };
@@ -185,7 +188,7 @@ class ProductsListContainer extends Component {
         });
 
         this.productListData = filteredList;
-        console.log("FIltered LiST", this.productListData);
+        console.log("FIltered LiST", JSON.stringify(this.productListData));
 
     }
     /************************************

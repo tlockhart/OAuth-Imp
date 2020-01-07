@@ -140,7 +140,7 @@ class NavbarPage extends Component {
   };
 
   componentDidUpdate() {
-    console.log("PROPS name:", this.props.name, ", currentPage:", this.props.currentPage);
+    // console.log("PROPS name:", this.props.name, ", currentPage:", this.props.currentPage);
 
     if (this.props.currentPage === "Logout") {
       // When credentials are cleared force password reset, since no new page is displayed
