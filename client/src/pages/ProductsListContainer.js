@@ -89,6 +89,9 @@ class ProductsListContainer extends Component {
         // Execute getProducts
         returnProducts(baseURL);
     }
+    // componentDidUpdate() {
+    //     this.setUserState();
+    // }
 
     async setUserState() {
         // set state variables:
@@ -122,7 +125,7 @@ class ProductsListContainer extends Component {
             });
     }
     set productListData(data) {
-        // this.setUserState();
+        this.setUserState();
         let products = data;
         console.log("in get", products, "length", products.length);
 

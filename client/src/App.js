@@ -28,12 +28,14 @@ class App extends Component {
     this.state = {
       currentPage: '',
       name: '',
+      refreshButtons: null,
+      toggle: false
     };
 
     this.handlePageClick = this.handlePageClick.bind(this);
   }
 
-  handlePageClick(event) {
+  async handlePageClick(event) {
     // No preventDefault Here:  It will not allow page to transition to insert form, with a dropdownitem
     // event.preventDefault();
     event.persist();
@@ -46,14 +48,26 @@ class App extends Component {
 
     //01/04/2020:
     console.log("PageClicked: ", this.state.currentPage);
+    if (event.target.name === "Products") {
+      // window.location.reload();
+      console.log("PRODUCT VIEW Originally refreshButton:", this.state.refreshButtons);
+      let toggle = this.state.toggle;
+      console.log("TOGGLE1:", toggle);
+      toggle = !toggle;
+      console.log("TOGGLE2:", toggle);
+      this.setState({toggle: toggle});
+      console.log("PRODUCT VIEW toggle state:", this.state.toggle);
+    }
 
     
   }
 
   render() {
+    let toggle = this.state.toggle.toString();
     return (
       <Router>
         <div>
+          Rresh={toggle}
           <Navbar
             handlePageClick={this.handlePageClick}
             navItems={this.state.navItems}
