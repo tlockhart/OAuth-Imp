@@ -36,6 +36,7 @@ class App extends Component {
   handlePageClick(event) {
     // No preventDefault Here:  It will not allow page to transition to insert form, with a dropdownitem
     // event.preventDefault();
+    event.persist();
 
     this.setState({
       currentPage: event.target.name,

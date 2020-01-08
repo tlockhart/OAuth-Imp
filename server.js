@@ -5,7 +5,7 @@ require("dotenv").config();
 
 // import required modules
 const morgan = require('morgan');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -16,10 +16,6 @@ const port = process.env.PORT || 3001;
 
 // Define middleware here
 // ************************************************
-// 12/22/2019: Increase File Size
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-
 app.use(express.urlencoded({limit: '50mb',extended: true }));
 app.use(express.json({limit: '50mb'}));
 
@@ -42,7 +38,7 @@ mongoose.connect(
     process.env.MONGODB_URI,
     {
         useCreateIndex: true,
-        // useNewUrlParser: true,
+        useNewUrlParser: true,
         useUnifiedTopology: true
     });
 
@@ -52,6 +48,13 @@ mongoose.connect(
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
+
+// 12/22/2019: Increase File Size
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+// app.use(express.json({limit: '50mb'}));
+// app.use(express.urlencoded({limit: '50mb',extended: true }));
+
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "./client/build/index.html"));
