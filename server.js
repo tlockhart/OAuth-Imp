@@ -1,24 +1,29 @@
-// const path = require('path');
+// Dependencies
+/*************************/
+const express = require('express');
+const mongoose = require('mongoose');
+
+const path = require('path');
 
 // import dotenv
 require("dotenv").config();
 
 // import required modules
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 
-const express = require('express');
-const mongoose = require('mongoose');
-// const routes = require("./api/routes");
-const routes = require("./api/routes");
+// initialize express
 const app = express();
+
+// Set port
 const port = process.env.PORT || 3001;
 
-
-// Define middleware here
-// ************************************************
+// Define middleware here *********************************************
 app.use(express.urlencoded({limit: '50mb',extended: true }));
 app.use(express.json({limit: '50mb'}));
+
+// Define routes here to get bidy parser working
+const routes = require("./api/routes");
 
 // Append headers to any response sent back, before routes, to disable cors errors
 app.use((req, res, next) => {
@@ -56,9 +61,6 @@ app.use(routes);
 //Connect to MongoDB
 // ************************************************
 mongoose.connect(
-    // 'mongodb+srv:'+'//'+
-    //  process.env.MONGO_ATLAS_ID + ':' + process.env.MONGO_ATLAS_PW +
-    // '@node-rest-shop-77xp2.mongodb.net/test?retryWrites=true&w=majority', 
     process.env.MONGODB_URI,
     {
         useCreateIndex: true,
