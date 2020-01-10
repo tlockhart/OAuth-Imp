@@ -1,10 +1,7 @@
 import React, { Component } from "react";
-// import "../style.css";
-// import CarouselPage from "../components/Carousel";
-// import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBMask, MDBView } from "mdbreact";
 
 // Import module to get/set variables from/in the LocalStorage
-import authenticationStore from '../utils/authenticationStore';
+import * as authenticationStore from '../utils/authenticationStore';
 
 // Import Server-Side Utilities:
 import API from '../utils/API';

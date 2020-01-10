@@ -1,20 +1,23 @@
+import API from '../utils/API';
 const moment = require('moment');
+// Import Server-Side Utilities:
+
 
 /**********************
  * Contains methods for storing credentials in localStorage and packaging for setting as state variables
  */
-exports.set = (name, value) => {
+export let set = (name, value) => {
     localStorage.setItem(name, value);
 };
 
-exports.get = (name) => {
+export let get = (name) => {
     let authenticationStore_value = localStorage.getItem(name);
     console.log(name, ':', authenticationStore_value);
     let returnValue = authenticationStore_value ? authenticationStore_value : '';
     return returnValue;
 };
 
-exports.hasTimeExpired = (() => {
+export let hasTimeExpired = (() => {
     let data = localStorage.getItem('data');
     // set hasTimeExpired to true to get the refreshToken method to execute.  Request will fail with no tokens and return.  Otherwise
     let returnValue = false;
@@ -22,7 +25,7 @@ exports.hasTimeExpired = (() => {
     if (data !== null && typeof data !== 'undefined') {
         // let currentTime = moment();
         let currentTime = moment.utc();
-        let data = JSON.parse(this.get('data'));
+        let data = JSON.parse(get('data'));
         let { expiration } = data;
         console.log("expiration", expiration);
         let authenticationStore_expiration = expiration;
@@ -78,7 +81,7 @@ exports.hasTimeExpired = (() => {
     return returnValue;
 });
 
-exports.setLocalStorage = ((access_token, refresh_token, expiration, email, message) => {
+export let setLocalStorage = ((access_token, refresh_token, expiration, email, message) => {
 
     let data = {
         access_token,
@@ -88,18 +91,18 @@ exports.setLocalStorage = ((access_token, refresh_token, expiration, email, mess
         message
     };
     console.log("created data", data.message);
-    this.set('data', JSON.stringify(data));
+    set('data', JSON.stringify(data));
     console.log("set LocalStorage data", data.message);
     return data;
 });
 
-exports.getLocalStorage = (() => {
+export let getLocalStorage = (() => {
     let returnData;
 
     let data = localStorage.getItem('data');
 
     if (data !== null && typeof data !== 'undefined') {
-        let data = JSON.parse(this.get('data'));
+        let data = JSON.parse(get('data'));
         let { access_token, refresh_token, expiration, email } = data;
         // console.log("ACCESS TOKEN From Data:", data );
         console.log("access_token", data.access_token);
@@ -122,7 +125,44 @@ exports.getLocalStorage = (() => {
     return returnData;
 });
 
-exports.resetLocalStorage = () => {
+export let resetLocalStorage = () => {
     console.log("LOCAL STORAGE CLEARED");
     localStorage.clear();
 };
+
+export let setUserState = async (email) => {
+    // set state variables:
+    // let stateVariables = await getLocalStorage();
+
+    // this.setState(stateVariables);
+    // let user;
+    let baseURL = `/user/information/${email}`;
+    console.log("Email=*" + email + "*");
+
+    // 01/03/2020: Get User role
+    let userRoleObj = await API.getUserInfo(baseURL, email)
+        .then(res => {
+            console.log("BASE URL=", baseURL);
+            console.log("USER RES=", res);
+            // set user
+
+            let userObject = {
+                role: res.data.role,
+                // data: products
+            };
+            console.log("PLC2USEROBJECT:", userObject);
+            return userObject
+
+            // this.setState({ user: userObject });
+        })
+        .catch(err => {
+            console.log("ERROR: Setting ROLE to VISITOR:", err);
+            let userObject = {
+                role: "visitor",
+                // data: products
+            };
+            return userObject
+            // this.setState({ user: userObject });
+        });
+        return userRoleObj;
+}

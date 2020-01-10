@@ -1,5 +1,5 @@
 import tokenStore from './tokenStore';
-import authenticationStore from "./authenticationStore";
+import * as authenticationStore from "./authenticationStore";
 
 export default {
     get: async (refresh_token, refreshURL, authToken, email, hasTimeExpired) => {

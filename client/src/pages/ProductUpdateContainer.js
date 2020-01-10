@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 // Import module to get/set variables from/in the LocalStorage
-import authenticationStore from '../utils/authenticationStore';
+import * as authenticationStore from '../utils/authenticationStore';
 
 // Import Components
 import ProductUpdateForm from "../components/ProductUpdateForm";

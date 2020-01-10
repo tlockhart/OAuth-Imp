@@ -4,7 +4,7 @@ import {
   MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon, NavLink
 } from "mdbreact";
 // import { BrowserRouter as Router } from 'react-router-dom';
-import authenticationStore from '../../utils/authenticationStore';
+import * as authenticationStore from '../../utils/authenticationStore';
 
 
 class NavbarPage extends Component {
@@ -134,13 +134,27 @@ class NavbarPage extends Component {
       }
     };
   }
-
+  
   toggleCollapse = () => {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
   componentDidUpdate() {
-    // console.log("PROPS name:", this.props.name, ", currentPage:", this.props.currentPage);
+    /***********************
+   * 01/08/19
+   * 1) Convert NavBar to a Component
+   * 2) Pass user to productList, which
+   * should update the state (buttons)on ProductListItem
+   * 3) TO TEST send a user = {role: "admin"} to ProductListItem in constructor and setState on user.
+   *********************/
+
+   // set the role
+  // this.setState(authenticationStore.getLocalStorage());
+  
+  // let user = this.setUserState(this.state.email);
+  
+  // this.setState({user});
+/************************************** */
 
     if (this.props.currentPage === "Logout") {
       // When credentials are cleared force password reset, since no new page is displayed

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 // Import module to get/set variables from/in the LocalStorage
-import authenticationStore from '../../utils/authenticationStore';
+import * as authenticationStore from '../../utils/authenticationStore';
 
 // Import Components
 import ProductInsertForm from "../../components/ProductInsertForm";
@@ -35,10 +35,10 @@ class ProductInsertContainer extends Component {
                 base64Str: '',
                 input: '',
                 file: '',
-                previewCanvas: undefined,
-                productImage: undefined,
-                fileMsg: undefined,
-                submitImage: undefined,
+                // previewCanvas: undefined,
+                // productImage: undefined,
+                // fileMsg: undefined,
+                // submitImage: undefined,
                 submitBtnId: "image-input",
                 fileTypes: [
                     'image/jpeg',
@@ -60,7 +60,7 @@ class ProductInsertContainer extends Component {
                 fileMsgElement: '',
                 previewCanvasElement: '',
                 submitImageElement: '',
-                name: "productImage",
+                // name: "productImage",
                 className: "custom-file-input",
                 type: "file"
             }
@@ -158,7 +158,7 @@ class ProductInsertContainer extends Component {
                 console.log("failure ", err);
                 imgOnError(image.previewCanvasElement, image.imageWidth, image.imageMax, image.imageHeight, image.errorTag, image.invalidMsg);
             }
-            console.log("IMAGE NAME", this.imageName);
+            // console.log("IMAGE NAME", this.imageName);
         }// if
         else {
             // if(image.previewCanvasElement) {
@@ -190,8 +190,8 @@ class ProductInsertContainer extends Component {
     }
     async submitImageHandler(event, img) {
         // Don't refresh the page!
-        event.preventDefault();
-        // event.persist();
+        // event.preventDefault();
+        event.persist();
         console.log("IN SUBMITIMAGEHANDLER");
 
         //local copy of image

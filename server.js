@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 
 const express = require('express');
 const mongoose = require('mongoose');
+// const routes = require("./api/routes");
 const routes = require("./api/routes");
 const app = express();
 const port = process.env.PORT || 3001;

@@ -9,15 +9,18 @@ import API from '../utils/API';
 // import ProductForm from "../components/ProductsOLD";
 import ProductListItem from "../components/ProductListItem/index";
 
-import authenticationStore from "../utils/authenticationStore";
-// import tokenStore from '../utils/tokenStore';
+import * as authenticationStore from "../utils/authenticationStore";
+import * as authorizationStore from "../utils/authorizationStore";
 import credentialStore from '../utils/credentialStore';
 import { performDBAction, deleteProduct } from '../utils/productStore';
 
 
 class ProductsListContainer extends Component {
+    // setUserRole = authenticationStore.setUserRole;
+    setUserRole = authorizationStore.setUserRole;
     constructor(props) {
         super(props);
+        
         /******************************************
              * STEP2a: SET DELETEURL
              ******************************************/
@@ -38,7 +41,7 @@ class ProductsListContainer extends Component {
             message: '',
             user: {}
         };
-
+        
         // this.clickHandler = this.clickHander.bind(this);
     } // constructor
 
@@ -71,13 +74,20 @@ class ProductsListContainer extends Component {
     /************************************************/
 
 
-    componentDidMount() {
+    async componentDidMount() {
+        await this.setState(authenticationStore.getLocalStorage());
+
         //01/05:
-        this.setUserState();
+        console.log("PLCEMAIL:", this.state.email);
+
+        let user = await this.setUserRole(this.state.email);
+
+        this.setState({user});
+        console.log("PLCUSER:", JSON.stringify(user));
 
         let baseURL = "/products";
 
-        let returnProducts = (baseURL) => {
+        let returnProducts = async (baseURL) => {
             API.getProducts(baseURL)
                 .then(res => {
                     // set this.state.productsList
@@ -87,55 +97,27 @@ class ProductsListContainer extends Component {
         };
 
         // Execute getProducts
-        returnProducts(baseURL);
+        await returnProducts(baseURL);
     }
     // componentDidUpdate() {
-    //     this.setUserState();
+    //     this.setUserRole();
     // }
-
-    async setUserState() {
-        // set state variables:
-        let stateVariables = await authenticationStore.getLocalStorage();
-
-        this.setState(stateVariables);
-        // let user;
-        let baseURL = `/user/information/${this.state.email}`;
-        console.log("Email=*" + this.state.email + "*");
-
-        // 01/03/2020: Get User role
-        await API.getUserInfo(baseURL, this.state.email).then(res => {
-            console.log("BASE URL=", baseURL);
-            console.log("USER RES=", res.data);
-            // set user
-
-            let userObject = {
-                role: res.data.role,
-                // data: products
-            };
-
-            this.setState({ user: userObject });
-        })
-            .catch(err => {
-                console.log("ERROR: Setting ROLE to VISITOR:", err);
-                let userObject = {
-                    role: "visitor",
-                    // data: products
-                };
-                this.setState({ user: userObject });
-            });
-    }
+/******************************
+ * 1/8/19: setUser HERE
+ ******************************/
     set productListData(data) {
-        this.setUserState();
+
+        this.setState(authenticationStore.getLocalStorage());
+
+        // let user =  await this.setUserRole(this.state.email);
+
+        // this.setState({user});
+
         let products = data;
+
         console.log("in get", products, "length", products.length);
+        // console.log("ProductsList-USER", this.state.user);
 
-
-        // 001/03/2020:
-        // let user = {
-        //     role: "admin",
-        //     // role: "visitor",
-        //     data: products
-        // };
         // Set productsList from response data
         let productItemArray = products.map((product) => {
             console.log("PI", product.productImage);

@@ -13,13 +13,13 @@ const rules = {
         "users:getSelf",
         "home-page:visit",
         "dashboard-page:visit"
-      ],
+      ],  //static
       dynamic: {
         "posts:edit": ({userId, postOwnerId}) => {
           if (!userId || !postOwnerId) return false;
           return userId === postOwnerId;
         }
-      }
+      } // dyanmic
     },
     admin: {
       static: [
