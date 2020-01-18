@@ -92,8 +92,9 @@ class ProductsListContainer extends Component {
 
         let baseURL = "/products";
 
-        let returnProducts = async (baseURL) => {
-            API.getProducts(baseURL)
+        let returnProducts = async(baseURL) => {
+            // let returnProducts = (baseURL) => {
+            await API.getProducts(baseURL)
                 .then(res => {
                     // set this.state.productsList
                     this.productListData = res.data.products;
