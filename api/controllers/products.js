@@ -29,7 +29,7 @@ exports.products_get_all = (req, res, next) => {
             // res.type('json')
             res.set({'Content-Type': 'application/json',
             'Content-Length': '2048'});
-        });
+       
 
             // res.status(200).json(response);
             // res.status(200).send(JSON.stringify(response));
