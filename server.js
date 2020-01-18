@@ -21,11 +21,11 @@ const port = process.env.PORT || 3001;
 // Define middleware here *********************************************
 // app.use(express.urlencoded({limit: '50mb',extended: true }));
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-// app.use(express.urlencoded({extended: true }));
-// app.use(express.json());
+app.use(express.urlencoded({limit: '50mb', extended: true }));
+app.use(express.json({limit: '50mb'}));
 
 // Append headers to any response sent back, before routes, to disable cors errors
 app.use((req, res, next) => {
@@ -94,23 +94,4 @@ app.listen(port, function () {
     console.log(`🌎  ==> API Server now listening on PORT ${port}!`);
 });
 // ************************************************
-
-// package to help spin up server
-// const http = require('http');
-
-// Import the express app module from app.js to act as a request handler
-// const app = require('./app');
-
-// const port = process.env.PORT || 3001;
-
-
-// create server
-// const server = http.createServer(app);
-
-// // Start server listening on port
-// server.listen(port);
-// console.log(`server listening at http://localhost:${port}`);
-// if (process.env.NODE_ENV === 'production') {
-// 	app.use(express.static('client/build'));
-// }
 
