@@ -25,7 +25,8 @@ exports.products_get_all = (req, res, next) => {
                 })
             }; //response
             res.header('Content-Type', 'application/json');
-            res.status(200).json(response);
+            // res.status(200).json(response);
+            res.status(200).send(JSON.stringify(response));
         })
         .catch(err => {
             console.log(err);
