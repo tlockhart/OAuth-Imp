@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import './App.css';
 
 // Handle Routes
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // Import Components
 // import Navbar from './components/Navbar';
 import Navbar from './components/Navbar';
 // import MainContent from './components/MainContent';
 import Footer from './components/Footer';
+import history from "./history";
 
 
 // Import Pages
@@ -59,13 +60,13 @@ class App extends Component {
       // console.log("PRODUCT VIEW toggle state:", this.state.toggle);
     }
 
-    
+
   }
 
   render() {
     // let toggle = this.state.toggle.toString();
     return (
-      <Router>
+      <Router history={history}>
         <div>
           {/* Refresh={toggle} */}
           <Navbar
@@ -73,13 +74,16 @@ class App extends Component {
             navItems={this.state.navItems}
             currentPage={this.state.currentPage}
             name={this.state.name} />
-          <Route exact path="/" component={HomeContainer} />
-          <Route exact path="/user/registration" component={RegistrationContainer} />
-          <Route exact path="/user/login" component={LoginContainer} />
-          <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />
-          <Route exact path="/product/insert" component={ProductInsertContainer} />
-          <Route exact path="/products/product/:product_id" component={ProductViewContainer} />
-          <Route exact path="/products" component={ProductsListContainer} />
+          <Switch>
+            <Route exact path="/" component={HomeContainer} />
+            <Route exact path="/user/registration" component={RegistrationContainer} />
+            <Route exact path="/user/login" component={LoginContainer} />
+            <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />
+            <Route exact path="/product/insert" component={ProductInsertContainer} />
+            <Route exact path="/products/product/:product_id" component={ProductViewContainer} />
+            <Route exact path="/products" component={ProductsListContainer} />
+          </Switch>
+
           <Footer />
         </div>
       </Router>
