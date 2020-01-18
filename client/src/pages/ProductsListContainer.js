@@ -16,11 +16,9 @@ import { performDBAction, deleteProduct } from '../utils/productStore';
 
 
 class ProductsListContainer extends Component {
-    // setUserRole = authenticationStore.setUserRole;
-    setUserRole = authorizationStore.setUserRole;
-    constructor(props) {
+    constructor (props) {
         super(props);
-        
+        // role = await authorizationStore.setUserRole;
         /******************************************
              * STEP2a: SET DELETEURL
              ******************************************/
@@ -39,7 +37,7 @@ class ProductsListContainer extends Component {
             hasTimeExpired: false,
             isUserAuthorized: true,
             message: '',
-            user: {}
+            user: {role: this.role}
         };
         
         // this.clickHandler = this.clickHander.bind(this);
@@ -78,15 +76,17 @@ class ProductsListContainer extends Component {
     async componentDidMount() {
         // componentDidMount() {
             this.setState({refreshed: true});
+
         await this.setState(authenticationStore.getLocalStorage());
         // this.setState(authenticationStore.getLocalStorage());
 
         //01/05:
         console.log("PLCEMAIL:", this.state.email);
 
-        let user = await this.setUserRole(this.state.email);
+        let user = await authorizationStore.setUserRole(this.state.email);
         // let user = this.setUserRole(this.state.email);
 
+        // this.setState({user});
         this.setState({user});
         console.log("PLCUSER:", JSON.stringify(user));
 

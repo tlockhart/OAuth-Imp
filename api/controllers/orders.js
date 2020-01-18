@@ -53,7 +53,7 @@ exports.orders_create_order = (req, res, next) => {
         return order.save();   
     })
     // then chain the promise to send the response once resolved
-    .then(document => {
+    .then( document => {
         console.log(document);
         let response = {
             message: 'Order stored',
