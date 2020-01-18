@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import './App.css';
 
 // Handle Routes
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+// import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 
 // Import Components
 // import Navbar from './components/Navbar';

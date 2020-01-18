@@ -24,11 +24,12 @@ exports.products_get_all = (req, res, next) => {
                     }
                 })
             }; //response
-            res.set('Content-Type', 'application/json');
+            // res.set('Content-Type', 'application/json');
+            res.type('Content-Type', 'application/json');
+
             // res.status(200).json(response);
-            res.status(200);
-            res.send(JSON.stringify(response));
-            console.log("STATUS:", res.status);
+            res.status(200).send(response);
+            console.log("STATUS:", res.statusCode);
             console.log("CONTENT:", res.get('Content-Type'));
         })
         .catch(err => {
