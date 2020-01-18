@@ -45,6 +45,9 @@ app.use((req, res, next) => {
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
         return res.status(200).json({});
     }
+
+    // Set content-type header for all request
+    res.set("Content-Type", "application/json");
     // Header 4: Call next, so that other routes can handle the next (real) request
     next();
 });

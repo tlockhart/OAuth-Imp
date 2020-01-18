@@ -36,7 +36,7 @@ exports.products_get_all = (req, res, next) => {
             // res.status(200).send(JSON.stringify(response));
             console.log("STATUS:", res.statusCode);
             console.log("CONTENT:", res.get('Content-Type'));
-            req.headers['content-type'] === 'application/json; charset=UTF-8';
+            // req.headers['content-type'] === 'application/json; charset=UTF-8';
         })
         .catch(err => {
             console.log(err);
