@@ -5,7 +5,7 @@ const oAuthAccessToken = require('../generators/oAuthAccessToken');
 
 //import user model
 const User = require('../models/user');
-const Token = require('../models/Token');
+const Token = require('../models/token');
 
 //import momentjs
 const moment = require('moment');
