@@ -27,27 +27,27 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // app.use(express.urlencoded({extended: true }));
 // app.use(express.json());
 
-// // Append headers to any response sent back, before routes, to disable cors errors
-// app.use((req, res, next) => {
-//     // Header 1: restrict to certain URL
-//     // res.header('Access-Control-Allow-Origin', 'http://my-cool-page.com'); 
+// Append headers to any response sent back, before routes, to disable cors errors
+app.use((req, res, next) => {
+    // Header 1: restrict to certain URL
+    // res.header('Access-Control-Allow-Origin', 'http://my-cool-page.com'); 
 
-//     // Set Cross Access Control Header to all incoming URLS
-//     res.header('Access-Control-Allow-Origin', '*'); 
+    // Set Cross Access Control Header to all incoming URLS
+    res.header('Access-Control-Allow-Origin', '*'); 
 
-//     // Header 2: Set which Headers can be accepted along with a request
-//     // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-//     res.header('Access-Control-Allow-Headers', '*');
+    // Header 2: Set which Headers can be accepted along with a request
+    // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Headers', '*');
 
-//     // Header 3: An options incoming request.meth is equal to options.  A browser will always send an options request first when you make an HTTP request, where the browser determines if he is allowed to make the actual request (Post Flight Check);
-//     if ( req.method === 'OPTIONS') {
-//         // Allow all HTTP REQUESTS
-//         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-//         return res.status(200).json({});
-//     }
-//     // Header 4: Call next, so that other routes can handle the next (real) request
-//     next();
-// });
+    // Header 3: An options incoming request.meth is equal to options.  A browser will always send an options request first when you make an HTTP request, where the browser determines if he is allowed to make the actual request (Post Flight Check);
+    if ( req.method === 'OPTIONS') {
+        // Allow all HTTP REQUESTS
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).json({});
+    }
+    // Header 4: Call next, so that other routes can handle the next (real) request
+    next();
+});
 
 
 // Serve up static assets
