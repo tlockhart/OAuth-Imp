@@ -24,12 +24,13 @@ exports.products_get_all = (req, res, next) => {
                     }
                 })
             }; //response
-            
+
             // res.type('Content-Type', 'application/json');
             // res.type('json')
-            res.set({'Content-Type': 'application/json',
-            'Content-Length': '2048'});
-       
+            res.set({
+                'Content-Type': 'application/json'
+            });
+
 
             // res.status(200).json(response);
             // res.status(200).send(JSON.stringify(response));
@@ -57,7 +58,7 @@ exports.products_insert_product = (req, res, next) => {
         }
     }
     console.log("insertProps.authToken:", insertProps.authToken);
- 
+
     // if(true) {
     // create a new product document, to be sent in the request
     const product = new Product({
