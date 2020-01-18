@@ -18,11 +18,15 @@ const app = express();
 // Set port
 const port = process.env.PORT || 3001;
 
+// var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: '200mb'}));
+app.use(bodyParser.urlencoded({limit: '200mb', extended: true}));
+
 // Define middleware here *********************************************
 // app.use(express.urlencoded({limit: '50mb',extended: true }));
 
-app.use(express.json());
-app.use(express.urlencoded());
+// app.use(express.json());
+// app.use(express.urlencoded());
 
 // app.use(bodyParser.json({limit: '50mb'}));
 // app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
