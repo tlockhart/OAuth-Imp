@@ -159,7 +159,8 @@ class NavbarPage extends Component {
     if (this.props.currentPage === "Logout") {
       // When credentials are cleared force password reset, since no new page is displayed
       authenticationStore.resetLocalStorage();
-      window.location.reload(false);
+      // window.location.reload(false);
+      window.location.reload();
     }
      
   }
