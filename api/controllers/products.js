@@ -32,7 +32,7 @@ exports.products_get_all = (req, res, next) => {
             });
 
 
-            // res.status(200).json(response);
+            res.status(200).json(response);
             // res.status(200).send(JSON.stringify(response));
             console.log("STATUS:", res.statusCode);
             console.log("CONTENT:", res.get('Content-Type'));
