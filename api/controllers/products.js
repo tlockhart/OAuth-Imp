@@ -24,7 +24,7 @@ exports.products_get_all = (req, res, next) => {
                     }
                 })
             }; //response
-            res.setHeader('Content-Type', 'application/json');
+            res.header('Content-Type', 'application/json');
             res.status(200).json(response);
         })
         .catch(err => {
