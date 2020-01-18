@@ -31,10 +31,10 @@ exports.products_get_all = (req, res, next) => {
             //     'Content-Type': 'application/json'
             // });
 
-            res.set({'Content-Type': 'text/html'});
-            // res.status(200).json(response);
+            // res.set({'Content-Type': 'text/html'});
+            res.status(200).json(response);
             // res.status(200).send(JSON.stringify(response));
-            res.status(200).send(response);
+            // res.status(200).send(response);
             console.log("STATUS:", res.statusCode);
             console.log("CONTENT:", res.get('Content-Type'));
             // req.headers['content-type'] === 'application/json; charset=UTF-8';
