@@ -182,7 +182,7 @@ class NavbarPage extends Component {
 
     return (
       // <Router>
-      <MDBNavbar color="default-color" dark expand="md">
+      <MDBNavbar color="default-color dark" expand="md">
         <MDBNavbarBrand>
           <strong className="white-text">Navbar</strong>
         </MDBNavbarBrand>

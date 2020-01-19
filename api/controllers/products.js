@@ -19,7 +19,8 @@ exports.products_get_all = (req, res, next) => {
                         productImage: document.productImage,
                         request: {
                             type: 'GET',
-                            url: `http://localhost:3000/products/${document._id}`
+                            // url: `http://localhost:3000/products/${document._id}`
+                            url: `http://localhost:3000/products/`
                         }
                     }
                 })
