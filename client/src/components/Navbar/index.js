@@ -16,24 +16,30 @@ class NavbarPage extends Component {
       {
         homeActiveTag: (
           <MDBNavItem active onClick={this.props.handlePageClick}>
-            <MDBNavLink name="Home" to={"/"}>Home</MDBNavLink>
+            {/* <MDBNavLink name="Home" to={"/"}>Home</MDBNavLink> */}
+            <NavLink name="Home" to={"/"}>Home</NavLink>
           </MDBNavItem>
         ),
         homeInactiveTag: (
           <MDBNavItem onClick={this.props.handlePageClick}>
-            <MDBNavLink name="Home" to="/">Home</MDBNavLink>
+            {/* <MDBNavLink name="Home" to="/">Home</MDBNavLink> */}
+            <NavLink name="Home" to="/">Home</NavLink>
           </MDBNavItem>
         ),
         productsActiveTag: (
           <MDBNavItem active onClick={this.props.handlePageClick}>
-            <MDBNavLink name="Products" to="/products" >Products
-            </MDBNavLink>
+            {/* <MDBNavLink name="Products" to="/products" >Products
+            </MDBNavLink> */}
+            <NavLink name="Products" to="/products" >Products
+            </NavLink>
           </MDBNavItem>
         ),
         productsInactiveTag: (
           <MDBNavItem onClick={this.props.handlePageClick}>
-            <MDBNavLink name="Products" to="/products">Products
-          </MDBNavLink>
+            {/* <MDBNavLink name="Products" to="/products">Products
+            </MDBNavLink> */}
+            <NavLink name="Products" to="/products">Products
+            </NavLink>
           </MDBNavItem>
         ),
         insertActiveTag: (
@@ -83,21 +89,26 @@ class NavbarPage extends Component {
           // </MDBNavbarNav>
         ),
         registrationActiveTag: (
-          <MDBNavLink to="/user/registration">
+          // <MDBNavLink to="/user/registration">
+          <NavLink to="/user/registration">
             <MDBDropdownItem
               active
               name="Registration"
               onClick={this.props.handlePageClick}
             >Register</MDBDropdownItem>
-          </MDBNavLink>
+          {/* </MDBNavLink> */}
+          </NavLink>
         ),
         registrationInactiveTag: (
-          <MDBNavLink to="/user/registration">
+          // <MDBNavLink to="/user/registration">
+          <NavLink to="/user/registration">
             <MDBDropdownItem
               name="Registration"
               onClick={this.props.handlePageClick}
             >Register</MDBDropdownItem>
-          </MDBNavLink>
+          {/* </MDBNavLink> */}
+          </NavLink>
+
         ),
         loginActiveTag: (
           <NavLink to="/user/login">
@@ -109,27 +120,27 @@ class NavbarPage extends Component {
           </NavLink>
         ),
         loginInactiveTag: (
-          <MDBNavLink to="/user/login">
+          <NavLink to="/user/login">
             <MDBDropdownItem
               name="Login"
               onClick={this.props.handlePageClick}
             >Login</MDBDropdownItem>
-          </MDBNavLink>
+          </NavLink>
         ),
         logoutActiveTag: (
-          <MDBNavLink to="#">
+          <NavLink to="#">
             <MDBDropdownItem
               active
               name="Logout"
               onClick={this.props.handlePageClick}>Logout</MDBDropdownItem>
-          </MDBNavLink>
+          </NavLink>
         ),
         logoutInactiveTag: (
-          <MDBNavLink to="#">
+          <NavLink to="#">
             <MDBDropdownItem
               name="Logout"
               onClick={this.props.handlePageClick}>Logout</MDBDropdownItem>
-          </MDBNavLink>
+          </NavLink>
         )
       }
     };

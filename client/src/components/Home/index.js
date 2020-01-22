@@ -20,7 +20,7 @@ let Home = function() {
         // </main>
         // <!-- Intro Section -->
         <header>
-        <div class="view jarallax" data-jarallax='{"speed": 0.2}' style={divStyle}>
+        <div className="view jarallax" data-jarallax='{"speed": 0.2}' style={divStyle}>
           {/* <div class="mask rgba-white-light"> */}
             <div className="container h-100 d-flex justify-content-center align-items-center">
               <div className="row pt-5 mt-3">
