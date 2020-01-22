@@ -39,12 +39,13 @@ export default {
     getProducts: async (baseURL) => {
         if (baseURL) {
             console.log("In API.getProducts", baseURL);
-            let get = await axios.get(baseURL, {
-                headers:
-                {
-                    Accept: 'application/json'
-                }
-            });
+            // let get = await axios.get(baseURL, {
+            //     headers:
+            //     {
+            //         Accept: 'application/json'
+            //     }
+            // });
+            let get = await axios.get(baseURL);
             return get;
         }
     },
