@@ -130,7 +130,7 @@ class ProductsListContainer extends Component {
 
         // Set productsList from response data
         let productItemArray = products.map((product) => {
-            console.log("PI", product.productImage);
+            // console.log("PI", product.productImage);
             return (
                 <ProductListItem
                     user={this.state.user}

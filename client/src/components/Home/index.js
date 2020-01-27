@@ -1,6 +1,6 @@
   
 import React from "react";
-import styles from './styles.css';
+// import styles from './styles.css';
 // import { MDBCarousel, MDBCarouselCaption, MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask, MDBContainer } from "mdbreact";
 
 let Home = function() {

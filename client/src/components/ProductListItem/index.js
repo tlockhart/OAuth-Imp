@@ -30,8 +30,6 @@ let ProductListItem = (props) => {
           <p className="mt-2"><b>{name ? nameText : 'false'}</b></p>
           <p>{valueText}<br /></p>
 
-          {/* LINK BUTTON */}
-          {/* {(props) => ( */}
           <Can
             role={user.role}
             perform="dashboard-page:visit"
@@ -49,16 +47,6 @@ let ProductListItem = (props) => {
                   }
                 }
                   buttonName={"Update"} />
-                {/* <LinkActionBtn to={
-                    {
-                      pathname: `/product/insert`,
-                      state: {
-                        name: name,
-                        value: value,
-                      }
-                    }
-                  }
-                    buttonName={"Insert"} /> */}
                 <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)} id={id} />
               </React.Fragment>
             )}
@@ -77,13 +65,7 @@ let ProductListItem = (props) => {
                 <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
               </React.Fragment>
             )}
-          // {() => <Redirect to="/" />}
           />
-          {/* )} */}
-
-
-
-
           <hr />
         </div>
       </div>
