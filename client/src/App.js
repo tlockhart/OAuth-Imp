@@ -4,7 +4,7 @@ import './App.css';
 
 // Handle Routes
 // import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // Import Components
 // import Navbar from './components/Navbar';
@@ -67,7 +67,7 @@ class App extends Component {
   render() {
     // let toggle = this.state.toggle.toString();
     return (
-      <Router history={history}>
+      <Router>
         <div>
           {/* Refresh={toggle} */}
           <Navbar
