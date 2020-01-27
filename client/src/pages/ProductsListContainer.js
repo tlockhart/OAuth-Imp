@@ -74,20 +74,21 @@ class ProductsListContainer extends Component {
 
 
     async componentDidMount() {
+        //01/05:
+        console.log("Mount 1");
         // componentDidMount() {
             this.setState({refreshed: true});
-
+            console.log("Mount 2");
         await this.setState(authenticationStore.getLocalStorage());
         // this.setState(authenticationStore.getLocalStorage());
 
         //01/05:
-        console.log("PLCEMAIL:", this.state.email);
+        console.log("Mount3 Email:", this.state.email);
 
         let user = await authorizationStore.setUserRole(this.state.email);
         // let user = this.setUserRole(this.state.email);
 
         // this.setState({user});
-        this.setState({user});
         console.log("PLCUSER:", JSON.stringify(user));
 
         let baseURL = "/products";
