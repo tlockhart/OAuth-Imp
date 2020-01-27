@@ -82,7 +82,7 @@ class App extends Component {
             <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />
             <Route exact path="/product/insert" component={ProductInsertContainer} />
             <Route exact path="/products/product/:product_id" component={ProductViewContainer} />
-            <Route exact path="/products" component={ProductsListContainer} />
+            <Route exact path="/products/" component={ProductsListContainer} />
           </Switch>
 
           <Footer />
