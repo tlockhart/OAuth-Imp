@@ -27,6 +27,7 @@
     "concurrently": "^4.1.2",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "express-csp-header": "^2.3.2",
     "if-env": "^1.0.4",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",

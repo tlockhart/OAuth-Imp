@@ -35,6 +35,7 @@ exports.products_get_all = (req, res, next) => {
             // res.set({'Content-Type': 'text/html'});
             //Correct:
             /***********/
+            // res.header('Content-Security-Policy', 'img-src 'self');
             res.status(200).json(response);
 
             // res.status(200).send(JSON.stringify(response));
