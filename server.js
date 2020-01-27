@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
 const routes = require("./api/routes");
 // initialize express
 const app = express();
-const csp = require('express-csp-header');
+// const csp = require('express-csp-header');
 
 // Set port
 const port = process.env.PORT || 3001;
@@ -37,16 +37,16 @@ app.use(express.json({limit: '5024mb'}));
 app.use(express.urlencoded({limit: '5024mb', extended: true }));
 
 //Content-Security-Policy
-app.use(csp({
-    policies: {
-        'default-src': [csp.SELF],
-        'script-src': [csp.SELF, csp.INLINE, 'somehost.com'],
-        'style-src': [csp.SELF, 'mystyles.net'],
-        'img-src': ['data:', 'images.com'],
-        'worker-src': [csp.NONE],
-        'block-all-mixed-content': true
-    }
-}));
+// app.use(csp({
+//     policies: {
+//         'default-src': [csp.SELF],
+//         'script-src': [csp.SELF, csp.INLINE, 'somehost.com'],
+//         'style-src': [csp.SELF, 'mystyles.net'],
+//         'img-src': ['data:', 'images.com'],
+//         'worker-src': [csp.NONE],
+//         'block-all-mixed-content': true
+//     }
+// }));
 
 // Append headers to any response sent back, before routes, to disable cors errors
 app.use((req, res, next) => {
