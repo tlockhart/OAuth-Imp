@@ -39,8 +39,12 @@ app.use(express.urlencoded({limit: '5024mb', extended: true }));
 //Content-Security-Policy
 app.use(csp({
     policies: {
-        'default-src': [csp.NONE],
-        'img-src': [csp.SELF],
+        'default-src': [csp.SELF],
+        'script-src': [csp.SELF, csp.INLINE, 'somehost.com'],
+        'style-src': [csp.SELF, 'mystyles.net'],
+        'img-src': ['data:', 'images.com'],
+        'worker-src': [csp.NONE],
+        'block-all-mixed-content': true
     }
 }));
 
