@@ -10,7 +10,10 @@ import API from '../utils/API';
 import ProductListItem from "../components/ProductListItem/index";
 
 import * as authenticationStore from "../utils/authenticationStore";
-import * as authorizationStore from "../utils/authorizationStore";
+// import * as authorizationStore from "../utils/authorizationStore";
+// import {auth} from '../utils/mergedAuth';
+import * as auth from '../utils/authenticationStore';
+
 import credentialStore from '../utils/credentialStore';
 import { performDBAction, deleteProduct } from '../utils/productStore';
 
@@ -57,7 +60,10 @@ class ProductsListContainer extends Component {
    //      ************************************************/
     setStateVariables(access_token, refresh_token, expiration, email, message) {
         let authToken = "Bearer " + access_token;
-        let hasTimeExpired = authenticationStore.hasTimeExpired();
+        // let hasTimeExpired = authenticationStore.hasTimeExpired();
+        let hasTimeExpired = auth.hasTimeExpired();
+        // .hasTimeExpired();
+
 
 
         this.setState({
@@ -82,18 +88,24 @@ class ProductsListContainer extends Component {
         // componentDidMount() {
         this.setState({ refreshed: true });
         console.log("Mount 2");
-        this.setState(authenticationStore.getLocalStorage());
-        // this.setState(authenticationStore.getLocalStorage());
+        const localStateObj = auth.getLocalStorage();
+        console.log("ProductListContainer LOCALSTATEOBJ:", localStateObj);
+        this.setState(localStateObj);
+        console.log("EMAIL:", localStateObj.email);
+        //5/18/20
+        /*******************************************/
+        const email = localStateObj.email;
+        console.log("Mount3 Email:", email);
 
-        //01/05:
-        console.log("Mount3 Email:", this.state.email);
-
-        let user = authorizationStore.setUserRole(this.state.email);
-        // let user = this.setUserRole(this.state.email);
-
-        this.setState({ user });
-        console.log("PLCUSER:", JSON.stringify(user));
-
+        /* Set user role on state, by using call back
+        function instead of async await */
+        auth.setUserRole(email)
+            .then((data => {
+                console.log("setUserRole:", data);
+                this.setState({ user: data });
+                console.log("AFTER DIDMOUNT LOAD user:", this.state.user);
+            }));
+        /******************************************** */
         // Execute getProducts
         this.returnProducts(this.baseURL);
         // returnProducts(baseURL);
@@ -111,7 +123,6 @@ class ProductsListContainer extends Component {
             }
 
         }
-
         catch (err) {
             console.log(err)
         }
@@ -121,7 +132,9 @@ class ProductsListContainer extends Component {
      ******************************/
     set productListData(data) {
 
-        this.setState(authenticationStore.getLocalStorage());
+        // this.setState(authenticationStore.getLocalStorage());
+        this.setState(auth.getLocalStorage());
+
 
         // let user =  await this.setUserRole(this.state.email);
 
@@ -242,7 +255,9 @@ class ProductsListContainer extends Component {
             /***************************************
              * STEP2: Get Data out of local Storage
              ***************************************/
-            let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
+            // let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
+            let { access_token, refresh_token, expiration, email, message } = await auth.getLocalStorage();
+
 
             /******************************************
              * STEP3: SET STATE VARIABLES With data returned from localStorage

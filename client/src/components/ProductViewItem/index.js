@@ -21,18 +21,6 @@ let ProductItem = (props) => {
           <img src={image} alt={`product ${id}`} />
           <p className="mt-2"><b>{name? nameText: ''}</b></p>
           <p><b>{value ? valueText: ''}</b><br /></p>
-
-          {/* <LinkActionBtn to={
-            {
-              pathname: `/products/product/update/${id}`,
-              state: {
-                name: name,
-                value: value,
-                id: id,
-              }
-            }
-          }
-          buttonName={"Update"}/> */}
           <hr />
         </div>
       </div>

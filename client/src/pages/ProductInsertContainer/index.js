@@ -8,11 +8,14 @@ import credentialStore from '../../utils/credentialStore';
 import { insertProduct, performDBAction } from '../../utils/productStore';
 import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpers';
 
+import { insertCloudinary } from '../../utils/productStore';
+
 class ProductInsertContainer extends Component {
     constructor(props) {
         super(props);
         this.refreshURL = '/user/login/refresh';
         this.baseURL = '/products/product/insert/';
+        this.cloudinaryURL = '/products/cloudinary/insert/';
         this.state = {
             productId: '',
             productName: '',
@@ -263,6 +266,7 @@ class ProductInsertContainer extends Component {
             // If input is not valid do not accept image and do nothing
             console.log("Is Input File Valid:", isInputValid);
             if (!isInputValid) {
+                console.log("image not acceptable");
                 if (fileMsgElement) {
                     setFileMessage(errorTag, unacceptedMsg);
                 } else {
@@ -272,13 +276,21 @@ class ProductInsertContainer extends Component {
                 // show select image:
                 // $('#select-btn').show()
             } else {
-                // console.log ("Image is acceptable");
+                console.log ("Image is acceptable");
                 var imageUrl = imageSrc;
 
+                console.log("Call convertImageFromURLTOBase");
                 /******************************************************    Converts image to base64String
                 ****************************************************/
                 let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
-                console.log("In the out");
+
+                /**************************
+                 * Code Burst onChange Event
+                 * upload to Cloudinary
+                 **************************/
+                console.log("Calling productStore.insertCloudinary");
+                await insertCloudinary(this.cloudinaryURL, base64StringImage);
+                /**************************/
                 console.log("Converted Image: ", base64StringImage);
                 // copy image state to local variable
                 image = this.state.image;
@@ -397,14 +409,14 @@ class ProductInsertContainer extends Component {
     ************************************/
     async stageDBAction(
         id,
-        email, 
-        name, 
-        value, 
-        image, 
-        url, 
+        email,
+        name,
+        value,
+        image,
+        url,
         cb) {
         // var image = imageRef;
-        console.log("STAGEDBACTION BASE64: ", image.base64Str);
+        // console.log("STAGEDBACTION BASE64: ", image.base64Str);
         console.log("Start performDBAction");
         // console.log("ProductInsertContainer: stageDBACTION: FILE", file);
 
@@ -557,6 +569,7 @@ class ProductInsertContainer extends Component {
                 // Refresh_Token should be temporarily set to 'norefresh' in productionAction, as tokens should NOT be refreshed
                 // this.setState({ refresh_token: 'norefresh' });
 
+                // 5/17/2020:
                 console.log('ProductInsertContainer:refresh_token = ', this.state.refresh_token);
 
                 /**************************************
@@ -565,27 +578,27 @@ class ProductInsertContainer extends Component {
                 // 12/22/2019: CONVERT IMAGE TO BASEURL
                 /**************************************/
                 await this.submitImageHandler(event, this.state.image);
-                console.log("base64 still here:", this.state.image.base64Str);
+                // console.log("base64 still here:", this.state.image.base64Str);
 
                 /***********************************************
                  * Step8 of 8: PERFORM A DB ACTION IF TOKENS R VALID 
                  **********************************************/
                 // 12/15
                 await this.stageDBAction(
-                    this.state.productId, 
+                    this.state.productId,
                     this.state.email,
-                    name, 
-                    value, 
-                    image, 
-                    this.baseURL, 
+                    name,
+                    value,
+                    image,
+                    this.baseURL,
                     insertProduct);
             } // if
 
         } // try
         catch (err) {
-            console.log(err, "User is logged out");
+            console.log(err);
             this.setState({
-                message: "User is logged out"
+                message: err
             });
         }
     }

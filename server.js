@@ -3,6 +3,10 @@
 // import dotenv
 require("dotenv").config();
 
+// use multipart data 5/17/2020
+const formData = require('express-form-data');
+// const cors = require('cors');
+
 // import required modules
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -10,7 +14,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
-// Define routes here to get bidy parser working
+// Define routes here to get body parser working
 const routes = require("./api/routes");
 // initialize express
 const app = express();
@@ -19,19 +23,18 @@ const app = express();
 // Set port
 const port = process.env.PORT || 3001;
 
-// var bodyParser = require('body-parser');
-app.use(bodyParser.json({limit: '200mb'}));
-app.use(bodyParser.urlencoded({limit: '200mb', extended: true}));
 
-// app.use(express.urlencoded({limit: '50mb',extended: true }));
-// app.use(express.json());
-// app.use(express.urlencoded());
+//5/17/2020:
+// use multipart data:
+app.use(formData.parse());
 
+// app.use(bodyParser.json({limit: '200mb'}));
+// app.use(bodyParser.urlencoded({limit: '200mb', extended: true}));
 /*********************************************/
-// Define middleware here 
+// Define middleware here 5/17/2020
 /*********************************************/
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.use(express.json({limit: '5024mb'}));
 app.use(express.urlencoded({limit: '5024mb', extended: true }));

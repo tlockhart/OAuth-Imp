@@ -29,6 +29,13 @@ router.get('/', ProductsController.products_get_all);
 /**********/
 router.post('/product/insert/', checkAuth,ProductsController.products_insert_product);
 
+
+// 5/17/2020
+// URL: '/products/cloudinary/insert/'
+/*******************/
+// router.post('/cloudinary/insert/', checkAuth,ProductsController.cb_image_upload);
+router.post('/cloudinary/insert/',ProductsController.cb_image_upload);
+
 // localhost:3000/products/5d75802fa50af037b063668d
 router.get('/:productId', ProductsController.products_get_product);
 

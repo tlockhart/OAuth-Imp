@@ -186,16 +186,18 @@ export let loadImage = (img, blob) => {
 /* Base64 Decoder: Remove the metadata
 https://www.base64decode.net/base64-image-decoder */
 export let convertImageFromUrlToBase64String = async (url) => {
+  console.log("In convertImageStart");
   var img = new Image()
   img.crossOrigin = 'Anonymous'
   var dataUrl;
   return new Promise(function (resolve, reject) {
     // Setting the img.src will call img.onload when the src is loaded
-
+    console.log("URL1: ", url);
     // Pull Width/Height from URL and store in img objec
     img.src = url;// url is the img src
+    console.log("URL2: ", url);
 
-    img.onload = function () {
+    img.onload = () => {
       var canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
@@ -207,11 +209,13 @@ export let convertImageFromUrlToBase64String = async (url) => {
       context.drawImage(img, 0, 0);
       // Return a data URI containing a representation of the image in jpg format
       dataUrl = canvas.toDataURL('image/jpg');
+      console.log("Images loaded helper.js resolved");
       resolve(dataUrl);
     };
+    
     // reject promis onError
-    img.onerror = () => {
-      reject("rejected");
+    img.onerror = (err) => {
+      reject("image rejected in BASE64 Conversion:", err);
     };
   }); // promise
 };// convertImage

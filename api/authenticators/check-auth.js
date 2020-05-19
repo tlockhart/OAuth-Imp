@@ -13,8 +13,8 @@ module.exports = async (req, res, next) => {
     // Step1: call next() if we did successfully authenticate
     // verify and return decoded value
     /************************************/
-    console.log("CHECKAUTH req BODY Data: ", req.body);
-    console.log("CHECKAUTH req Head: ", req.headers);
+    // console.log("CHECKAUTH req BODY Data: ", req.body);
+    // console.log("CHECKAUTH req Head: ", req.headers);
 
 
     /************************************/
@@ -45,7 +45,7 @@ module.exports = async (req, res, next) => {
                 console.log("******IS AN ARRAY*****");
                 for (let key of req.body) {
                     // validate that data has been supplied
-                    console.log("Key:", key);
+                    // console.log("Key:", key);
                     if (key.value !== undefined) {
                         updateProps[key.propName] = key.value;
                         if (key.propName === "email") {
@@ -86,14 +86,14 @@ module.exports = async (req, res, next) => {
         const refresh_token_header = req.headers.refreshtoken;
         const access_token_header = req.headers.authorization;
 
-        console.log('check-auth:refresh_token_header: ', refresh_token_header, 'isrefreshEqNoRefresh', refresh_token_header === 'norefresh');
-        console.log('check-auth:access_token_header: ', access_token_header);
+        // console.log('check-auth:refresh_token_header: ', refresh_token_header, 'isrefreshEqNoRefresh', refresh_token_header === 'norefresh');
+        // console.log('check-auth:access_token_header: ', access_token_header);
         console.log('check-auth:expired: ', expired, 'isTrue', expired === true);
 
         // 01/01/2019: Pull the User record 
         let userDocument = await userController.populate_token(email);
 
-        console.log("CHECKAUTH USERDOCUMENT Access: ", userDocument.token.access, "refresh: ", userDocument.token.refresh);
+        // console.log("CHECKAUTH USERDOCUMENT Access: ", userDocument.token.access, "refresh: ", userDocument.token.refresh);
 
         // 01/01/2019: No-Refresh: Access Token has not expired, before we perform an update in the db, make sure the access_tokens match the access_token on the user record
         /******************************/

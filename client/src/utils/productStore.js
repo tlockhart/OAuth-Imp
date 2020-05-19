@@ -57,6 +57,14 @@ export let updateProduct = async (
     return updateResponse;
 };
 
+// Cloudinary
+export let insertCloudinary = async (baseURL, imageObj) => {
+    console.log("productStore.insertCloudinary called, Name:", imageObj.imageName);
+    const cloudinaryResponse = await API.insertCloudinary(baseURL, imageObj);
+
+    return cloudinaryResponse;
+};
+
 // Define Call to Server Side utils to post body to the backend server:
 export let insertProduct = async (
     url,

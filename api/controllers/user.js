@@ -82,7 +82,7 @@ exports.user_refreshTokens = async (req, res, next) => {
                 *******************************************/
                 access_token = oAuthAccessToken.createAccessToken(email, user._id);
                 refresh_token = oAuthAccessToken.createRefreshToken(email, user._id);
-                console.log("TOKEN:", access_token);
+                // console.log("TOKEN:", access_token);
                 return res.status(200).json({
                     message: 'Auth successful',
                     access_token: access_token,
@@ -250,7 +250,7 @@ exports.user_login = async (req, res, next) => {
                     //     console.log("RESPONSE: ", popResponse);
                     }
 
-                    console.log("TOKEN:", access_token);
+                    // console.log("TOKEN:", access_token);
                     res.status(200).json({
                         message: 'Auth successful',
                         access_token: access_token,

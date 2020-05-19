@@ -65,6 +65,10 @@ export default {
             console.log("APIGETUSERINFO: "+JSON.stringify(response));
             return response;
         }
+        else {
+            console.log("API.email:", email);
+            console.log("API.baseURL:", baseURL);
+        }
     },
 
     refreshTokens: async (url, accessToken, refreshToken, email, expired) => {
@@ -174,6 +178,28 @@ export default {
              * Send the results back to the calling program
              ************************************************************/
             return patch;
+        }
+    },
+    // insertCloudinary
+    insertCloudinary: async (baseURL, imageObj) => {
+        if (imageObj) {
+            console.log ("In insertCloudinary", baseURL);
+            // console.log ("#ImageObj:", imageObj);
+
+            //create formData from BASE64 file
+            const formData = new FormData();
+            formData.append('file',imageObj);
+
+            const config = {
+                headers:
+                {
+                    'Content-Type': "multipart/form-data"
+                }
+            };
+
+            // NEW POST WITH FORMDATA
+            const post = await axios.post(baseURL, formData, config)
+            return post;
         }
     },
     // /:productId

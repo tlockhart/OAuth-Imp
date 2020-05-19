@@ -1,87 +1,58 @@
 import API from '../utils/API';
-const moment = require('moment');
+// const moment = require('moment');
+import moment, {Moment} from 'moment';
 // Import Server-Side Utilities:
 
 
 /**********************
  * Contains methods for storing credentials in localStorage and packaging for setting as state variables
  */
-export let set = (name, value) => {
+let set = (name, value) => {
     localStorage.setItem(name, value);
 };
 
-export let get = (name) => {
+let get = (name) => {
     let authenticationStore_value = localStorage.getItem(name);
     console.log(name, ':', authenticationStore_value);
     let returnValue = authenticationStore_value ? authenticationStore_value : '';
     return returnValue;
 };
 
-export let hasTimeExpired = (() => {
+let hasTimeExpired = (() => {
     let data = localStorage.getItem('data');
     // set hasTimeExpired to true to get the refreshToken method to execute.  Request will fail with no tokens and return.  Otherwise
     let returnValue = false;
 
     if (data !== null && typeof data !== 'undefined') {
-        // let currentTime = moment();
-        let currentTime = moment.utc();
+        let currentTime = moment.utc(moment()).local().format("L LT");
         let data = JSON.parse(get('data'));
+        //5/17/2020
+        /***********************************/
         let { expiration } = data;
-        console.log("expiration", expiration);
-        let authenticationStore_expiration = expiration;
-
-        // If expiration has been set in locaStorage, use it, else use current time
-        let expirationTime = authenticationStore_expiration ? authenticationStore_expiration : currentTime;
-        // let sessionExpirationTime = moment(expirationTime);
-        // let sessionExpirationTime = moment.utc(expirationTime);
-        let sessionExpirationTime = expirationTime
+        let sessionExpirationTime  = moment.utc(moment(expiration)).local().format("MM/DD/YYYY LT");
 
 
-        // let sessionExpirationHour = moment(sessionExpirationTime).format('HH');
-        // let sessionExpirationHour = moment.utc(sessionExpirationTime).format('HH');
-        // let sessionExpirationHour = moment.utc(sessionExpirationTime)
-        let sessionExpirationHour = moment(sessionExpirationTime).format('HH');
+        /************************************/
+        console.log("currentTime.isAfter(sessionExpirationTime):", moment(currentTime).isAfter(sessionExpirationTime));
 
-        // let currentTimeHour = moment(currentTime).format('HH');
-        // let currentTimeHour = moment.utc(currentTime).format('HH');
-        // let currentTimeHour = moment.utc(currentTime);
-        let currentTimeHour = moment(currentTime).format('HH');
-        // let currentMomentTIme = moment(currentTime;
-
-        console.log("sessionExpirationHour: ", sessionExpirationHour, sessionExpirationHour === '23', 'currentTimeHour', currentTimeHour);
-        let timeDiff = moment(sessionExpirationTime).diff(moment(currentTime), 'minutes');
-
-        console.log("currentTime.isAfter(sessionExpirationTime):", currentTime.isAfter(sessionExpirationTime));
         console.log("sessionExpirationTime.isAfter(currentTime):", moment(sessionExpirationTime).isAfter(moment(currentTime)));
 
-        // Handles current time 7pm (23), expiration 8pm (00)
-        if (moment(sessionExpirationTime).isAfter(moment(currentTime)) && currentTimeHour === '23') {
-            timeDiff = timeDiff - 1440;
-        }
-        // When expiration time is 23:26 (11), but the currenttime is 23:26, moment thinks its a new day,
-        // so substract 1440 mins from the timeDiff, to Normalize it
-        // if (moment(sessionExpirationTime).isAfter(moment(currentTime)) && sessionExpirationHour === '23') {
-        //     timeDiff = timeDiff - 1440;
-        // }
-
-        // regular time,  when currenttime passing sessionExpirationTime, take the normal difference
-        // If access_token is expired, user will have to relogin.
-        // else if (currentTime.isAfter(sessionExpirationTime)) {
-        if (moment(currentTime).isAfter(moment(sessionExpirationTime))) {
-            console.log("Session Expired: currentTime has passed sessionExpirationTime");
-            // timeDiff = timeDiff;
-        }
 
         console.log('currentTime:', currentTime, 'sessionExpiration:', sessionExpirationTime);
+
+        // Get TIme difference in minutes
+        let timeDiff = moment(sessionExpirationTime).diff(moment(currentTime), 'minutes');
+
         console.log('TIMEDIFF:', timeDiff);
 
         returnValue = timeDiff <= 10 ? true : false;
         // return returnValue;
+        // return false;
     } // if
     return returnValue;
 });
 
-export let setLocalStorage = ((access_token, refresh_token, expiration, email, message) => {
+let setLocalStorage = ((access_token, refresh_token, expiration, email, message) => {
 
     let data = {
         access_token,
@@ -96,7 +67,7 @@ export let setLocalStorage = ((access_token, refresh_token, expiration, email, m
     return data;
 });
 
-export let getLocalStorage = (() => {
+let getLocalStorage = (() => {
     let returnData;
 
     let data = localStorage.getItem('data');
@@ -120,24 +91,25 @@ export let getLocalStorage = (() => {
             refresh_token: '',
             expiration: '',
             email: ''
-        }
+        };
     }
+    console.log("AuthenticationStore return Data:", returnData);
     return returnData;
 });
 
-export let resetLocalStorage = () => {
+let resetLocalStorage = () => {
     console.log("LOCAL STORAGE CLEARED");
     localStorage.clear();
 };
 
-export let setUserState = async (email) => {
+let setUserState = async (email) => {
     // set state variables:
     // let stateVariables = await getLocalStorage();
 
     // this.setState(stateVariables);
     // let user;
     let baseURL = `/user/information/${email}`;
-    console.log("Email=*" + email + "*");
+    console.log("authenticationStore.setUserState: Email=*" + email + "*");
 
     // 01/03/2020: Get User role
     let userRoleObj = await API.getUserInfo(baseURL, email)
@@ -153,7 +125,6 @@ export let setUserState = async (email) => {
             console.log("PLC2USEROBJECT:", userObject);
             return userObject
 
-            // this.setState({ user: userObject });
         })
         .catch(err => {
             console.log("ERROR: Setting ROLE to VISITOR:", err);
@@ -166,3 +137,40 @@ export let setUserState = async (email) => {
         });
         return userRoleObj;
 }
+
+// get user role from backend
+let setUserRole = async (email) => {
+    // set state variables:
+    // let stateVariables = await getLocalStorage();
+
+    // this.setState(stateVariables);
+    // let user;
+    let baseURL = `/user/information/${email}`;
+    console.log("authenticationStore.setUserRole: Email=*" + email + "*");
+
+    // 01/03/2020: Get User role
+    let userRoleObj = await API.getUserInfo(baseURL, email)
+        .then(res => {
+            console.log("BASE URL=", baseURL);
+            console.log("USER RES=", res);
+            // set user
+
+            let userRole = {
+                role: res.data.role,
+            };
+            console.log("PLC2USERROLE:", userRole);
+            return userRole;
+        })
+        .catch(err => {
+            console.log("ERROR: Setting ROLE to VISITOR:", err);
+            let userRole = {
+                role: "visitor",
+            };
+            return userRole;
+        });
+        return userRoleObj;
+}
+
+// import * as auth from './authenticationStore';
+
+export {set, get, hasTimeExpired, setLocalStorage, getLocalStorage, resetLocalStorage, setUserState, setUserRole};

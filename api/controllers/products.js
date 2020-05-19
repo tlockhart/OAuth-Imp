@@ -3,6 +3,15 @@ const mongoose = require('mongoose');
 // import models
 const Product = require('../models/product');
 
+// import cloudinary
+var cloudinary = require('cloudinary').v2;
+
+cloudinary.config({ 
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.CLOUD_API_KEY, 
+    api_secret: process.env.CLOUD_API_SECRET 
+  });
+
 exports.products_get_all = (req, res, next) => {
     Product.find()
         // Get the fields you want
@@ -51,6 +60,28 @@ exports.products_get_all = (req, res, next) => {
             });
         });
 };
+// CODEBURST CLOUDINARY UPLOAD:
+/****************************************/
+exports.cb_image_upload = async (req, res, next) => {
+    // The form data comes in an Object with keys that will vary by the type of file that was uploaded
+    console.log("IN products.cb_image_upload");
+
+    // https://cloudinary.com/documentation/node_integration#installation_and_setup
+    
+    // var res = req.body.file.replace("blob:", "");
+    // console.log("********FILENAME", res);
+    let cloudifyResponse = await cloudinary.uploader.upload(req.body.file, (error, result) => {
+        if(error) {
+            console.log ("Failed", error);
+            res.status(400).json({failed: "failed"});
+        }
+        else{
+            console.log("Success",result);
+            res.status(200).json({success: "success"});
+        }
+    });
+}
+/****************************************/
 
 exports.products_insert_product = (req, res, next) => {
 
