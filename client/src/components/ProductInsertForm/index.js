@@ -73,7 +73,7 @@ let ProductInsertForm = (props) => {
                                     <MDBCol>
                                         {/******SUBMIT BUTTON: PRODUCT/VALUE UPLOAD*********/}
                                         <label htmlFor="formGroupSubmitButton" />
-                                        <MDBBtn color="blue-grey" type="submit"
+                                        <MDBBtn id="submit-image" color="blue-grey" type="submit"
                                         >Submit</MDBBtn>
                                         <h3 className="mt-5">{props.message ? props.message : ''}</h3>
                                     </MDBCol>

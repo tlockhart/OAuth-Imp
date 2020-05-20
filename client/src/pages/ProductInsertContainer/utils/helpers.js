@@ -1,4 +1,4 @@
-export let setImageParagraphTag=(para, color, imageName, imageSize, imageWidth, imageHeight, previewCanvas) =>{
+let setImageParagraphTag=(para, color, imageName, imageSize, imageWidth, imageHeight, previewCanvas) =>{
   // Set Paragraph
   para = document.createTextNode('File Name: ' + imageName + ', File Size: ' + imageSize + ', Width: ' + imageWidth + ', Height: ' + imageHeight);
 
@@ -19,7 +19,7 @@ export let setImageParagraphTag=(para, color, imageName, imageSize, imageWidth, 
   removeItem('canvas', previewCanvas);
 };
 
-export let removeItem = (element, previewCanvas) => {
+let removeItem = (element, previewCanvas) => {
   /************************/
   if (previewCanvas) {
     let item = previewCanvas.getElementsByTagName(`${element}`);
@@ -35,7 +35,7 @@ export let removeItem = (element, previewCanvas) => {
 
 };
 
-export let removeCanvas = (previewCanvas) => {
+let removeCanvas = (previewCanvas) => {
   if (previewCanvas) {
     var canvasElement = previewCanvas.getElementsByTagName('canvas');
     if (canvasElement.length >= 1) {
@@ -47,7 +47,7 @@ export let removeCanvas = (previewCanvas) => {
 };
 
 
-export let setFileMessage = (tag, message) => {
+let setFileMessage = (tag, message) => {
   const errorTag = document.getElementById(tag);
   if (errorTag) {
     document.getElementById(tag).innerHTML = message;
@@ -55,13 +55,13 @@ export let setFileMessage = (tag, message) => {
 
 };
 
-export let getFormattedFileSize = (files) => {
+let getFormattedFileSize = (files) => {
   let curFiles = files;
   return returnFileSize(curFiles[0].size);
 };
 
 /*Returns formatted version of file size*/
-export let returnFileSize = (number) => {
+let returnFileSize = (number) => {
   if (number < 1024) {
     return number + 'bytes'
   } else if (number >= 1024 && number < 1048576) {
@@ -71,7 +71,7 @@ export let returnFileSize = (number) => {
   }
 };
 
-export let appendImage = (img, canvas, previewCanvas) => {
+let appendImage = (img, canvas, previewCanvas) => {
   img.onload = () => {
     // Set canvas dimension to match image
     canvas.width = img.width
@@ -84,14 +84,12 @@ export let appendImage = (img, canvas, previewCanvas) => {
   };
 };
 
-export let checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, submitImageButton) => {
+let checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax) => {
   let areDimensionsValid = false;
   // let para = document.createTextNode('');
 
   // if dimensions valid
   if (imageWidth >= imageMin && imageWidth <= imageMax && imageHeight >= imageMin && imageHeight <= imageMax) {
-    // document.getElementById('submit-image').disabled = false;
-    // submitImageButton.disabled = false;
     areDimensionsValid = true;
   }
   // dimensions not valid
@@ -101,14 +99,14 @@ export let checkImageDimensions = (imageWidth, imageMin, imageHeight, imageMax, 
   return areDimensionsValid;
 };
 
-export let setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, imageName, imageSize, files, previewCanvas, imageWidth, imageHeight) => {
+let setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedMsg, imageName, imageSize, files, previewCanvas, imageWidth, imageHeight) => {
   let para = document.createTextNode('');
   if (areDimensionsValid) {
     // Set file size with Units:
     imageSize = getFormattedFileSize(files);
-    // setImageParagraphTag(para, 'black');
     setImageParagraphTag(para, 'black', imageName, imageSize, imageWidth, imageHeight, previewCanvas);
     setFileMessage(errorTag, acceptedMsg);
+    document.getElementById('submit-image').disabled = false;
   }
   else {
     console.log("****DIMENSIONS NOT VALID****");
@@ -117,31 +115,30 @@ export let setFileSize = (areDimensionsValid, errorTag, acceptedMsg, unacceptedM
     // Set file size with Units:
     imageSize = getFormattedFileSize(files);
     setImageParagraphTag(para, 'red', imageName, imageSize, imageWidth, imageHeight, previewCanvas);
-    setFileMessage(errorTag, unacceptedMsg)
+    setFileMessage(errorTag, unacceptedMsg);
   }
   return imageSize;
 };
 
-export let isFileSelected = (input) => {
+let isFileSelected = (input) => {
   let curFiles = input ? input.files : null;
   return curFiles;
 };
 
-export let imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
+let imgOnError = (previewCanvas, imageWidth, imageMax, imageHeight, errorTag, invalidMsg) => {
   if (imageWidth <= imageMax && imageHeight <= imageMax) {
     console.log('NOT A Valid File: ');
     setFileMessage(errorTag, invalidMsg);
-    // document.getElementById('submit-image').disabled = true
-    // $('#select-btn').show()
-    console.log("IMAGE ERROR ONLOAD")
+    document.getElementById('submit-image').disabled = true;
+    console.log("IMAGE ERROR ONLOAD");
   }
   // Remove Canvas and Paragraph for wrong dimensions or no file.
   removeCanvas(previewCanvas);
-  console.log("in imgONERROR")
+  console.log("in imgONERROR");
 }; // oneerror
 
 
-export let displayImage = (img, areDimensionsValid, previewCanvas) => {
+let displayImage = (img, areDimensionsValid, previewCanvas) => {
   var canvasElement = previewCanvas.getElementsByTagName('canvas');
   var canvas = document.createElement('canvas');
   console.log("DISPLAYIMAGE CANVASELEMENT:", canvasElement);
@@ -159,7 +156,7 @@ export let displayImage = (img, areDimensionsValid, previewCanvas) => {
   }
 };
 
-export let loadImage = (img, blob) => {
+let loadImage = (img, blob) => {
   console.log("IMG", img, "BLOB", blob);
   return new Promise(function (resolve, reject) {
     // define source
@@ -173,19 +170,19 @@ export let loadImage = (img, blob) => {
         imageWidth: img.width,
         imageSize: blob.size,
         imageSrc: img.src
-      }
+      };
       resolve(imageProps);
-    }
-    // reject promis onError
+    };
+    // reject promise onError
     img.onerror = () => {
-      reject("rejected")
-    }
-  })
+      reject("rejected");
+    };
+  });
 };
 
 /* Base64 Decoder: Remove the metadata
 https://www.base64decode.net/base64-image-decoder */
-export let convertImageFromUrlToBase64String = async (url) => {
+let convertImageFromUrlToBase64String = async (url) => {
   console.log("In convertImageStart");
   var img = new Image()
   img.crossOrigin = 'Anonymous'
@@ -221,22 +218,18 @@ export let convertImageFromUrlToBase64String = async (url) => {
 };// convertImage
 
 // Check whether the file type of the input file is valid
-export let isFileTypeValid = (file, fileTypes) => {
+let isFileTypeValid = (file, fileTypes) => {
   if (file) {
     console.log("FILEType :", file.type);
     for (var i = 0; i < fileTypes.length; i++) {
       if (file.type === fileTypes[i]) {
-        // console.log("File Length = "+fileTypes.length, "FileTypes", fileTypes[i]);
-        // console.log("File Length = " + fileTypes.length);
         return true;
       }
-      // else
-      //   return false;
     }
   }
   else
     return false;
 };
 
-// export {setImageParagraphTag, removeItem, removeCanvas, setFileMessage, getFormattedFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, 
-//   loadImage, convertImageFromUrlToBase64String, isFileTypeValid, returnFileSize};
+export {setImageParagraphTag, removeItem, removeCanvas, setFileMessage, getFormattedFileSize, appendImage, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, 
+  loadImage, convertImageFromUrlToBase64String, isFileTypeValid, returnFileSize};

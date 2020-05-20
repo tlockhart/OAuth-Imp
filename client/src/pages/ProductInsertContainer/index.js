@@ -6,8 +6,7 @@ import * as authenticationStore from '../../utils/authenticationStore';
 import ProductInsertForm from "../../components/ProductInsertForm";
 import credentialStore from '../../utils/credentialStore';
 import { insertProduct, performDBAction } from '../../utils/productStore';
-import { setFileMessage, removeItem, removeCanvas, checkImageDimensions, setFileSize, isFileSelected, imgOnError, displayImage, loadImage, isFileTypeValid, convertImageFromUrlToBase64String } from './utils/helpers';
-
+import * as imgHelper from './utils/helpers';
 import { insertCloudinary } from '../../utils/productStore';
 
 class ProductInsertContainer extends Component {
@@ -124,7 +123,7 @@ class ProductInsertContainer extends Component {
 
         let img;
 
-        if (isFileSelected(image.input) && isFileTypeValid(image.file, image.fileTypes)) {
+        if (imgHelper.isFileSelected(image.input) && imgHelper.isFileTypeValid(image.file, image.fileTypes)) {
             // this.setImageProp("file", image.input.files[0]); 
             var blob = image.input.files[0];
 
@@ -132,7 +131,7 @@ class ProductInsertContainer extends Component {
 
             img = new Image();
             try {
-                const result = await loadImage(img, blob);
+                const result = await imgHelper.loadImage(img, blob);
                 console.log("RESULT", result);
 
                 // Set variables
@@ -146,27 +145,28 @@ class ProductInsertContainer extends Component {
                 console.log("DISPLAYIMAGE PREVIEW CANVAS:", image.previewCanvasElement, "*", "state:", this.state.image.previewCanvasElement);
 
                 // remove OL tag
-                removeItem('ol', image.previewCanvasElement);
-                var areDimensionsValid = checkImageDimensions(image.imageWidth, image.imageMin, image.imageHeight, image.imageMax, image.submitImageElement);
+                imgHelper.removeItem('ol', image.previewCanvasElement);
+                var areDimensionsValid = imgHelper.checkImageDimensions(image.imageWidth, image.imageMin, image.imageHeight, image.imageMax);
+                console.log("AREDIMENSIONSVALID:", areDimensionsValid);
 
-                this.setImageProp("imageSize", setFileSize(areDimensionsValid, image.errorTag, image.acceptedMsg, image.unacceptedMsg, image.imageName, image.imageSize, image.input.files, image.previewCanvasElement, image.imageWidth, image.imageHeight));
+                this.setImageProp("imageSize", imgHelper.setFileSize(areDimensionsValid, image.errorTag, image.acceptedMsg, image.unacceptedMsg, image.imageName, image.imageSize, image.input.files, image.previewCanvasElement, image.imageWidth, image.imageHeight));
 
                 // Create Canvas and load image
-                displayImage(img, areDimensionsValid, image.previewCanvasElement);
+                imgHelper.displayImage(img, areDimensionsValid, image.previewCanvasElement);
 
                 //12/12/09: set new image prop values
                 this.setState({ image });
             }
             catch (err) {
                 console.log("failure ", err);
-                imgOnError(image.previewCanvasElement, image.imageWidth, image.imageMax, image.imageHeight, image.errorTag, image.invalidMsg);
+                imgHelper.imgOnError(image.previewCanvasElement, image.imageWidth, image.imageMax, image.imageHeight, image.errorTag, image.invalidMsg);
             }
             // console.log("IMAGE NAME", this.imageName);
         }// if
         else {
             // if(image.previewCanvasElement) {
-            removeCanvas(image.previewCanvasElement);
-            setFileMessage(image.errorTag, image.unacceptedMsg);
+            imgHelper.removeCanvas(image.previewCanvasElement);
+            imgHelper.setFileMessage(image.errorTag, image.unacceptedMsg);
             // }
         }
     }
@@ -221,7 +221,7 @@ class ProductInsertContainer extends Component {
             image: img
         });
         // if file selected
-        if (isFileSelected(input)) {
+        if (imgHelper.isFileSelected(input)) {
             console.log("ActionHelper file selected");
 
             // checks image dimension and file size
@@ -268,9 +268,9 @@ class ProductInsertContainer extends Component {
             if (!isInputValid) {
                 console.log("image not acceptable");
                 if (fileMsgElement) {
-                    setFileMessage(errorTag, unacceptedMsg);
+                    imgHelper.setFileMessage(errorTag, unacceptedMsg);
                 } else {
-                    setFileMessage(errorTag, acceptedMsg);
+                    imgHelper.setFileMessage(errorTag, acceptedMsg);
                 }
 
                 // show select image:
@@ -282,7 +282,7 @@ class ProductInsertContainer extends Component {
                 console.log("Call convertImageFromURLTOBase");
                 /******************************************************    Converts image to base64String
                 ****************************************************/
-                let base64StringImage = await convertImageFromUrlToBase64String(imageUrl);
+                let base64StringImage = await imgHelper.convertImageFromUrlToBase64String(imageUrl);
 
                 /**************************
                  * Code Burst onChange Event
@@ -301,7 +301,7 @@ class ProductInsertContainer extends Component {
                 console.log("IMAGE STATE UPDATED: ", this.state.image.base64Str);
             }// else
             // remove canvas after submit
-            removeCanvas(previewCanvasElement);
+            imgHelper.removeCanvas(previewCanvasElement);
             // var image = this.state.image;
 
             /*****************************/
