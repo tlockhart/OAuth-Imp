@@ -25,9 +25,9 @@ class ProductsListContainer extends Component {
         /******************************************
              * STEP2a: SET DELETEURL
              ******************************************/
-        this.deleteURL = `/products/product/delete/`;
+        this.deleteURL = `/api/products/product/delete/`;
         this.refreshURL = '/user/login/refresh';
-        this.baseURL = "/products";
+        this.baseURL = "/api/products";
         /******************************************/
         // this._productsList = [];
         this.state = {

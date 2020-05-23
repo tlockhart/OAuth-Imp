@@ -31,7 +31,7 @@ class ProductViewContainer extends Component {
             console.log('ID:', id);
 
 
-            let baseURL = `/products/${id}`;
+            let baseURL = `/api/products/${id}`;
             console.log("baseline:", baseURL);
 
             let returnProduct = (baseURL) => {

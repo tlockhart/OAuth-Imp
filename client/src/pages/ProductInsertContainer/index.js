@@ -13,8 +13,8 @@ class ProductInsertContainer extends Component {
     constructor(props) {
         super(props);
         this.refreshURL = '/user/login/refresh';
-        this.baseURL = '/products/product/insert/';
-        this.cloudinaryURL = '/products/cloudinary/insert/';
+        this.baseURL = '/api/products/product/insert/';
+        this.cloudinaryURL = '/api/products/cloudinary/insert/';
         this.state = {
             productId: '',
             productName: '',

@@ -6,8 +6,9 @@ export let retrieveUpdatedProductList = async (email) => {
     /*********************
      * STEP9: Get the new updated productsLis
      ********************/
+    const baseURL = '/api/products';
     try {
-        let res = await API.getProducts('/products');
+        let res = await API.getProducts(baseURL);
         let data = res.data.products;
         console.log("productStore:retrieveUpdatedProductList data =", data);
         return data;

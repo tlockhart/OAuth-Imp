@@ -12,7 +12,7 @@ class ProductUpdateContainer extends Component {
     constructor(props) {
         super(props);
         this.refreshURL = '/user/login/refresh';
-        this.baseURL = '/products/product/update/';
+        this.baseURL = '/api/products/product/update/';
         this.state = {
             productId: '',
             productName: '',

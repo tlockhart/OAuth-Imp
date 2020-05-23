@@ -38,7 +38,7 @@ exports.products_get_all = (req, res, next) => {
             // res.type('Content-Type', 'application/json');
             // res.type('json')
             // stop server route from displaying on frontend request
-            res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+            // res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
             res.set({
                 'Content-Type': 'application/json'
                 // 'Content-Type': "multipart/form-data"
@@ -263,9 +263,7 @@ exports.products_update_product = (req, res, next) => {
 }; // products_update_product
 
 exports.products_delete_product = (req, res, next) => {
-    // res.status(200).json({
-    //     message: 'Deleted product!',
-    // }); 
+    console.log("IN PRODUCTS_DELETE_PRODUCT");
     const id = req.params.productId;
     // Product.deleteOne( {_id: id} )
     Product.remove({ _id: id })
