@@ -67,7 +67,7 @@ console.log("HANDLEPAGECLICK: "+JSON.stringify(event.target.name));
   render() {
     // let toggle = this.state.toggle.toString();
     return (
-      <Router>
+      <Router history={history}>
         <div>
           {/* Refresh={toggle} */}
           <Navbar
