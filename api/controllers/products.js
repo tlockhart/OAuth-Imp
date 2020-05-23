@@ -38,7 +38,8 @@ exports.products_get_all = (req, res, next) => {
             // res.type('Content-Type', 'application/json');
             // res.type('json')
             res.set({
-                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/json'
+                'Content-Type': "multipart/form-data"
             });
 
             // res.set({'Content-Type': 'text/html'});
