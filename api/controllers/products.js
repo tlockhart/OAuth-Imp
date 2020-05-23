@@ -73,11 +73,12 @@ exports.cb_image_upload = async (req, res, next) => {
     let cloudifyResponse = await cloudinary.uploader.upload(req.body.file, (error, result) => {
         if(error) {
             console.log ("Failed", error);
-            res.status(400).json({failed: "failed"});
+            res.status(400).json({error: error});
         }
         else{
             console.log("Success",result);
-            res.status(200).json({success: "success"});
+            // console.log(cloudinary.image());
+            res.status(200).json(result);
         }
     });
 }

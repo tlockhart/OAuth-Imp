@@ -206,7 +206,8 @@ export default {
     insertProduct: async (baseURL, id,
         email, authToken, refreshToken, name, value, image, expired) => {
     // insertProduct: async (baseURL, authToken, refreshToken, name, value, imageUrl, imageFile, imageSrc) => {
-        var base64Image = image.base64Str;
+        // var base64Image = image.base64Str;
+        var cloudImageUrl = image.cloudImageUrl;
         if (baseURL) {
             // console.log("in API.insertProduct, baseURL:", baseURL);
             // console.log("API: INSERT TOKEN: INSERT PRODUCT IMAGE:", "*", imageUrl, "*");
@@ -224,9 +225,13 @@ export default {
                         'propName': 'value',
                         'value': value
                     },
+                    // {
+                    //     'propName': 'productImage',
+                    //     'value': base64Image
+                    // },
                     {
                         'propName': 'productImage',
-                        'value': base64Image
+                        'value': cloudImageUrl
                     },
                     {
                         'propName': 'productId',

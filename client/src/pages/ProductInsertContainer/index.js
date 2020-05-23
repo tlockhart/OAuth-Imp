@@ -35,6 +35,7 @@ class ProductInsertContainer extends Component {
             // Image imputs for Image Uploader component
             image: {
                 base64Str: '',
+                cloudImageUrl: '',
                 input: '',
                 file: '',
                 // previewCanvas: undefined,
@@ -289,11 +290,15 @@ class ProductInsertContainer extends Component {
                  * upload to Cloudinary
                  **************************/
                 console.log("Calling productStore.insertCloudinary");
-                await insertCloudinary(this.cloudinaryURL, base64StringImage);
+                let cloudinaryResult = await insertCloudinary(this.cloudinaryURL, base64StringImage);
+                // this.setState({cloudImageUrl: cloudinaryResult.url});
                 /**************************/
                 console.log("Converted Image: ", base64StringImage);
                 // copy image state to local variable
                 image = this.state.image;
+                //update cloudImageUrl
+                console.log("CLOUD URL:", cloudinaryResult.data.url);
+                image.cloudImageUrl = cloudinaryResult.data.url;
                 // update base64Str
                 image.base64Str = base64StringImage;
                 // update image state variable

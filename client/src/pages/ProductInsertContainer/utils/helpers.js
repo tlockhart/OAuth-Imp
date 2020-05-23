@@ -184,7 +184,7 @@ let loadImage = (img, blob) => {
 https://www.base64decode.net/base64-image-decoder */
 let convertImageFromUrlToBase64String = async (url) => {
   console.log("In convertImageStart");
-  var img = new Image()
+  var img = new Image();
   img.crossOrigin = 'Anonymous'
   var dataUrl;
   return new Promise(function (resolve, reject) {
