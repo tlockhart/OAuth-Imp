@@ -21,7 +21,9 @@ import { performDBAction, deleteProduct } from '../utils/productStore';
 class ProductsListContainer extends Component {
     constructor(props) {
         super(props);
-        // role = await authorizationStore.setUserRole;
+        // authorizationStore.setUserRole((data)=>{
+        //     role = data;
+        // });
         /******************************************
              * STEP2a: SET DELETEURL
              ******************************************/
@@ -29,10 +31,9 @@ class ProductsListContainer extends Component {
         this.refreshURL = '/user/login/refresh';
         this.baseURL = "/api/products";
         /******************************************/
-        // this._productsList = [];
+        this._productsListData = [];
         this.state = {
             productListData: [],
-            productListItems: '',
             access_token: '',
             authToken: '',
             refresh_token: '',
@@ -41,7 +42,9 @@ class ProductsListContainer extends Component {
             hasTimeExpired: false,
             isUserAuthorized: true,
             message: '',
-            user: { role: this.role }
+            // user: {},
+            role: '',
+            loading: false
         };
 
 
@@ -63,9 +66,6 @@ class ProductsListContainer extends Component {
         // let hasTimeExpired = authenticationStore.hasTimeExpired();
         let hasTimeExpired = auth.hasTimeExpired();
         // .hasTimeExpired();
-
-
-
         this.setState({
             access_token,
             refresh_token,
@@ -81,6 +81,32 @@ class ProductsListContainer extends Component {
     }
     /************************************************/
 
+    componentWillMount() {
+        // //5/23/2020
+        // /**************************** */
+        // const localStateObj = auth.getLocalStorage();
+        // console.log("ProductListContainer LOCALSTATEOBJ:", localStateObj);
+        // this.setState(localStateObj);
+        // console.log("EMAIL:", localStateObj.email);
+        // //5/18/20
+        // /*******************************************/
+        // const email = localStateObj.email;
+        // console.log("Mount3 Email:", email);
+
+        // /* Set user role on state, by using call back
+        // function instead of async await */
+        // this.setState({loading: true});
+
+        // auth.setUserRole(email)
+        //     .then((data => {
+
+        //         console.log("setUserRole:", data.role);
+        //         this.setState({ role: data.role });
+        //         this.setState({loading: false});
+        //         console.log("AFTER WILLMOUNT LOAD user:", this.state.role);
+        //     }));
+        // /******************************************** */
+    }
 
     componentDidMount() {
         //01/05:
@@ -88,6 +114,8 @@ class ProductsListContainer extends Component {
         // componentDidMount() {
         this.setState({ refreshed: true });
         console.log("Mount 2");
+        //5/23/2020
+        /**************************** */
         const localStateObj = auth.getLocalStorage();
         console.log("ProductListContainer LOCALSTATEOBJ:", localStateObj);
         this.setState(localStateObj);
@@ -99,13 +127,19 @@ class ProductsListContainer extends Component {
 
         /* Set user role on state, by using call back
         function instead of async await */
+        this.setState({ loading: true });
+
         auth.setUserRole(email)
             .then((data => {
-                console.log("setUserRole:", data);
-                this.setState({ user: data });
-                console.log("AFTER DIDMOUNT LOAD user:", this.state.user);
+
+                console.log("setUserRole:", data.role);
+                this.setState({ role: data.role });
+                this.setState({ loading: false });
+                console.log("AFTER WILLMOUNT LOAD user:", this.state.role);
             }));
         /******************************************** */
+
+
         // Execute getProducts
         this.returnProducts(this.baseURL);
         // returnProducts(baseURL);
@@ -119,59 +153,49 @@ class ProductsListContainer extends Component {
             let res = await API.getProducts(baseURL);
             console.log("RES: ", res);
             if (res) {
-                this.productListData = res.data.products;
+                this.productsListData = res.data.products;
             }
 
         }
         catch (err) {
-            console.log(err)
+            console.log(err);
         }
+    }
+
+    get productsListData() {
+        return this._productsListData;
     }
     /******************************
      * 1/8/19: setUser HERE
      ******************************/
-    set productListData(data) {
-
-        // this.setState(authenticationStore.getLocalStorage());
+    set productsListData(data) {
         this.setState(auth.getLocalStorage());
+        console.log("----Data", data);
+        this._productsListData = data;
 
+        console.log("***ProductListData Set:", this._productsListData, "length", this._productsListData.length);
 
-        // let user =  await this.setUserRole(this.state.email);
+        this.setState({ productsListData: this._productsListData });
+        // Set productsList to mapped productsListData array
+        // return this.state.productsListData;
+    } // setProductList
 
-        // this.setState({user});
-
-        let products = data;
-
-        console.log("in get", products, "length", products.length);
-        // console.log("ProductsList-USER", this.state.user);
-
-        // Set productsList from response data
-        let productItemArray = products.map((product) => {
-            // console.log("PI", product.productImage);
+    setHtmlItems() {
+        let productList = this.productsListData.map((product) => {
             return (
                 <ProductListItem
-                    user={this.state.user}
+                    role={this.state.role}
                     key={product._id}
                     id={product._id}
                     name={product.name}
                     value={product.value}
                     productImage={product.productImage}
                     filterClickHandler={(event) => this.filterClickHandler(event)}
-                    deleteClickHandler={(event) => this.deleteClickHandler(event)} />
+                    deleteClickHandler={(event) => this.deleteClickHandler(event)}
+                />
             )
         });
-
-        // Set products state property to array of ProductListItems
-        this.setState(
-            {
-                productListData: products,
-                productListItems: productItemArray
-
-            });
-    } // setProductList
-
-    get productListData() {
-        return this.state.productListData;
+        return productList;
     }
 
     filterClickHandler(event) {
@@ -185,7 +209,7 @@ class ProductsListContainer extends Component {
         // console.log("productListData:Filter:", JSON.stringify(this.productListData));
         // Using Setters and getters
 
-        let filteredList = this.productListData.filter((product) => {
+        let filteredList = this.productsListData.filter((product) => {
             return (product._id.toString() !== event_id.toString());
         })
             .map((product) => {
@@ -194,14 +218,13 @@ class ProductsListContainer extends Component {
                     value: product.value,
                     productImage: product.productImage,
                     _id: product._id,
-                    key: product._id
+                    key: product._id,
+                    event: event
                 };
                 return data;
-
             });
 
-        this.productListData = filteredList;
-        console.log("FIltered LiST", JSON.stringify(this.productListData));
+        this.productsListData = filteredList;
 
     }
     /************************************
@@ -222,11 +245,8 @@ class ProductsListContainer extends Component {
             url,
             cb);
 
-        // console.log("RESULTS1: ", JSON.stringify(results));
-        // console.log("RESULTS2: ", results);
         console.log("Passed performDBAction");
 
-        // let parsedResults = JSON.parse(results);
         let { message, refresh_token, isUserAuthorized, hasTimeExpired, productsList } = results;
 
         /***************************************************
@@ -239,9 +259,9 @@ class ProductsListContainer extends Component {
             hasTimeExpired,
         });
 
-        console.log("productListData =", productsList);
+        console.log("productsListData =", productsList);
         // 10/15/2019: Set the rendering components
-        this.productListData = productsList;
+        this.productsListData = productsList;
     }
 
     async deleteClickHandler(event) {
@@ -325,11 +345,25 @@ class ProductsListContainer extends Component {
         }
     }
     render() {
-        return (
-            <React.Fragment>
-                {this.state.productListItems}
-            </React.Fragment>
-        )
+        /* 5/23/2020: In order to stop the component from
+            rendering before the user's role has been loaded
+            add a loading state property.  When the loading state changes, the page will be rerendered with the correct usr role. */
+        if (this.state.loading === true) {
+            console.log('loading...');
+            return <h2>Loading...</h2>;
+        }
+        else {
+            var userRole = this.state.role;
+            console.log("ProductListContainer: userRole =", userRole);
+            let updatedProductsListData = this.setHtmlItems();
+            console.log("UpdateProducts", updatedProductsListData);
+            return (
+                <React.Fragment>
+                    {updatedProductsListData}
+                </React.Fragment>
+            )
+        }
+
     }
 } // class
 

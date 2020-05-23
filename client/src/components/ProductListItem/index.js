@@ -15,8 +15,8 @@ let ProductListItem = (props) => {
   let id = props.id;
   let regex = /['"']+/g;
   let productImage = props.productImage.replace(regex, '');
-  let user = props.user;
-  console.log("PRODUCTLISTITEM-USER:", user);
+  let userRole = props.role;
+  console.log("PRODUCTLISTITEM-USERRole:", userRole);
 
   // const CanUser = Can(props);
   // const CanUser = Can;
@@ -31,7 +31,7 @@ let ProductListItem = (props) => {
           <p>{valueText}<br /></p>
 
           <Can
-            role={user.role}
+            role={userRole}
             perform="dashboard-page:visit"
             // data= {props.user.data}
             yes={() => (
