@@ -37,6 +37,8 @@ exports.products_get_all = (req, res, next) => {
 
             // res.type('Content-Type', 'application/json');
             // res.type('json')
+            // stop server route from displaying on frontend request
+            res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
             res.set({
                 'Content-Type': 'application/json'
                 // 'Content-Type': "multipart/form-data"
