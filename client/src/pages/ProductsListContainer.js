@@ -6,14 +6,11 @@ import React, { Component } from "react";
 import API from '../utils/API';
 
 // Import Components
-// import ProductForm from "../components/ProductsOLD";
 import ProductListItem from "../components/ProductListItem/index";
+import UploadSpinner from '../components/UploadSpinner';
 
-import * as authenticationStore from "../utils/authenticationStore";
-// import * as authorizationStore from "../utils/authorizationStore";
-// import {auth} from '../utils/mergedAuth';
+//import utils
 import * as auth from '../utils/authenticationStore';
-
 import credentialStore from '../utils/credentialStore';
 import { performDBAction, deleteProduct } from '../utils/productStore';
 
@@ -78,34 +75,6 @@ class ProductsListContainer extends Component {
             refreshed: false
         });
 
-    }
-    /************************************************/
-
-    componentWillMount() {
-        // //5/23/2020
-        // /**************************** */
-        // const localStateObj = auth.getLocalStorage();
-        // console.log("ProductListContainer LOCALSTATEOBJ:", localStateObj);
-        // this.setState(localStateObj);
-        // console.log("EMAIL:", localStateObj.email);
-        // //5/18/20
-        // /*******************************************/
-        // const email = localStateObj.email;
-        // console.log("Mount3 Email:", email);
-
-        // /* Set user role on state, by using call back
-        // function instead of async await */
-        // this.setState({loading: true});
-
-        // auth.setUserRole(email)
-        //     .then((data => {
-
-        //         console.log("setUserRole:", data.role);
-        //         this.setState({ role: data.role });
-        //         this.setState({loading: false});
-        //         console.log("AFTER WILLMOUNT LOAD user:", this.state.role);
-        //     }));
-        // /******************************************** */
     }
 
     componentDidMount() {
@@ -350,7 +319,8 @@ class ProductsListContainer extends Component {
             add a loading state property.  When the loading state changes, the page will be rerendered with the correct usr role. */
         if (this.state.loading === true) {
             console.log('loading...');
-            return <h2>Loading...</h2>;
+            // return <h2>Loading...</h2>;
+            return <UploadSpinner />
         }
         else {
             var userRole = this.state.role;

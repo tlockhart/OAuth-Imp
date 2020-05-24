@@ -47,8 +47,21 @@ let ProductListItem = (props) => {
                   }
                 }
                   buttonName={"Update"} />
+
                 <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)} id={id} />
+                <LinkActionBtn to={
+                  {
+                    pathname: `/products/product/${id}`,
+                    state: {
+                      name: name,
+                      value: value,
+                      id: id,
+                      image: productImage                    }
+                  }}
+                  buttonName={"View"} />
+                <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
               </React.Fragment>
+              /****** */
             )}
             no={() => (
               <React.Fragment>
@@ -59,7 +72,8 @@ let ProductListItem = (props) => {
                       name: name,
                       value: value,
                       id: id,
-                      image: productImage                    }
+                      image: productImage
+                    }
                   }}
                   buttonName={"View"} />
                 <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
