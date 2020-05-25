@@ -13,6 +13,7 @@ import UploadSpinner from '../components/UploadSpinner';
 import * as auth from '../utils/authenticationStore';
 import credentialStore from '../utils/credentialStore';
 import { performDBAction, deleteProduct } from '../utils/productStore';
+// import history from "../history";
 
 
 class ProductsListContainer extends Component {
@@ -21,6 +22,7 @@ class ProductsListContainer extends Component {
         // authorizationStore.setUserRole((data)=>{
         //     role = data;
         // });
+        
         /******************************************
              * STEP2a: SET DELETEURL
              ******************************************/
@@ -78,6 +80,7 @@ class ProductsListContainer extends Component {
     }
 
     componentDidMount() {
+        
         //01/05:
         console.log("Mount 1");
         // componentDidMount() {
@@ -105,8 +108,16 @@ class ProductsListContainer extends Component {
                 this.setState({ role: data.role });
                 this.setState({ loading: false });
                 console.log("AFTER WILLMOUNT LOAD user:", this.state.role);
+            /**************************/
+            //05/24/2020 After Role is set
+            // Pass it to App.js Controller
+            // so it can pass it to the navbar
+            // for a page refresh
+            /***************************/
+            let reloadState = true;
+            this.props.fetchRole("ProductsListContainer", reloadState, this.state.role);
             }));
-        /******************************************** */
+            /***************************/
 
 
         // Execute getProducts
@@ -123,6 +134,11 @@ class ProductsListContainer extends Component {
             console.log("RES: ", res);
             if (res) {
                 this.productsListData = res.data.products;
+                //05/24/2020
+        /******************************/
+        // let reloadState = true;
+        // this.props.fetchRole("ProductsListContainer", reloadState, this.state.role);
+        /******************************/
             }
 
         }
@@ -199,7 +215,6 @@ class ProductsListContainer extends Component {
     /************************************
      * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
      ************************************/
-    //productId, this.deleteURL, deleteProduct
     async stageDBAction(id, email, url, cb) {
         console.log("Start performDBAction");
         let results = await performDBAction(
@@ -319,10 +334,9 @@ class ProductsListContainer extends Component {
             add a loading state property.  When the loading state changes, the page will be rerendered with the correct usr role. */
         if (this.state.loading === true) {
             console.log('loading...');
-            // return <h2>Loading...</h2>;
             return <UploadSpinner />
         }
-        else {
+         {
             var userRole = this.state.role;
             console.log("ProductListContainer: userRole =", userRole);
             let updatedProductsListData = this.setHtmlItems();

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router-dom';
 
 // Import module to get/set variables from/in the LocalStorage
 import * as authenticationStore from '../utils/authenticationStore';
@@ -19,7 +20,8 @@ class LoginContainer extends Component {
             message: '',
             access_token: '',
             refresh_token: '',
-            expiration: ''
+            expiration: '',
+            // toProducts: false
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -103,7 +105,9 @@ class LoginContainer extends Component {
                             expiration,
                             email,
                             message);
-                    }
+                        // this.setState({toProducts: true}); 
+                        this.props.history.push('/products');
+                    }//if
                 })
                 .catch(async err => {
                     console.log("LOGIN ERROR", err);
@@ -118,8 +122,9 @@ class LoginContainer extends Component {
         // Reset state variables after submit
         this.setState({
             email: '',
-            password: ''
+            password: '',
         });
+        // window.location.reload();
     }
 
     async setStateVariables(access_token, refresh_token, expiration, email, message) {
@@ -148,6 +153,9 @@ class LoginContainer extends Component {
     }
 
     render() {
+        // if(this.state.toProducts === true){
+        //     return <Redirect to='#' />
+        // }
         return (
             <React.Fragment>
                 <LoginForm

@@ -4,7 +4,9 @@ import {
   MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon, NavLink
 } from "mdbreact";
 // import { BrowserRouter as Router } from 'react-router-dom';
-import * as authenticationStore from '../../utils/authenticationStore';
+import * as auth from '../../utils/authenticationStore';
+import Can from "../Can";
+import { Timestamp } from "mongodb";
 
 
 class NavbarPage extends Component {
@@ -12,6 +14,8 @@ class NavbarPage extends Component {
     super(props);
     this.state = {
       isOpen: false,
+      role: this.props.role,
+      reload: this.props.reload,
       navItems:
       {
         homeActiveTag: (
@@ -96,7 +100,7 @@ class NavbarPage extends Component {
               name="Registration"
               onClick={this.props.handlePageClick}
             >Register</MDBDropdownItem>
-          {/* </MDBNavLink> */}
+            {/* </MDBNavLink> */}
           </NavLink>
         ),
         registrationInactiveTag: (
@@ -106,7 +110,7 @@ class NavbarPage extends Component {
               name="Registration"
               onClick={this.props.handlePageClick}
             >Register</MDBDropdownItem>
-          {/* </MDBNavLink> */}
+            {/* </MDBNavLink> */}
           </NavLink>
 
         ),
@@ -144,36 +148,52 @@ class NavbarPage extends Component {
         )
       }
     };
+  }// constructor
+
+  componentDidMount() {
+    console.log("NAVBAR componentDidMount");
+    console.log("NAVBAR DIDMOUNT STATE RELOAD:", this.state.reload);
+    console.log("NAVBAR DIDMOUNT STATE Role:", this.state.role);
+    console.log("Navbar: ComponentDIDMOUNT");
+
+    // 05/25/2020: Set reload back to false in App.js
+    this.props.fetchRole("Navbar",false, this.state.role);
   }
-  
+
   toggleCollapse = () => {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
   componentDidUpdate() {
     /***********************
-   * 01/08/19
-   * 1) Convert NavBar to a Component
-   * 2) Pass user to productList, which
-   * should update the state (buttons)on ProductListItem
-   * 3) TO TEST send a user = {role: "admin"} to ProductListItem in constructor and setState on user.
-   *********************/
+   * 05/25/2020
+   * 1) Trigger refresh on login and logout
+    /************************************** */
+    // console.log("navbar componentDidUpdate")
+    // console.log("NAVBAR currentpage", this.props.currentPage);
+    // console.log("NAVBAR DIDUPDATE STATE RELOAD:", this.state.reload);
+    // console.log("NAVBAR DIDUPDATE STATE Role:", this.state.role);
+    // console.log("NAVBAR PROPS ROLE:", this.props.role);
+    // console.log("NAVBAR PROPS RELOAD:", this.props.reload);
 
-   // set the role
-  // this.setState(authenticationStore.getLocalStorage());
-  
-  // let user = this.setUserState(this.state.email);
-  
-  // this.setState({user});
-/************************************** */
-
-    if (this.props.currentPage === "Logout") {
+    if (this.props.currentPage === "Logout" ) {
       // When credentials are cleared force password reset, since no new page is displayed
-      authenticationStore.resetLocalStorage();
-      // window.location.reload(false);
+      console.log("Navbar In LOGOUT")
+      auth.resetLocalStorage();
       window.location.reload();
     }
-     
+    //05/25/2020: Trigger a navigation update when the props.role has been updated, but state.role has not
+    /****************************************************************/
+    if (this.props.role && this.props.reload && (!this.state.role || this.props.role !== this.state.role)) {
+      console.log("Navbar: ComponentDIDUPDATE");
+      //set new state
+      this.setState(
+        {
+          reload: this.props.reload,
+          role: this.props.role
+        });
+    }
+    /****************************************************************/
   }
 
   render() {
@@ -191,66 +211,89 @@ class NavbarPage extends Component {
 
     let isLogoutActive = this.props.currentPage === "Logout" || this.props.name === "Logout" ? true : false;
 
-    return (
-      // <Router>
-      <MDBNavbar color="default-color dark" expand="md">
-        <MDBNavbarBrand>
-          <strong className="white-text">Navbar</strong>
-        </MDBNavbarBrand>
-        <MDBNavbarToggler onClick={this.toggleCollapse} />
-        <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-          <MDBNavbarNav left>
+    // if (this.state.loading === true) {
+    //   console.log('loading...');
+    //   return <h2>Loading...</h2>;
+    //   // return <UploadSpinner />
+    // }
+    // else {
+      var userRole = this.state.role;
+      console.log("NAVBAR CONTAINER: userRole =", userRole);
+      return (
+        // <Router>
+        <MDBNavbar color="default-color dark" expand="md">
+          <MDBNavbarBrand>
+            <strong className="white-text">Navbar</strong>
+          </MDBNavbarBrand>
+          <MDBNavbarToggler onClick={this.toggleCollapse} />
+          <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
+          <Can
+            role={userRole}
+            perform="dashboard-page:visit"
+            yes={() => (
+            <MDBNavbarNav left>
 
-            {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
+              {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
 
-            {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
+              {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
 
-            {isInsertActive ?
-              this.state.navItems.insertActiveTag :
-              this.state.navItems.insertInactiveTag}
+                {isInsertActive ?
+                  this.state.navItems.insertActiveTag :
+                  this.state.navItems.insertInactiveTag}
+            
+              {/* <React.Fragment> */}
+            </MDBNavbarNav>
+            )}
+            no={() => (
+              <MDBNavbarNav left>
 
-          </MDBNavbarNav>
+              {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
 
-          <MDBNavbarNav right>
-            <MDBNavItem>
-              <MDBNavLink className="waves-effect waves-light" to="#!">
-                <MDBIcon fab icon="twitter" />
-              </MDBNavLink>
-            </MDBNavItem>
-            <MDBNavItem>
-              <MDBNavLink className="waves-effect waves-light" to="#!">
-                <MDBIcon fab icon="google-plus-g" />
-              </MDBNavLink>
-            </MDBNavItem>
-            <MDBNavItem>
-              <MDBDropdown>
-                <MDBDropdownToggle nav caret>
-                  <MDBIcon icon="user" />
-                </MDBDropdownToggle>
-                <MDBDropdownMenu className="dropdown-default" right>
-                  {
-                    isRegistrationActive ?
-                      this.state.navItems.registrationActiveTag :
-                      this.state.navItems.registrationInactiveTag
-                  }
-                  {
-                    isLoginActive ?
-                      this.state.navItems.loginActiveTag :
-                      this.state.navItems.loginInactiveTag
-                  }
-                  {
-                    isLogoutActive ?
-                      this.state.navItems.logoutActiveTag :
-                      this.state.navItems.logoutInactiveTag
-                  }
-                </MDBDropdownMenu>
-              </MDBDropdown>
-            </MDBNavItem>
-          </MDBNavbarNav>
-        </MDBCollapse>
-      </MDBNavbar>
-      // </Router>
-    );
+              {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
+              </MDBNavbarNav>)
+              }/>
+            <MDBNavbarNav right>
+              <MDBNavItem>
+                <MDBNavLink className="waves-effect waves-light" to="#!">
+                  <MDBIcon fab icon="twitter" />
+                </MDBNavLink>
+              </MDBNavItem>
+              <MDBNavItem>
+                <MDBNavLink className="waves-effect waves-light" to="#!">
+                  <MDBIcon fab icon="google-plus-g" />
+                </MDBNavLink>
+              </MDBNavItem>
+
+              <MDBNavItem>
+                <MDBDropdown>
+                  <MDBDropdownToggle nav caret>
+                    <MDBIcon icon="user" />
+                  </MDBDropdownToggle>
+                  <MDBDropdownMenu className="dropdown-default" right>
+                    {
+                      isRegistrationActive ?
+                        this.state.navItems.registrationActiveTag :
+                        this.state.navItems.registrationInactiveTag
+                    }
+                    {
+                      isLoginActive ?
+                        this.state.navItems.loginActiveTag :
+                        this.state.navItems.loginInactiveTag
+                    }
+                    {
+                      isLogoutActive ?
+                        this.state.navItems.logoutActiveTag :
+                        this.state.navItems.logoutInactiveTag
+                    }
+                  </MDBDropdownMenu>
+                </MDBDropdown>
+              </MDBNavItem>
+            </MDBNavbarNav>
+          </MDBCollapse>
+        </MDBNavbar>
+        // </Router>
+      );
+    // }// else
   } //render
 }
 

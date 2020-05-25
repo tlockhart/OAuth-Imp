@@ -146,19 +146,19 @@ let setUserRole = async (email) => {
     // this.setState(stateVariables);
     // let user;
     let baseURL = `/user/information/${email}`;
-    console.log("authenticationStore.setUserRole: Email=*" + email + "*");
+    // console.log("authenticationStore.setUserRole: Email=*" + email + "*");
 
     // 01/03/2020: Get User role
     let userRoleObj = await API.getUserInfo(baseURL, email)
         .then(res => {
-            console.log("BASE URL=", baseURL);
-            console.log("USER RES=", res);
+            // console.log("BASE URL=", baseURL);
+            // console.log("USER RES=", res);
             // set user
 
             let userRole = {
                 role: res.data.role,
             };
-            console.log("PLC2USERROLE:", userRole);
+            // console.log("PLC2USERROLE:", userRole);
             return userRole;
         })
         .catch(err => {
