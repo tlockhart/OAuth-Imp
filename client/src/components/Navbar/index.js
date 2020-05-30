@@ -3,24 +3,20 @@ import {
   MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavItem, MDBNavLink, MDBNavbarToggler, MDBCollapse, MDBDropdown,
   MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBIcon, NavLink
 } from "mdbreact";
-// import { BrowserRouter as Router } from 'react-router-dom';
 import * as auth from '../../utils/authenticationStore';
 import Can from "../Can";
-import { Timestamp } from "mongodb";
-import history from "../../history";
-import { Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
+
 
 class NavbarPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      refreshNav: this.props.refreshNav,
       isOpen: false,
       role: this.props.role,
-      reload: this.props.reload,
-      redirect: false,
+      redirect: this.props.redirect,
       loggedOut: false,
+      refreshPage: this.props.refreshPage,
+
       navItems:
       {
         homeActiveTag: (
@@ -61,7 +57,6 @@ class NavbarPage extends Component {
               <MDBDropdownMenu className="dropdown-default">
                 <NavLink
                   to="/product/insert"
-
                 >
                   <MDBDropdownItem active
                     name="Insert"
@@ -156,20 +151,6 @@ class NavbarPage extends Component {
   }// constructor
 
   componentDidMount() {
-    console.log("NAVBAR: DIDMOUNT componentDidMount");
-    console.log("NAVBAR: DIDMOUNT state.RELOAD:", this.state.reload);
-    console.log("NAVBAR: DIDMOUNT state.Role:", this.state.role);
-    console.log("NAVBAR: DIDMOUNT props.Role:", this.props.role);
-    console.log("NAVBAR: DIDMOUNT state.loggedOut:", this.state.loggedOut);
-    console.log("Navbar: DIDMOUNT ComponentDIDMOUNT");
-
-    // 05/25/2020: Set reload back to false in  and set role in App.js
-    if (this.state.role) {
-      this.props.fetchRole("Navbar", !this.state.roload, this.state.role);
-    }
-    else {
-      this.props.fetchRole("Navbar", !this.state.roload, 'visitor');
-    }
   }//componentdidMount
 
   toggleCollapse = () => {
@@ -186,58 +167,37 @@ class NavbarPage extends Component {
       // When credentials are cleared force password reset, since no new page is displayed
       console.log("Navbar In LOGOUT1, currentPage:", this.props.currentPage)
 
-      //Clear Credentails on Logout
+      console.log("NAVBAR: DIDMOUNT componentDidMount");
+    console.log("NAVBAR: DIDMOUNT state.Role:", this.state.role);
+    console.log("NAVBAR: DIDMOUNT props.Role:", this.props.role);
+    console.log("NAVBAR: DIDMOUNT state.loggedOut:", this.state.loggedOut);
+    console.log("Navbar: DIDMOUNT ComponentDIDMOUNT");
+
+      /******************************************
+       Authorization-Part1:
+       ********************* 
+       Clear Credentails on 
+       Logout making state.role out of sync with 
+       prop.role
+       ******************************************/
       auth.resetLocalStorage();
-      // Do nothing if visitor hits logout
-        window.location.reload();
-      // this.props.fetchRole("Navbar", !this.state.roload, 'visitor');
-
-      /**********************************************************
-      Authorization-Part1: 
-      *******************
-      User is in the process of logging out of site, so change loggedOut to true, If Props set to admin, or user, then change to state to visitor to make them mismatch
-      **********************************************************/
-      if (!this.state.loggedOut && this.state.role === this.props.role) {
-        console.log("Navbar IN LOGOUT2")
-        this.setState(
-          {
-            loggedOut: true,
-            role: "visitor",
-            redirect: "true"
-          }
-        );
+      if((this.state.role!= 'visitor') && !this.loggedOut &&this.state.role === this.props.role ){
+        console.log("LOGGUER OUT IN NAV")
+        this.props.setRole('visitor');
       }
-    } // if page is logout
-    /*************************************************************
-    Authorization-Part2:
-    *******************
-    Intercept mismatch role and prompt to Trigger a navigation update when the props.role has been updated, but state.role 
-    has not
-    **************************************************************/
-    if (this.props.role && this.props.reload && (!this.state.role || this.props.role != this.state.role)) {
-
-      console.log("LOGOUT2: No State role:", this.state.role, `props.role: ${this.state.role}`);
-      console.log("loggedOut:", this.state.loggedOut, "currentPage:", this.props.currentPage);
-      //set new state
-      this.setState(
-        {
-          reload: false,
-          /*Stop this condition from retriggering, 
-          but can be exploited to gain admin role*/
-          role: this.props.role
-        });
-
-      /**************************************
-      Set Redirect and refreshNav to true 
-      in App.js to refresh the page.  Does nothing 
-      if user is not logged in (just a visitor).
-      **************************************/
-      if (this.props.currentPage === 'Logout'){
+      /******************************************
+       Authorization-Part2: 
+       *******************
+       Catch the out-of-sync props.role and 
+       state.role, indicating a logout state
+       ******************************************/
+      else if((this.state.role != this.props.role) && (this.state.role!= 'visitor') ){
+        this.setState({role: 'visitor'});
         this.props.redirectHome();
       }
-      /**************************************/
-    }
+    }    
   }//componentDidUpdate
+
 
   render() {
 

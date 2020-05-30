@@ -13,19 +13,14 @@ import UploadSpinner from '../components/UploadSpinner';
 import * as auth from '../utils/authenticationStore';
 import credentialStore from '../utils/credentialStore';
 import { performDBAction, deleteProduct } from '../utils/productStore';
-// import history from "../history";
-
 
 class ProductsListContainer extends Component {
     constructor(props) {
         super(props);
-        // authorizationStore.setUserRole((data)=>{
-        //     role = data;
-        // });
-        
+
         /******************************************
-             * STEP2a: SET DELETEURL
-             ******************************************/
+                 STEP2a: SET Base URLs
+        ******************************************/
         this.deleteURL = `/api/products/product/delete/`;
         this.refreshURL = '/user/login/refresh';
         this.baseURL = "/api/products";
@@ -41,13 +36,10 @@ class ProductsListContainer extends Component {
             hasTimeExpired: false,
             isUserAuthorized: true,
             message: '',
-            // user: {},
-            role: '',
-            loading: false
+            role: this.props.role,
+            loading: false,
+            // refreshPage: this.props.refreshPage
         };
-
-
-        // this.clickHandler = this.clickHander.bind(this);
     } // constructor
 
     resetStateVariables() {
@@ -58,13 +50,13 @@ class ProductsListContainer extends Component {
         this.setState({ hasTimeExpired: false });
     }
     /************************************************
-   //      * SET State VARIABLES FROM LocalStorage
-   //      ************************************************/
+        SET State VARIABLES FROM LocalStorage
+    ************************************************/
     setStateVariables(access_token, refresh_token, expiration, email, message) {
         let authToken = "Bearer " + access_token;
-        // let hasTimeExpired = authenticationStore.hasTimeExpired();
+
         let hasTimeExpired = auth.hasTimeExpired();
-        // .hasTimeExpired();
+
         this.setState({
             access_token,
             refresh_token,
@@ -80,46 +72,6 @@ class ProductsListContainer extends Component {
     }
 
     componentDidMount() {
-        
-        //01/05:
-        console.log("Mount 1");
-        // componentDidMount() {
-        this.setState({ refreshed: true });
-        console.log("Mount 2");
-        //5/23/2020
-        /**************************** */
-        const localStateObj = auth.getLocalStorage();
-        console.log("ProductListContainer LOCALSTATEOBJ:", localStateObj);
-        this.setState(localStateObj);
-        console.log("EMAIL:", localStateObj.email);
-        //5/18/20
-        /*******************************************/
-        const email = localStateObj.email;
-        console.log("Mount3 Email:", email);
-
-        /* Set user role on state, by using call back
-        function instead of async await */
-        this.setState({ loading: true });
-
-        auth.setUserRole(email)
-            .then((data => {
-
-                console.log("setUserRole:", data.role);
-                this.setState({ role: data.role });
-                this.setState({ loading: false });
-                console.log("AFTER WILLMOUNT LOAD user:", this.state.role);
-            /**************************/
-            //05/24/2020 After Role is set
-            // Pass it to App.js Controller
-            // so it can pass it to the navbar
-            // for a page refresh
-            /***************************/
-            let reloadState = true;
-            this.props.fetchRole("ProductsListContainer", reloadState, this.state.role);
-            }));
-            /***************************/
-
-
         // Execute getProducts
         this.returnProducts(this.baseURL);
         // returnProducts(baseURL);
@@ -128,17 +80,21 @@ class ProductsListContainer extends Component {
     } //componentdidmount
 
     async returnProducts(baseURL) {
-        //  let res;
+        /**********************************/
+        // 05/24/2020 Start Loading Spinner
+        /**********************************/
+        this.setState({ loading: true });
+        /**********************************/
         try {
             let res = await API.getProducts(baseURL);
             console.log("RES: ", res);
             if (res) {
                 this.productsListData = res.data.products;
-                //05/24/2020
-        /******************************/
-        // let reloadState = true;
-        // this.props.fetchRole("ProductsListContainer", reloadState, this.state.role);
-        /******************************/
+                /**********************************/
+                //05/24/2020 Stop Loading Spinner
+                /**********************************/
+                this.setState({ loading: false });
+                /**********************************/
             }
 
         }
@@ -161,10 +117,10 @@ class ProductsListContainer extends Component {
         console.log("***ProductListData Set:", this._productsListData, "length", this._productsListData.length);
 
         this.setState({ productsListData: this._productsListData });
-        // Set productsList to mapped productsListData array
-        // return this.state.productsListData;
+
     } // setProductList
 
+    // Set productsList to mapped productsListData array
     setHtmlItems() {
         let productList = this.productsListData.map((product) => {
             return (
@@ -336,7 +292,7 @@ class ProductsListContainer extends Component {
             console.log('loading...');
             return <UploadSpinner />
         }
-         {
+        {
             var userRole = this.state.role;
             console.log("ProductListContainer: userRole =", userRole);
             let updatedProductsListData = this.setHtmlItems();

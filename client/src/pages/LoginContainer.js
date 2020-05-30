@@ -21,7 +21,6 @@ class LoginContainer extends Component {
             access_token: '',
             refresh_token: '',
             expiration: '',
-            // toProducts: false
         };
 
         this.changeHandler = this.changeHandler.bind(this);
@@ -105,6 +104,11 @@ class LoginContainer extends Component {
                             expiration,
                             email,
                             message);
+                    
+                        /***********************************
+                         Get user role and set on App Router
+                         ***********************************/
+                        await this.props.getRole();
                         // this.setState({toProducts: true}); 
                         this.props.history.push('/products');
                     }//if

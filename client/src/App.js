@@ -22,10 +22,8 @@ import ProductsListContainer from './pages/ProductsListContainer';
 import ProductUpdateContainer from './pages/ProductUpdateContainer';
 import ProductViewContainer from './pages/ProductViewContainer';
 import RegistrationContainer from './pages/RegistrationContainer';
-import { faWindowRestore } from '@fortawesome/free-solid-svg-icons';
-
-
-
+import * as auth from './utils/authenticationStore';
+import UploadSpinner from './components/UploadSpinner';
 
 
 class App extends Component {
@@ -35,71 +33,103 @@ class App extends Component {
     this.state = {
       currentPage: '',
       name: '',
-      refreshButtons: null,
-      role: '',
-      reload: false,
-      refreshPage: false
+      role: 'visitor',
+      loading: false,
+      redirect: false
     };
 
     this.handlePageClick = this.handlePageClick.bind(this);
-    this.fetchRole = this.fetchRole.bind(this);
     this.redirectHome = this.redirectHome.bind(this);
+    this.getRole = this.getRole.bind(this);
+    this.setRole = this.setRole.bind(this);
   }
-
-  redirectHome (){
-    //IMPORTANT: Redirect to the selected organization's page.
-    console.log("Called REDIRECT HOME", this.props);
-    history.push({
-      pathname: '/', 
-      refreshNav: true,
-      redirect: true
+  setRole(role) {
+    this.setState({
+      role: role,
+      loggedOut: true
     });
-    this.setState({refreshPage: true});
-    console.log("refreshPage:", this.state.refreshPage);
   }
+  // Taken from productionListContainer
+  async getRole() {
+    const localStateObj = auth.getLocalStorage();
+    console.log("APPJS. LOCALSTATEOBJ:", localStateObj);
+    // this.setState(localStateObj);
+    console.log("EMAIL:", localStateObj.email);
+    const email = localStateObj.email;
+    console.log("Navbar Mount3 Email:", email);
 
-  fetchRole(myComponent, state, role) {
-    this.setState({ reload: state });
-    this.setState({ role: role });
+    /* Set user role on state, by using call back
+    function instead of async await */
+    this.setState({ loading: true });
 
-    console.log("Passing fetchRole");
-    console.log("RELOAD B4 Set:", `component: ${myComponent} reload: ${this.state.reload} role: ${this.state.role}`);
-    if (this.state.reload === true) {
+    auth.setUserRole(email)
+      .then((data => {
 
-      console.log("App.js FetchRole executing, RELOAD:", this.state.reload);
-    }
-    console.log("RELOAD After Set:", this.state.reload);
+        console.log("setUserRole:", data.role);
+        this.setState({ role: data.role });
+        this.setState({ loading: false });
+        console.log("AFTER WILLMOUNT LOAD user:", this.state.role);
+        /**************************/
+        console.log("APPJS ROLE B4 Set:", this.state.role);
+        this.setState({ role: data.role });
+        console.log("APPJS STATE ROLE After Set:", this.state.role);
+        return data.role;
+      }));
+
+
+    /***************************/
+  }
+  redirectHome() {
+    //IMPORTANT: Redirect to the selected organization's page.
+    console.log("Called REDIRECT HOME redirect b4", this.state.redirect);
+    this.setState({
+      redirect: true,
+      role: 'visitor'
+    });
+    console.log("Called REDIRECT HOME redirect after", this.state.redirect);
+    history.push({
+      pathname: '/',
+    });
   }
 
   async handlePageClick(event) {
-    // No preventDefault Here:  It will not allow page to transition to insert form, with a dropdownitem
+    // IMPORTANT: No preventDefault Here:  It will not allow page to transition to insert form, with a dropdownitem
     // event.preventDefault();
     // event.persist();
-    console.log("HANDLEPAGECLICK: " + JSON.stringify(event.target.name));
+
     this.setState({
       currentPage: event.target.name,
       name: event.target.name
     });
-    console.log("event.target.name:", event.target.name, " EventTarget:", event.target);
 
     //01/04/2020:
-    console.log("PageClicked: ", "*" + this.state.currentPage + "*");
-  
-    if (event.target.name === "Products") {
-      console.log("PRODUCT VIEW Originally refreshButton:", this.state.refreshButtons);
+    if (event.target.name === 'Logout') {
+      this.redirectHome();
     }
-    else if (event.target.name === "") {
-      console.log("Pushing from page:", "*" + this.state.currentPage + "*");
-      
-    }
-    else
-      console.log("On PAGE:", "*" + this.state.currentPage + "*");
-  }
+    // console.log("HANDLEPAGECLICK: " + JSON.stringify(event.target.name));
+    // console.log("event.target.name:", event.target.name, " EventTarget:", event.target);
+    // const currentPage = this.state.currentPage;
+    // if(event.target.name === 'Login'){
+    //   console.log("currentpage:", "*"+currentPage+"*");
+    // }
+    // else if (event.target.name === "Products") {
+      //  console.log("currentpage:", "*"+currentPage+"*");
+      // }
+      // else if (event.target.name === "") {
+      //  console.log("currentpage:", "*"+currentPage+"*");
+      // else
+      //  console.log("currentpage:", "*"+currentPage+"*");
+      // }
+  }   
 
   componentDidUpdate() {
     console.log("APPJS JUST UPDATED!");
   }
   render() {
+    if (this.state.loading === true) {
+      // console.log('loading...');
+      return (<UploadSpinner />);
+    }
     return (
       <Router history={history}>
         {/* <Router> */}
@@ -111,32 +141,38 @@ class App extends Component {
             currentPage={this.state.currentPage}
             name={this.state.name}
             role={this.state.role}
-            reload={this.state.reload}
-            fetchRole={this.fetchRole}
-            redirectHome={this.redirectHome}  />
+            redirectHome={this.redirectHome}
+            getRole={this.getRole}
+            setRole={this.setRole}
+            loggedOut={this.state.loggedOut}
+            redirect={this.state.redirect} />
 
           <Switch>
-            {/* <Route exact path="/" component={HomeContainer} /> */}
-            <Route 
-              exact 
-              path="/" 
-              render={(props) => 
+            <Route
+              exact
+              path="/"
+              render={(props) =>
                 <HomeContainer {...props}
-                  fetchRole={this.fetchRole}
                 />
-              } 
+              }
             />
             <Route exact path="/user/registration" component={RegistrationContainer} />
-            <Route exact path="/user/login" component={LoginContainer} />
+            <Route
+              exact
+              path="/user/login"
+              render={(props) => <LoginContainer
+                {...props}
+                getRole={this.getRole}
+              />}
+            />
             <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />
             <Route exact path="/product/insert" component={ProductInsertContainer} />
             <Route exact path="/products/product/:product_id" component={ProductViewContainer} />
-            {/* <Route exact path="/products/" component={ProductsListContainer} /> */}
             <Route
               exact
               path="/products/"
               render={(props) => <ProductsListContainer {...props}
-                fetchRole={this.fetchRole} />}
+                role={this.state.role} />}
             />
           </Switch>
 
