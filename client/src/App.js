@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 // Handle Routes
 // import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
+// import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
+// import { Router } from 'react-router';
+
 // import logo from './logo.svg';
 import './App.css';
 // import MainContent from './components/MainContent';
@@ -34,10 +38,24 @@ class App extends Component {
       refreshButtons: null,
       role: '',
       reload: false,
+      refreshPage: false
     };
 
     this.handlePageClick = this.handlePageClick.bind(this);
     this.fetchRole = this.fetchRole.bind(this);
+    this.redirectHome = this.redirectHome.bind(this);
+  }
+
+  redirectHome (){
+    //IMPORTANT: Redirect to the selected organization's page.
+    console.log("Called REDIRECT HOME", this.props);
+    history.push({
+      pathname: '/', 
+      refreshNav: true,
+      redirect: true
+    });
+    this.setState({refreshPage: true});
+    console.log("refreshPage:", this.state.refreshPage);
   }
 
   fetchRole(myComponent, state, role) {
@@ -66,8 +84,13 @@ class App extends Component {
 
     //01/04/2020:
     console.log("PageClicked: ", "*" + this.state.currentPage + "*");
+  
     if (event.target.name === "Products") {
       console.log("PRODUCT VIEW Originally refreshButton:", this.state.refreshButtons);
+    }
+    else if (event.target.name === "") {
+      console.log("Pushing from page:", "*" + this.state.currentPage + "*");
+      
     }
     else
       console.log("On PAGE:", "*" + this.state.currentPage + "*");
@@ -89,10 +112,20 @@ class App extends Component {
             name={this.state.name}
             role={this.state.role}
             reload={this.state.reload}
-            fetchRole={this.fetchRole} />
+            fetchRole={this.fetchRole}
+            redirectHome={this.redirectHome}  />
 
           <Switch>
-            <Route exact path="/" component={HomeContainer} />
+            {/* <Route exact path="/" component={HomeContainer} /> */}
+            <Route 
+              exact 
+              path="/" 
+              render={(props) => 
+                <HomeContainer {...props}
+                  fetchRole={this.fetchRole}
+                />
+              } 
+            />
             <Route exact path="/user/registration" component={RegistrationContainer} />
             <Route exact path="/user/login" component={LoginContainer} />
             <Route exact path="/products/product/update/:product_id" component={ProductUpdateContainer} />

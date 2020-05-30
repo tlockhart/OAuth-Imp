@@ -7,15 +7,20 @@ import {
 import * as auth from '../../utils/authenticationStore';
 import Can from "../Can";
 import { Timestamp } from "mongodb";
-
+import history from "../../history";
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 class NavbarPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      refreshNav: this.props.refreshNav,
       isOpen: false,
       role: this.props.role,
       reload: this.props.reload,
+      redirect: false,
+      loggedOut: false,
       navItems:
       {
         homeActiveTag: (
@@ -151,14 +156,21 @@ class NavbarPage extends Component {
   }// constructor
 
   componentDidMount() {
-    console.log("NAVBAR componentDidMount");
-    console.log("NAVBAR DIDMOUNT STATE RELOAD:", this.state.reload);
-    console.log("NAVBAR DIDMOUNT STATE Role:", this.state.role);
-    console.log("Navbar: ComponentDIDMOUNT");
+    console.log("NAVBAR: DIDMOUNT componentDidMount");
+    console.log("NAVBAR: DIDMOUNT state.RELOAD:", this.state.reload);
+    console.log("NAVBAR: DIDMOUNT state.Role:", this.state.role);
+    console.log("NAVBAR: DIDMOUNT props.Role:", this.props.role);
+    console.log("NAVBAR: DIDMOUNT state.loggedOut:", this.state.loggedOut);
+    console.log("Navbar: DIDMOUNT ComponentDIDMOUNT");
 
-    // 05/25/2020: Set reload back to false in App.js
-    this.props.fetchRole("Navbar",false, this.state.role);
-  }
+    // 05/25/2020: Set reload back to false in  and set role in App.js
+    if (this.state.role) {
+      this.props.fetchRole("Navbar", !this.state.roload, this.state.role);
+    }
+    else {
+      this.props.fetchRole("Navbar", !this.state.roload, 'visitor');
+    }
+  }//componentdidMount
 
   toggleCollapse = () => {
     this.setState({ isOpen: !this.state.isOpen });
@@ -169,39 +181,69 @@ class NavbarPage extends Component {
    * 05/25/2020
    * 1) Trigger refresh on login and logout
     /************************************** */
-    // console.log("navbar componentDidUpdate")
-    // console.log("NAVBAR currentpage", this.props.currentPage);
-    // console.log("NAVBAR DIDUPDATE STATE RELOAD:", this.state.reload);
-    // console.log("NAVBAR DIDUPDATE STATE Role:", this.state.role);
-    // console.log("NAVBAR PROPS ROLE:", this.props.role);
-    // console.log("NAVBAR PROPS RELOAD:", this.props.reload);
 
-    if (this.props.currentPage === "Logout" ) {
+    if (this.props.currentPage === "Logout") {
       // When credentials are cleared force password reset, since no new page is displayed
-      console.log("Navbar In LOGOUT")
+      console.log("Navbar In LOGOUT1, currentPage:", this.props.currentPage)
+
+      //Clear Credentails on Logout
       auth.resetLocalStorage();
-      window.location.reload();
-    }
-    //05/25/2020: Trigger a navigation update when the props.role has been updated, but state.role has not
-    /****************************************************************/
-    if (this.props.role && this.props.reload && (!this.state.role || this.props.role !== this.state.role)) {
-      console.log("Navbar: ComponentDIDUPDATE");
+      // Do nothing if visitor hits logout
+        window.location.reload();
+      // this.props.fetchRole("Navbar", !this.state.roload, 'visitor');
+
+      /**********************************************************
+      Authorization-Part1: 
+      *******************
+      User is in the process of logging out of site, so change loggedOut to true, If Props set to admin, or user, then change to state to visitor to make them mismatch
+      **********************************************************/
+      if (!this.state.loggedOut && this.state.role === this.props.role) {
+        console.log("Navbar IN LOGOUT2")
+        this.setState(
+          {
+            loggedOut: true,
+            role: "visitor",
+            redirect: "true"
+          }
+        );
+      }
+    } // if page is logout
+    /*************************************************************
+    Authorization-Part2:
+    *******************
+    Intercept mismatch role and prompt to Trigger a navigation update when the props.role has been updated, but state.role 
+    has not
+    **************************************************************/
+    if (this.props.role && this.props.reload && (!this.state.role || this.props.role != this.state.role)) {
+
+      console.log("LOGOUT2: No State role:", this.state.role, `props.role: ${this.state.role}`);
+      console.log("loggedOut:", this.state.loggedOut, "currentPage:", this.props.currentPage);
       //set new state
       this.setState(
         {
-          reload: this.props.reload,
+          reload: false,
+          /*Stop this condition from retriggering, 
+          but can be exploited to gain admin role*/
           role: this.props.role
         });
+
+      /**************************************
+      Set Redirect and refreshNav to true 
+      in App.js to refresh the page.  Does nothing 
+      if user is not logged in (just a visitor).
+      **************************************/
+      if (this.props.currentPage === 'Logout'){
+        this.props.redirectHome();
+      }
+      /**************************************/
     }
-    /****************************************************************/
-  }
+  }//componentDidUpdate
 
   render() {
 
     let isHomeActive = this.props.currentPage === "Home" || this.props.name === "Home" ? true : false;
 
     let isProductsActive = this.props.currentPage === "Products" || this.props.name === "Products" ? true : false;
-    // console.log( "is Products active", isProductsActive);
 
     let isInsertActive = this.props.currentPage === "Insert" || this.props.name === "Insert" ? true : false;
 
@@ -211,89 +253,96 @@ class NavbarPage extends Component {
 
     let isLogoutActive = this.props.currentPage === "Logout" || this.props.name === "Logout" ? true : false;
 
-    // if (this.state.loading === true) {
-    //   console.log('loading...');
-    //   return <h2>Loading...</h2>;
-    //   // return <UploadSpinner />
-    // }
-    // else {
-      var userRole = this.state.role;
-      console.log("NAVBAR CONTAINER: userRole =", userRole);
-      return (
-        // <Router>
-        <MDBNavbar color="default-color dark" expand="md">
-          <MDBNavbarBrand>
-            <strong className="white-text">Navbar</strong>
-          </MDBNavbarBrand>
-          <MDBNavbarToggler onClick={this.toggleCollapse} />
-          <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-          <Can
-            role={userRole}
-            perform="dashboard-page:visit"
-            yes={() => (
-            <MDBNavbarNav left>
+    var userRole = this.state.role;
+    console.log("NAVBAR CONTAINER: userRole =", userRole);
 
-              {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
+    return (
+      <MDBNavbar color="default-color dark" expand="md">
+        <MDBNavbarBrand>
+          <strong className="white-text">Navbar</strong>
+        </MDBNavbarBrand>
+        <MDBNavbarToggler onClick={this.toggleCollapse} />
+        <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
+          <MDBNavbarNav left>
 
-              {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
+            <Can
+              role={userRole}
+              perform="home-page:visit"
+              yes={() => (
+                <>
+                  {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
+                </>)}
+              no={
+                () => (<React.Fragment></React.Fragment>)
+              }
+            />
 
-                {isInsertActive ?
-                  this.state.navItems.insertActiveTag :
-                  this.state.navItems.insertInactiveTag}
-            
-              {/* <React.Fragment> */}
-            </MDBNavbarNav>
-            )}
-            no={() => (
-              <MDBNavbarNav left>
+            <Can
+              role={userRole}
+              perform="products:view"
+              yes={() => (
+                <>
+                  {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
+                </>)}
+              no={
+                () => (<></>)
+              }
+            />
+            <Can
+              role={userRole}
+              perform="products:insert"
+              yes={() => (
+                <>
+                  {isInsertActive ?
+                    this.state.navItems.insertActiveTag :
+                    this.state.navItems.insertInactiveTag}
+                </>
+              )}
+              no={() => (
+                <></>
+              )
+              } />
+          </MDBNavbarNav>
+          <MDBNavbarNav right>
+            <MDBNavItem>
+              <MDBNavLink className="waves-effect waves-light" to="#!">
+                <MDBIcon fab icon="twitter" />
+              </MDBNavLink>
+            </MDBNavItem>
+            <MDBNavItem>
+              <MDBNavLink className="waves-effect waves-light" to="#!">
+                <MDBIcon fab icon="google-plus-g" />
+              </MDBNavLink>
+            </MDBNavItem>
 
-              {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
-
-              {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
-              </MDBNavbarNav>)
-              }/>
-            <MDBNavbarNav right>
-              <MDBNavItem>
-                <MDBNavLink className="waves-effect waves-light" to="#!">
-                  <MDBIcon fab icon="twitter" />
-                </MDBNavLink>
-              </MDBNavItem>
-              <MDBNavItem>
-                <MDBNavLink className="waves-effect waves-light" to="#!">
-                  <MDBIcon fab icon="google-plus-g" />
-                </MDBNavLink>
-              </MDBNavItem>
-
-              <MDBNavItem>
-                <MDBDropdown>
-                  <MDBDropdownToggle nav caret>
-                    <MDBIcon icon="user" />
-                  </MDBDropdownToggle>
-                  <MDBDropdownMenu className="dropdown-default" right>
-                    {
-                      isRegistrationActive ?
-                        this.state.navItems.registrationActiveTag :
-                        this.state.navItems.registrationInactiveTag
-                    }
-                    {
-                      isLoginActive ?
-                        this.state.navItems.loginActiveTag :
-                        this.state.navItems.loginInactiveTag
-                    }
-                    {
-                      isLogoutActive ?
-                        this.state.navItems.logoutActiveTag :
-                        this.state.navItems.logoutInactiveTag
-                    }
-                  </MDBDropdownMenu>
-                </MDBDropdown>
-              </MDBNavItem>
-            </MDBNavbarNav>
-          </MDBCollapse>
-        </MDBNavbar>
-        // </Router>
-      );
-    // }// else
+            <MDBNavItem>
+              <MDBDropdown>
+                <MDBDropdownToggle nav caret>
+                  <MDBIcon icon="user" />
+                </MDBDropdownToggle>
+                <MDBDropdownMenu className="dropdown-default" right>
+                  {
+                    isRegistrationActive ?
+                      this.state.navItems.registrationActiveTag :
+                      this.state.navItems.registrationInactiveTag
+                  }
+                  {
+                    isLoginActive ?
+                      this.state.navItems.loginActiveTag :
+                      this.state.navItems.loginInactiveTag
+                  }
+                  {
+                    isLogoutActive ?
+                      this.state.navItems.logoutActiveTag :
+                      this.state.navItems.logoutInactiveTag
+                  }
+                </MDBDropdownMenu>
+              </MDBDropdown>
+            </MDBNavItem>
+          </MDBNavbarNav>
+        </MDBCollapse>
+      </MDBNavbar>
+    );
   } //render
 }
 

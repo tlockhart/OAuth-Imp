@@ -32,10 +32,9 @@ let ProductListItem = (props) => {
 
           <Can
             role={userRole}
-            perform="dashboard-page:visit"
-            // data= {props.user.data}
+            perform="products:update"
             yes={() => (
-              <React.Fragment>
+              <>
                 <LinkActionBtn to={
                   {
                     pathname: `/products/product/update/${id}`,
@@ -47,24 +46,27 @@ let ProductListItem = (props) => {
                   }
                 }
                   buttonName={"Update"} />
+              </>)}
+            no={() => (<></>)}
+          />
 
-                <NoLinkActionBtn buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)} id={id} />
-                <LinkActionBtn to={
-                  {
-                    pathname: `/products/product/${id}`,
-                    state: {
-                      name: name,
-                      value: value,
-                      id: id,
-                      image: productImage                    }
-                  }}
-                  buttonName={"View"} />
-                <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
-              </React.Fragment>
-              /****** */
-            )}
-            no={() => (
-              <React.Fragment>
+          <Can
+            role={userRole}
+            perform="products:delete"
+            yes={() => (
+              <>
+                <NoLinkActionBtn
+                  buttonName={"Delete"} btnClickHandler={event => props.deleteClickHandler(event)}
+                  id={id} />
+              </>)}
+            no={() => (<></>)}
+          />
+
+          <Can
+            role={userRole}
+            perform="products:details"
+            yes={() => (
+              <>
                 <LinkActionBtn to={
                   {
                     pathname: `/products/product/${id}`,
@@ -76,9 +78,20 @@ let ProductListItem = (props) => {
                     }
                   }}
                   buttonName={"View"} />
-                <NoLinkActionBtn buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)} id={id} />
-              </React.Fragment>
-            )}
+              </>)}
+            no={() => (<></>)}
+          />
+
+          <Can
+            role={userRole}
+            perform="products:hide"
+            yes={() => (
+            <>
+            <NoLinkActionBtn
+                  buttonName={"Hide"} btnClickHandler={event => props.filterClickHandler(event)}
+                  id={id} />
+            </>)}
+            no={() => (<></>)}
           />
           <hr />
         </div>
