@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     role: {
         type: String,
         required: true,
-        default: "visitor"
+        default: "user"
     },
     token: {
         // Note the objecID is not defined, anything passed into token must be an id be default

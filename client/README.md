@@ -1,68 +1,86 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<style type="text/css">
+    ol ol { list-style-type: lower-alpha; }
+</style>
+# OAuth-Imp
 
-## Available Scripts
+### **Purpose**
+*OAuth* is a public standard for granting user access to server resources.  Since OAuth only provideds guidelines, the implementation can vary according to interpretation.  Client access is granted by an authentication server, which provides a temporary access token, upon user login.  Once the access token expires, a new token must be generated with a refresh token, or the user must log back into the application.
 
-In the project directory, you can run:
+OAuth-Imp is my implementation of the OAuth standard.  It implements the main client  authentication features above, including a refresh token for continued access.  It also, implements *Role Based Access Control (RBAC)*.  RBAC is a method of managing application privileges based on user roles (visitor, user, admin).  In essence, a resource can only be displayed, if the user's role has access to view it.
 
-### `npm start`
+To demonstrate this concept I have setup a crude *Single Page Application (SPA)*, using REACT.  Users are allowed to perform the following functions on a products database.  However, user privilege is role-based (see below).     
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Products Page Access**
+1. View (visitor)
+2. Hide (user, admin)
+3. View Details (user, admin)
+4. Update Products (admin)
+5. Delete Products  (admin)
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+**Admin Page Access:**
+1. Insert New Products (admin)
 
-### `npm test`
+**Role Based Credentials:**
+Unauthenticated users are given the visitor role by default.  In addition, newly registered users are given user access, by default.  However, in order to see the difference in authorization, I have setup the following test roles.  Please feel free to use them to test the application.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1.  `Admin Credentials:`
+    1. id: admin@ymail.com
+    2. pw: admin
+1. `User Credentials:`
+    1. id: user@ymail.com
+    2. pw: user
+1. `Visitor Credentials:`
+    1. id: visitor@ymail.com
+    1. pw: visitor
 
-### `npm run build`
+---
+### **IMPORTANT LINKS**
+* [Link to github repository](https://github.com/tlockhart/DEV_Front_BACK_OAuth)
+* [Demo Version] (https://lit-bayou-59305.herokuapp.com/)
+* [OAuth] (https://auth0.com/blog/5-steps-to-add-modern-authentication-to-legacy-apps-using-jwts/)
+* [RBACS] (https://auth0.com/blog/role-based-access-control-rbac-and-react-apps/)
+---
+### **Technologies Used**
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- MongoDB
+- JWT
+- Axios
+- Moment
+- BCrypt
+- Cloudinary
+- Node.js with Async/Await
+- React
+- DotEnv
+---
+### **Setup**
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+In order to run the app, you will need to clone this repository and install all required technologies listed below.  Note: You will also need to setup a mongoDB and cloudinary account, and add the credentials to a .env file in the root directory.
+___
+### **Required Technologies**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. [Node.js LTS](https://nodejs.org/en/)<br/>
+2. [NPM](https://www.npmjs.com/get-npm)<br/>
+3. [Git & Git Bash](https://git-scm.com/downloads)<br/>
+4. [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)<br/>
+5. [MongoAtlas](https://account.mongodb.com/account/login)<br/>
+6. [Cloudinary](https://cloudinary.com/)<br/>
+7. [Robo 3T](https://robomongo.org/download)<br/>
+---
+### **Installation and Configuration**
 
-### `npm run eject`
+1. Open Bash and Clone the OAuth-Imp repo
+2. Install all required technologies
+3. [Optional] In Bash, change the current directory to the OAuth-Imp directory and install create-react-app module using the following command:
+    1. npm install -g create-react-app
+4. In Bash, change to the OAuth-Imp directory, install all modules from the package.json, using the following command:
+    1. npm install [Enter]
+___
+### **Execute Program**
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+1. In Bash, enter the following command in the OAuth-Imp directory, to start the server.
+    1. npm start [ENTER]
+2. The application will open your browser and run the app in test mode:
+    1. http://localhost:3000
+___
+### **Use**
+This repo is available for public non-commercial use only.
