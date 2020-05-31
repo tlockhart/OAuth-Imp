@@ -36,6 +36,7 @@ class ProductInsertContainer extends Component {
             image: {
                 base64Str: '',
                 cloudImageUrl: '',
+                cloudImagePublicId: '',
                 input: '',
                 file: '',
                 // previewCanvas: undefined,
@@ -291,6 +292,7 @@ class ProductInsertContainer extends Component {
                  **************************/
                 console.log("Calling productStore.insertCloudinary");
                 let cloudinaryResult = await insertCloudinary(this.cloudinaryURL, base64StringImage);
+
                 // this.setState({cloudImageUrl: cloudinaryResult.url});
                 /**************************/
                 console.log("Converted Image: ", base64StringImage);
@@ -299,6 +301,15 @@ class ProductInsertContainer extends Component {
                 //update cloudImageUrl
                 console.log("CLOUD URL:", cloudinaryResult.data.url);
                 image.cloudImageUrl = cloudinaryResult.data.url;
+                image.cloudImagePublicId = cloudinaryResult.data.public_id;
+
+                /****************************/
+                //5/30/2020: Save image.cloudImagePublicId to db, where productImage == image.cloudImageURL
+                /****************************/
+                console.log("public_id", cloudinaryResult.public_id);
+                /*************************** */
+
+
                 // update base64Str
                 image.base64Str = base64StringImage;
                 // update image state variable

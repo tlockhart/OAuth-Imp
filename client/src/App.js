@@ -12,7 +12,7 @@ import './App.css';
 import Footer from './components/Footer';
 // Import Components
 // import Navbar from './components/Navbar';
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar/index';
 import history from "./history";
 // Import Pages
 import HomeContainer from './pages/HomeContainer';

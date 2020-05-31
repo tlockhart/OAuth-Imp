@@ -5,6 +5,7 @@ import {
 } from "mdbreact";
 import * as auth from '../../utils/authenticationStore';
 import Can from "../Can";
+import { navbarOptions as navbars } from './util/navbarOptions';
 
 
 class NavbarPage extends Component {
@@ -16,138 +17,9 @@ class NavbarPage extends Component {
       redirect: this.props.redirect,
       loggedOut: false,
       refreshPage: this.props.refreshPage,
-
-      navItems:
-      {
-        homeActiveTag: (
-          <MDBNavItem active onClick={this.props.handlePageClick}>
-            {/* <MDBNavLink name="Home" to={"/"}>Home</MDBNavLink> */}
-            <NavLink name="Home" to={"/"}>Home</NavLink>
-          </MDBNavItem>
-        ),
-        homeInactiveTag: (
-          <MDBNavItem onClick={this.props.handlePageClick}>
-            {/* <MDBNavLink name="Home" to="/">Home</MDBNavLink> */}
-            <NavLink name="Home" to="/">Home</NavLink>
-          </MDBNavItem>
-        ),
-        productsActiveTag: (
-          <MDBNavItem active onClick={this.props.handlePageClick}>
-            {/* <MDBNavLink name="Products" to="/products" >Products
-            </MDBNavLink> */}
-            <NavLink name="Products" to="/products" >Products
-            </NavLink>
-          </MDBNavItem>
-        ),
-        productsInactiveTag: (
-          <MDBNavItem onClick={this.props.handlePageClick}>
-            {/* <MDBNavLink name="Products" to="/products">Products
-            </MDBNavLink> */}
-            <NavLink name="Products" to="/products">Products
-            </NavLink>
-          </MDBNavItem>
-        ),
-        insertActiveTag: (
-          // <MDBNavbarNav left>
-          <MDBNavItem>
-            <MDBDropdown>
-              <MDBDropdownToggle nav caret>
-                <div className="d-none d-md-inline">Admin</div>
-              </MDBDropdownToggle>
-              <MDBDropdownMenu className="dropdown-default">
-                <NavLink
-                  to="/product/insert"
-                >
-                  <MDBDropdownItem active
-                    name="Insert"
-                    onClick={
-                      this.props.handlePageClick}
-                  >Insert</MDBDropdownItem>
-                </NavLink>
-              </MDBDropdownMenu>
-            </MDBDropdown>
-          </MDBNavItem>
-          // </MDBNavbarNav >
-        ),
-        insertInactiveTag: (
-          // <MDBNavbarNav left>
-          <MDBNavItem>
-            <MDBDropdown>
-              <MDBDropdownToggle nav caret>
-                <div className="d-none d-md-inline">Admin</div>
-              </MDBDropdownToggle>
-              <MDBDropdownMenu className="dropdown-default">
-                <NavLink
-                  to="/product/insert"
-                >
-                  <MDBDropdownItem
-                    name="Insert"
-                    onClick={this.props.handlePageClick}
-                  >
-                    Insert
-                    </MDBDropdownItem>
-                </NavLink>
-              </MDBDropdownMenu>
-            </MDBDropdown>
-          </MDBNavItem>
-          // </MDBNavbarNav>
-        ),
-        registrationActiveTag: (
-          // <MDBNavLink to="/user/registration">
-          <NavLink to="/user/registration">
-            <MDBDropdownItem
-              active
-              name="Registration"
-              onClick={this.props.handlePageClick}
-            >Register</MDBDropdownItem>
-            {/* </MDBNavLink> */}
-          </NavLink>
-        ),
-        registrationInactiveTag: (
-          // <MDBNavLink to="/user/registration">
-          <NavLink to="/user/registration">
-            <MDBDropdownItem
-              name="Registration"
-              onClick={this.props.handlePageClick}
-            >Register</MDBDropdownItem>
-            {/* </MDBNavLink> */}
-          </NavLink>
-
-        ),
-        loginActiveTag: (
-          <NavLink to="/user/login">
-            <MDBDropdownItem
-              active
-              name="Login"
-              onClick={this.props.handlePageClick}
-            >Login</MDBDropdownItem>
-          </NavLink>
-        ),
-        loginInactiveTag: (
-          <NavLink to="/user/login">
-            <MDBDropdownItem
-              name="Login"
-              onClick={this.props.handlePageClick}
-            >Login</MDBDropdownItem>
-          </NavLink>
-        ),
-        logoutActiveTag: (
-          <NavLink to="#">
-            <MDBDropdownItem
-              active
-              name="Logout"
-              onClick={this.props.handlePageClick}>Logout</MDBDropdownItem>
-          </NavLink>
-        ),
-        logoutInactiveTag: (
-          <NavLink to="#">
-            <MDBDropdownItem
-              name="Logout"
-              onClick={this.props.handlePageClick}>Logout</MDBDropdownItem>
-          </NavLink>
-        )
-      }
-    };
+      myNav: navbars(this.props)[0]
+    };//state
+    console.log("myNav", this.state.myNav);
   }// constructor
 
   componentDidMount() {
@@ -165,13 +37,12 @@ class NavbarPage extends Component {
 
     if (this.props.currentPage === "Logout") {
       // When credentials are cleared force password reset, since no new page is displayed
-      console.log("Navbar In LOGOUT1, currentPage:", this.props.currentPage)
-
-      console.log("NAVBAR: DIDMOUNT componentDidMount");
-    console.log("NAVBAR: DIDMOUNT state.Role:", this.state.role);
-    console.log("NAVBAR: DIDMOUNT props.Role:", this.props.role);
-    console.log("NAVBAR: DIDMOUNT state.loggedOut:", this.state.loggedOut);
-    console.log("Navbar: DIDMOUNT ComponentDIDMOUNT");
+      // console.log("Navbar In LOGOUT1, currentPage:", this.props.currentPage)
+      // console.log("NAVBAR: DIDMOUNT componentDidMount");
+      // console.log("NAVBAR: DIDMOUNT state.Role:", this.state.role);
+      // console.log("NAVBAR: DIDMOUNT props.Role:", this.props.role);
+      // console.log("NAVBAR: DIDMOUNT state.loggedOut:", this.state.loggedOut);
+      // console.log("Navbar: DIDMOUNT ComponentDIDMOUNT");
 
       /******************************************
        Authorization-Part1:
@@ -181,7 +52,7 @@ class NavbarPage extends Component {
        prop.role
        ******************************************/
       auth.resetLocalStorage();
-      if((this.state.role!= 'visitor') && !this.loggedOut &&this.state.role === this.props.role ){
+      if ((this.state.role != 'visitor') && !this.loggedOut && this.state.role === this.props.role) {
         console.log("LOGGUER OUT IN NAV")
         this.props.setRole('visitor');
       }
@@ -191,15 +62,18 @@ class NavbarPage extends Component {
        Catch the out-of-sync props.role and 
        state.role, indicating a logout state
        ******************************************/
-      else if((this.state.role != this.props.role) && (this.state.role!= 'visitor') ){
-        this.setState({role: 'visitor'});
+      else if ((this.state.role != this.props.role) && (this.state.role != 'visitor')) {
+        this.setState({ role: 'visitor' });
         this.props.redirectHome();
       }
-    }    
+    }
   }//componentDidUpdate
 
 
   render() {
+
+    var userRole = this.state.role;
+    console.log("NAVBAR CONTAINER: userRole =", userRole);
 
     let isHomeActive = this.props.currentPage === "Home" || this.props.name === "Home" ? true : false;
 
@@ -212,9 +86,6 @@ class NavbarPage extends Component {
     let isLoginActive = this.props.currentPage === "Login" || this.props.name === "Login" ? true : false;
 
     let isLogoutActive = this.props.currentPage === "Logout" || this.props.name === "Logout" ? true : false;
-
-    var userRole = this.state.role;
-    console.log("NAVBAR CONTAINER: userRole =", userRole);
 
     return (
       <MDBNavbar color="default-color dark" expand="md">
@@ -230,7 +101,7 @@ class NavbarPage extends Component {
               perform="home-page:visit"
               yes={() => (
                 <>
-                  {isHomeActive ? this.state.navItems.homeActiveTag : this.state.navItems.homeInactiveTag}
+                  {isHomeActive ? this.state.myNav.homeActiveTag : this.state.myNav.homeInactiveTag}
                 </>)}
               no={
                 () => (<React.Fragment></React.Fragment>)
@@ -242,7 +113,7 @@ class NavbarPage extends Component {
               perform="products:view"
               yes={() => (
                 <>
-                  {isProductsActive ? this.state.navItems.productsActiveTag : this.state.navItems.productsInactiveTag}
+                  {isProductsActive ? this.state.myNav.productsActiveTag : this.state.myNav.productsInactiveTag}
                 </>)}
               no={
                 () => (<></>)
@@ -254,8 +125,8 @@ class NavbarPage extends Component {
               yes={() => (
                 <>
                   {isInsertActive ?
-                    this.state.navItems.insertActiveTag :
-                    this.state.navItems.insertInactiveTag}
+                    this.state.myNav.insertActiveTag :
+                    this.state.myNav.insertInactiveTag}
                 </>
               )}
               no={() => (
@@ -283,18 +154,18 @@ class NavbarPage extends Component {
                 <MDBDropdownMenu className="dropdown-default" right>
                   {
                     isRegistrationActive ?
-                      this.state.navItems.registrationActiveTag :
-                      this.state.navItems.registrationInactiveTag
+                      this.state.myNav.registrationActiveTag :
+                      this.state.myNav.registrationInactiveTag
                   }
                   {
                     isLoginActive ?
-                      this.state.navItems.loginActiveTag :
-                      this.state.navItems.loginInactiveTag
+                      this.state.myNav.loginActiveTag :
+                      this.state.myNav.loginInactiveTag
                   }
                   {
                     isLogoutActive ?
-                      this.state.navItems.logoutActiveTag :
-                      this.state.navItems.logoutInactiveTag
+                      this.state.myNav.logoutActiveTag :
+                      this.state.myNav.logoutInactiveTag
                   }
                 </MDBDropdownMenu>
               </MDBDropdown>

@@ -14,7 +14,7 @@ class HomeContainer extends Component {
         };
         // const refreshNav = this.props.location.refreshNav;
         // const redirect = this.props.location.redirect;
-        console.log(`refreshnav: ${this.props.location.refreshNav}, redirect: ${this.props.location.redirect}`);
+        // console.log(`refreshnav: ${this.props.location.refreshNav}, redirect: ${this.props.location.redirect}`);
     } // constructor
 
     componentDidMount() {
