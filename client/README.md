@@ -11,7 +11,7 @@ OAuth-Imp is my implementation of the OAuth standard.  It implements the main cl
 To demonstrate this concept I have setup a crude *Single Page Application (SPA)*, using REACT.  Users are allowed to perform the following functions on a products database.  However, user privilege is role-based (see below).     
 
 **Products Page Access**
-1. View (visitor)
+1. View (visitor, user, admin))
 2. Hide (user, admin)
 3. View Details (user, admin)
 4. Update Products (admin)
