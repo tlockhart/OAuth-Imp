@@ -33,15 +33,20 @@ class App extends Component {
     this.state = {
       currentPage: '',
       name: '',
-      role: 'visitor',
+      role: '',
       loading: false,
-      redirect: false
+      redirect: false,
+      loggedOut: false
     };
 
     this.handlePageClick = this.handlePageClick.bind(this);
     this.redirectHome = this.redirectHome.bind(this);
     this.getRole = this.getRole.bind(this);
     this.setRole = this.setRole.bind(this);
+  }//constructor
+
+  componentDidMount(){
+    this.getRole();
   }
   setRole(role) {
     this.setState({
@@ -63,7 +68,7 @@ class App extends Component {
     this.setState({ loading: true });
 
     auth.setUserRole(email)
-      .then((data => {
+      .then((data) => {
 
         console.log("setUserRole:", data.role);
         this.setState({ role: data.role });
@@ -74,7 +79,7 @@ class App extends Component {
         this.setState({ role: data.role });
         console.log("APPJS STATE ROLE After Set:", this.state.role);
         return data.role;
-      }));
+      });
 
 
     /***************************/
@@ -84,7 +89,8 @@ class App extends Component {
     console.log("Called REDIRECT HOME redirect b4", this.state.redirect);
     this.setState({
       redirect: true,
-      role: 'visitor'
+      role: 'visitor',
+      loggedOut: true
     });
     console.log("Called REDIRECT HOME redirect after", this.state.redirect);
     history.push({
@@ -172,7 +178,8 @@ class App extends Component {
               exact
               path="/products/"
               render={(props) => <ProductsListContainer {...props}
-                role={this.state.role} />}
+                role={this.state.role}
+                loggedOut={this.state.loggedOut} />}
             />
           </Switch>
 

@@ -38,6 +38,7 @@ class ProductsListContainer extends Component {
             message: '',
             role: this.props.role,
             loading: false,
+            loggedOut: this.props.loggedOut
             // refreshPage: this.props.refreshPage
         };
     } // constructor
@@ -295,7 +296,7 @@ class ProductsListContainer extends Component {
         }
         {
             var userRole = this.state.role;
-            console.log("ProductListContainer: userRole =", userRole);
+            console.log("ProductListContainer: userRole =", userRole, "LoggedOut:", this.state.loggedOut);
             let updatedProductsListData = this.setHtmlItems();
             console.log("UpdateProducts", updatedProductsListData);
             return (

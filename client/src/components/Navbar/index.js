@@ -15,7 +15,7 @@ class NavbarPage extends Component {
       isOpen: false,
       role: this.props.role,
       redirect: this.props.redirect,
-      loggedOut: false,
+      loggedOut: this.props.loggedOut,
       refreshPage: this.props.refreshPage,
       myNav: navbars(this.props)[0]
     };//state
@@ -53,7 +53,8 @@ class NavbarPage extends Component {
        ******************************************/
       auth.resetLocalStorage();
       if ((this.state.role != 'visitor') && !this.loggedOut && this.state.role === this.props.role) {
-        console.log("LOGGUER OUT IN NAV")
+        console.log("LOG USER OUT IN NAV");
+        console.log("Navbar1: userRole =", this.state.role, "LoggedOut:", this.state.loggedOut);
         this.props.setRole('visitor');
       }
       /******************************************
@@ -64,6 +65,7 @@ class NavbarPage extends Component {
        ******************************************/
       else if ((this.state.role != this.props.role) && (this.state.role != 'visitor')) {
         this.setState({ role: 'visitor' });
+        console.log("Navbar2: userRole =", this.state.role, "LoggedOut:", this.state.loggedOut);
         this.props.redirectHome();
       }
     }
