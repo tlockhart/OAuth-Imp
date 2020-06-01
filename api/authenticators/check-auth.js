@@ -33,6 +33,7 @@ module.exports = async (req, res, next) => {
         if (req.body) {
             // 01/01/2019: if response is not an array (Delete, View)
             /***********************************/
+            console.log("check-auth BODY:", req.body);
             if (req.body.email) {
                 console.log("******NOT AN ARRAY*****");
                 expired = req.body.expired;

@@ -88,7 +88,7 @@ export let insertProduct = async (
     return insertResponse;
 };
 
-// Delete an item from the db
+// Perfom the methoda passed in as a callback function
 export let performDBAction = async (
     productId = '',
     email,

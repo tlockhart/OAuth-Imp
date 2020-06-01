@@ -82,5 +82,8 @@ ___
 2. The application will open your browser and run the app in test mode:
     1. http://localhost:3000
 ___
+### **Bugs**
+Currently, If the user refreshes the page, his role will be reset to a visitor.  I will fix this during the next iteration.
+___
 ### **Use**
 This repo is available for public non-commercial use only.

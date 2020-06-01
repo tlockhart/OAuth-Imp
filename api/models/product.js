@@ -16,6 +16,10 @@ const ProductSchema = new Schema({
         type: String,
         required: true
         // required: false
+    },
+    cloudId:{
+        type: String,
+        required: true
     }
     // ,
     // shippingCost: {

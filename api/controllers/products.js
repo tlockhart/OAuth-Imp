@@ -6,11 +6,11 @@ const Product = require('../models/product');
 // import cloudinary
 var cloudinary = require('cloudinary').v2;
 
-cloudinary.config({ 
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.CLOUD_API_KEY, 
-    api_secret: process.env.CLOUD_API_SECRET 
-  });
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET
+});
 
 exports.products_get_all = (req, res, next) => {
     Product.find()
@@ -70,16 +70,16 @@ exports.cb_image_upload = async (req, res, next) => {
     console.log("IN products.cb_image_upload");
 
     // https://cloudinary.com/documentation/node_integration#installation_and_setup
-    
+
     // var res = req.body.file.replace("blob:", "");
     // console.log("********FILENAME", res);
     let cloudifyResponse = await cloudinary.uploader.upload(req.body.file, (error, result) => {
-        if(error) {
-            console.log ("Failed", error);
-            res.status(400).json({error: error});
+        if (error) {
+            console.log("Failed", error);
+            res.status(400).json({ error: error });
         }
-        else{
-            console.log("Success",result);
+        else {
+            console.log("Success", result);
             // console.log(cloudinary.image());
             res.status(200).json(result);
         }
@@ -96,7 +96,7 @@ exports.products_insert_product = (req, res, next) => {
         // validate that data has been supplied
         if (key.value) {
             insertProps[key.propName] = key.value;
-            // console.log("PRODUCTS: KEY/VALUE:", key.propName, " = ", key.value);
+            console.log("PRODUCTS: KEY/VALUE:", key.propName, " = ", key.value);
         }
     }
     console.log("insertProps.authToken:", insertProps.authToken);
@@ -110,6 +110,7 @@ exports.products_insert_product = (req, res, next) => {
         name: insertProps.name,
         value: insertProps.value,
         productImage: insertProps.productImage,
+        cloudId: insertProps.cloudId
         // image: insertProps.productImage,
         // url: 
         // name: req.body.name,
@@ -118,6 +119,7 @@ exports.products_insert_product = (req, res, next) => {
     });
 
     // Save the document to the Product Mongodb:
+
     product
         .save()
         .then(result => {
@@ -266,24 +268,48 @@ exports.products_delete_product = (req, res, next) => {
     console.log("IN PRODUCTS_DELETE_PRODUCT");
     const id = req.params.productId;
     // Product.deleteOne( {_id: id} )
-    Product.remove({ _id: id })
+    /***************************** */
+    Product.findById(id)
+        .select('cloudId')
         .exec()
-        .then(document => {
-            // console.log("document:", document);
-            const response = {
-                message: 'Product deleted',
-                request: {
-                    type: 'POST',
-                    url: 'http://localhost:3000/products/product/delete/' + id,
-                    // body: { name: 'String', value: 'Number'}
-                }
-            };
-            res.status(200).json(document);
+        .then(async (cloudResult) => {
+            if (cloudResult.cloudId) { 
+                cloudImageDestroyed = await cloudinary.uploader.destroy(cloudResult.cloudId);
+                 console.log("CLOUDDESTROYED", cloudImageDestroyed);
+                // res.status(200).json(cloudId);
+                /********************************** */
+                Product.remove({ _id: id })
+                    .exec()
+                    .then(document => {
+                        // console.log("document:", document);
+                        const response = {
+                            message: 'Product deleted',
+                            request: {
+                                type: 'POST',
+                                url: 'http://localhost:3000/products/product/delete/' + id,
+                                // body: { name: 'String', value: 'Number'}
+                            }
+                        };
+                        res.status(200).json(document);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            message: err
+                        });
+                    });
+                /********************************* */
+            }
+            else {
+                res.status(404).json({
+                    message: 'No valid entry found for ID'
+                });
+            }
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                message: err
-            });
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({ error: error });
         });
+
 };
+

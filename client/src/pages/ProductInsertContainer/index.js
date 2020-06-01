@@ -337,8 +337,6 @@ class ProductInsertContainer extends Component {
     }// submit-Image on click
 
     /***************************************************/
-
-    // submitImageHandler = () => {submitImageHandler};
     async setStateVariables(access_token, refresh_token, expiration, email, message) {
         /************************************************
          * SET State VARIABLES FROM LocalStorage

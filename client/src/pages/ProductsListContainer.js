@@ -217,7 +217,7 @@ class ProductsListContainer extends Component {
              ***************************************/
             // let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
             let { access_token, refresh_token, expiration, email, message } = await auth.getLocalStorage();
-
+            console.log("GETLocalSTORAGE email:", email);
 
             /******************************************
              * STEP3: SET STATE VARIABLES With data returned from localStorage
@@ -270,6 +270,7 @@ class ProductsListContainer extends Component {
                 /*******************************
                  *STEP 7: PERFORM A DB ACTION IF TOKENS R VALID
                 ********************************/
+               console.log("EMAIL IN STAGEDBACTION:", this.state.email);
                 await this.stageDBAction(
                     productId,
                     this.state.email,
