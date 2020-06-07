@@ -17,7 +17,7 @@ export let retrieveUpdatedProductList = async (email) => {
     }
 };
 //url, authToken, refreshToken, name, value, image
-export let deleteProduct = async (
+export async function deleteProduct(
     url,
     productId,
     email,
@@ -27,7 +27,7 @@ export let deleteProduct = async (
     name = null,
     value = null,
     imageSrc = null
-    ) => {
+) {
     console.log('IN DELETE PRODUCT CALL');
     console.log(`DATA URL: ${url}, ATOKENT: ${accessToken}, RTOKEN: ${refresh_token}, EXPIRED: ${expired}, EMAIL: ${email}`);
 
@@ -38,7 +38,7 @@ export let deleteProduct = async (
 
     // Return response from deleteProduct on the backend
     return response;
-};
+}
 
 // Define Call to Server Side utils to post body to the backend server:
 export let updateProduct = async (
@@ -67,33 +67,30 @@ export let insertCloudinary = async (baseURL, imageObj) => {
 };
 
 // Define Call to Server Side utils to post body to the backend server:
-export let insertProduct = async (
+export async function insertProduct(
     url,
     id,
     email,
-    authToken,
-    refreshToken,
+    authToken = null,
+    refreshToken = null,
     expired = null,
     name,
     value,
-    image) => {
-    // export let insertProduct = async (url, authToken, refreshToken, expiration = null, name, value, image, file, imageSrc) => {
+    image) {
     console.log('IN INSERT PRODUCT CALL');
+    console.log("Insert Product Image:", image);
     let insertResponse = await
-        //12/01/2019:
-        // API.updateProduct(url, authToken, refreshToken, name, value);
         API.insertProduct(url, id, email, authToken, refreshToken, name, value, image, expired);
 
     // Return results to the calling program
     return insertResponse;
-};
+}
 
-// Perfom the methoda passed in as a callback function
 export let performDBAction = async (
     productId = '',
     email,
-    refresh_token,
     authToken,
+    refreshToken,
     expired,
     name = null,
     value = null,
@@ -103,7 +100,7 @@ export let performDBAction = async (
 
     console.log("ProductStore: PerformDbAction:", "email:", email);
 
-    console.log('ProductUpdateContainer:refresh_token = ', refresh_token);
+    console.log('ProductUpdateContainer:refresh_token = ', refreshToken);
 
     /************************************
      *  STEP8: Call method to delete product
@@ -113,13 +110,13 @@ export let performDBAction = async (
         let refresh_token = 'norefresh';
 
         console.log("BEFORE UPDATE CALLED");
-
+        console.log("PerformDBAction Image:", image);
         let response = await cb(
             url + productId,
             productId,
             email,
             authToken,
-            refresh_token,
+            refreshToken,
             expired,
             name,
             value,
@@ -138,12 +135,6 @@ export let performDBAction = async (
 
             let productsList = await retrieveUpdatedProductList(email);
             console.log("retrievedUpdatedProductList:", productsList);
-            // products = {
-            //     name:"BS0",
-            //     value:0,
-            //     _id:"5da082c31c9d440000576976",
-            //     productImage:"uploads/1570591284561_tlockhart.png"
-            // };
 
             let data = {
                 message: "Action Completed",
@@ -165,3 +156,84 @@ export let performDBAction = async (
     }
 };
 
+/************************************
+stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
+************************************/
+export let stageDBAction = async (
+    id,
+    email,
+    name,
+    value,
+    image,
+    url,
+    refreshToken,
+    authToken,
+    expired,
+    cb) => {
+    console.log("Start performDBAction");
+
+    //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
+    let results = await performDBAction(
+        id,
+        email,
+        authToken,
+        refreshToken,
+        expired,
+        name,
+        value,
+        image,
+        url,
+        cb);
+
+    console.log("PRODUCTINSERT: CONTAINER performDBAction RESULTS:", results);
+
+    /************************************
+     * Set placeholder text if data was insertd
+     ****************************************/
+    let namePlaceHolder;
+    let valuePlaceHolder;
+    if (results.message === "Action Completed") {
+
+        if (name) {
+            namePlaceHolder = { placeholderName: name };
+        }
+        if (value) {
+            valuePlaceHolder = { placeholderValue: value };
+
+        }
+    }
+    console.log("Passed performDBAction");
+    let { message, isUserAuthorized, productsList } = results;
+
+    /***************************************************
+     * Set objects to be returned from stageDBAction
+     *****************************************************/
+    let dbObj;
+    if (namePlaceHolder && valuePlaceHolder) {
+        dbObj = {
+            message,
+            refreshToken,
+            isUserAuthorized,
+            expired,
+            productsList,
+            placeholderName: namePlaceHolder ? namePlaceHolder.placeholderName : '',
+            placeholderValue: valuePlaceHolder ? valuePlaceHolder.placeholderValue : ''
+        }
+    }
+    else{
+        dbObj = {
+            message,
+            refreshToken,
+            isUserAuthorized,
+            hasTimeExpired: expired,
+            productsList
+        }
+    }
+
+    console.log("STAGEDBACTION: productListData =", productsList);
+
+    return dbObj;
+
+    // 10/15/2019: Set the rendering components
+    // this.productListData = productsList;
+}

@@ -12,7 +12,7 @@ import UploadSpinner from '../components/UploadSpinner';
 //import utils
 import * as auth from '../utils/authenticationStore';
 import credentialStore from '../utils/credentialStore';
-import { performDBAction, deleteProduct } from '../utils/productStore';
+import { deleteProduct, stageDBAction } from '../utils/productStore';
 
 class ProductsListContainer extends Component {
     constructor(props) {
@@ -27,6 +27,7 @@ class ProductsListContainer extends Component {
         /******************************************/
         this._productsListData = [];
         this.state = {
+            productsList: [],
             productListData: [],
             access_token: '',
             authToken: '',
@@ -38,9 +39,9 @@ class ProductsListContainer extends Component {
             message: '',
             role: this.props.role,
             loading: false,
-            loggedOut: this.props.loggedOut
-            // refreshPage: this.props.refreshPage
+            loggedOut: this.props.loggedOut,
         };
+        this.deleteProduct = deleteProduct.bind(this);
     } // constructor
 
     resetStateVariables() {
@@ -169,41 +170,6 @@ class ProductsListContainer extends Component {
         this.productsListData = filteredList;
 
     }
-    /************************************
-     * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
-     ************************************/
-    async stageDBAction(id, email, url, cb) {
-        console.log("Start performDBAction");
-        let results = await performDBAction(
-            id,
-            email,
-            this.state.refresh_token,
-            this.state.authToken,
-            this.state.hasTimeExpired,
-            null,
-            null,
-            null,
-            url,
-            cb);
-
-        console.log("Passed performDBAction");
-
-        let { message, refresh_token, isUserAuthorized, hasTimeExpired, productsList } = results;
-
-        /***************************************************
-         * Set State with the results of calling the DB Action
-         *****************************************************/
-        this.setState({
-            message,
-            refresh_token,
-            isUserAuthorized,
-            hasTimeExpired,
-        });
-
-        console.log("productsListData =", productsList);
-        // 10/15/2019: Set the rendering components
-        this.productsListData = productsList;
-    }
 
     async deleteClickHandler(event) {
         try {
@@ -216,7 +182,6 @@ class ProductsListContainer extends Component {
             /***************************************
              * STEP2: Get Data out of local Storage
              ***************************************/
-            // let { access_token, refresh_token, expiration, email, message } = await authenticationStore.getLocalStorage();
             let { access_token, refresh_token, expiration, email, message } = await auth.getLocalStorage();
             console.log("GETLocalSTORAGE email:", email);
 
@@ -272,11 +237,26 @@ class ProductsListContainer extends Component {
                  *STEP 7: PERFORM A DB ACTION IF TOKENS R VALID
                 ********************************/
                console.log("EMAIL IN STAGEDBACTION:", this.state.email);
-                await this.stageDBAction(
+
+                let dbActionResults = await stageDBAction(
                     productId,
                     this.state.email,
+                    null,
+                    null,
+                    null,
                     this.deleteURL,
-                    deleteProduct);
+                    this.state.refresh_token,
+                    this.state.authToken,
+                    this.state.hasTimeExpired,
+                    this.deleteProduct);
+
+                    this.setState(dbActionResults);
+
+                    this.productsListData = this.state.productsList;
+
+                    // console.log("ProductsListContainer: dbactionresults", dbActionResults);
+
+                    // console.log("ProductsListContainer:","productsList:", this.state.productsList,"productListData", this.state.productListData);
             } // if
 
         }

@@ -5,7 +5,7 @@ import * as authenticationStore from '../../utils/authenticationStore';
 // Import Components
 import ProductInsertForm from "../../components/ProductInsertForm";
 import credentialStore from '../../utils/credentialStore';
-import { insertProduct, performDBAction } from '../../utils/productStore';
+import { insertProduct, performDBAction, stageDBAction } from '../../utils/productStore';
 import * as imgHelper from './utils/helpers';
 import { insertCloudinary } from '../../utils/productStore';
 
@@ -22,16 +22,13 @@ class ProductInsertContainer extends Component {
             productImage: '',
             placeholderName: '',
             placeholderValue: '',
+            productsList: [],
             authToken: '',
             refresh_token: '',
             email: '',
             hasTimeExpired: false,
             isUserAuthorized: true,
             message: '',
-            // imgLabelContent: '',
-            // productImageName: '',
-            // imglabelInnerHTML: 'CF'
-
             // Image imputs for Image Uploader component
             image: {
                 base64Str: '',
@@ -39,10 +36,6 @@ class ProductInsertContainer extends Component {
                 cloudImagePublicId: '',
                 input: '',
                 file: '',
-                // previewCanvas: undefined,
-                // productImage: undefined,
-                // fileMsg: undefined,
-                // submitImage: undefined,
                 submitBtnId: "image-input",
                 fileTypes: [
                     'image/jpeg',
@@ -64,7 +57,6 @@ class ProductInsertContainer extends Component {
                 fileMsgElement: '',
                 previewCanvasElement: '',
                 submitImageElement: '',
-                // name: "productImage",
                 className: "custom-file-input",
                 type: "file"
             }
@@ -73,6 +65,7 @@ class ProductInsertContainer extends Component {
 
         this.changeHandler = this.changeHandler.bind(this);
         this.insertClickHandler = this.insertClickHandler.bind(this);
+        this.insertProduct = insertProduct.bind(this);
         this.productImageClickHandler = this.productImageClickHandler.bind(this);
         this.submitImageHandler = this.submitImageHandler.bind(this);
         this.selectImage = this.selectImage.bind(this);
@@ -86,14 +79,14 @@ class ProductInsertContainer extends Component {
         console.log("ImageUploaderStateMounted", this.state.image.imageMin);
 
         // Why is the image props not prining?
-        console.log("ImageUploaderState", this.state.image.fileTypes);
+        // console.log("ImageUploaderState", this.state.image.fileTypes);
     }
 
     //  Select an image
     /*********** */
     async selectImage(event, imageSelectRef, previewCanvasRef) {
-        event.preventDefault();
-        // event.persist();
+        // event.preventDefault();
+        event.persist();
 
         console.log("SELECTIMAGE imageSelectRef:", imageSelectRef.current, "previewCanvasRef:", previewCanvasRef.current);
 
@@ -121,16 +114,12 @@ class ProductInsertContainer extends Component {
 
         this.setImageProp("file", this.state.image.file);
 
-        // var _URL = window.URL || window.webkitURL;
-
         let img;
 
-        if (imgHelper.isFileSelected(image.input) && imgHelper.isFileTypeValid(image.file, image.fileTypes)) {
-            // this.setImageProp("file", image.input.files[0]); 
+        if (imgHelper.isFileSelected(image.input) && imgHelper.isFileTypeValid(image.file, image.fileTypes)) { 
             var blob = image.input.files[0];
 
             // save image back to prop
-
             img = new Image();
             try {
                 const result = await imgHelper.loadImage(img, blob);
@@ -174,14 +163,12 @@ class ProductInsertContainer extends Component {
     }
     /*********** */
     setImageProp(key, value) {
-        // copy current state
-        // var image = this.state.image;
-
         // 12/12/09: Make a copy of props
         var image = this.state.image;
         console.log("setImageProp", image, "Key", key, "Value", value);
         // update props
         image[key] = value;
+
         // PROBLEM
         /*******************/
         console.log("image: ", image);
@@ -278,7 +265,7 @@ class ProductInsertContainer extends Component {
                 // show select image:
                 // $('#select-btn').show()
             } else {
-                console.log ("Image is acceptable");
+                console.log("Image is acceptable");
                 var imageUrl = imageSrc;
 
                 console.log("Call convertImageFromURLTOBase");
@@ -301,20 +288,23 @@ class ProductInsertContainer extends Component {
                 //update cloudImageUrl
                 console.log("CLOUD URL:", cloudinaryResult.data.url);
                 image.cloudImageUrl = cloudinaryResult.data.url;
+                console.log("CLOUD IMAGEURL:", image.cloudImageUrl);
                 image.cloudImagePublicId = cloudinaryResult.data.public_id;
 
                 /****************************/
                 //5/30/2020: Save image.cloudImagePublicId to db, where productImage == image.cloudImageURL
                 /****************************/
-                console.log("public_id", cloudinaryResult.public_id);
+                console.log("public_id", image.cloudImagePublicId);
                 /*************************** */
 
 
                 // update base64Str
                 image.base64Str = base64StringImage;
                 // update image state variable
-                this.setState({ image });
-                console.log("IMAGE STATE UPDATED: ", this.state.image.base64Str);
+                console.log("Image:", image);
+                this.setState({ image: image });
+                // console.log("IMAGE STATE UPDATED: ", this.state.image.base64Str);
+                console.log("State image: ", this.state.image, "cloud image url", this.state.image.cloudImageUrl);
             }// else
             // remove canvas after submit
             imgHelper.removeCanvas(previewCanvasElement);
@@ -373,25 +363,15 @@ class ProductInsertContainer extends Component {
     componentDidMount() {
         this.setElementRef();
         if (this.props.location.state) {
-            /******************************************
-             *  Get id off the URL Dynamic Segment
-             * ****************************************/
-            // const { product_id } = this.props.match.params;
-            // console.log("Product_ID:", product_id);
-
             /********************************************
-             * Pass item info from click button
+             * Pass product info from click button
              * *****************************************/
             const { name, value } = this.props.location.state;
             var image = this.state.image;
             image.imageName = "Choose File";
-            // image.imageName = "";
             this.setState({
-                // productId: product_id,
                 placeholderName: name,
                 placeholderValue: `$ ${value}`,
-                //11/27/2019
-                // productImageName: "Choose File",
                 image: image
             });
         }
@@ -400,8 +380,6 @@ class ProductInsertContainer extends Component {
     changeHandler(event) {
         // First disable default behavior
         event.preventDefault();
-        // event.persist();
-
         const {
             name,
             value
@@ -418,74 +396,9 @@ class ProductInsertContainer extends Component {
         }
     } // changeHandler
 
-    /************************************
-    * stageDBActionis an integrator that passes an id and a callback function corresponding to the desired db action to be performed, and retrieves the new data and updates the state variables, to be displayed to screen. 
-    ************************************/
-    async stageDBAction(
-        id,
-        email,
-        name,
-        value,
-        image,
-        url,
-        cb) {
-        // var image = imageRef;
-        // console.log("STAGEDBACTION BASE64: ", image.base64Str);
-        console.log("Start performDBAction");
-        // console.log("ProductInsertContainer: stageDBACTION: FILE", file);
-
-        //EXECUTE CALLBACK FUNCTION AND RETURN RESULSTS
-        let results = await performDBAction(
-            id,
-            email,
-            this.state.refresh_token,
-            this.state.authToken,
-            this.state.hasTimeExpired,
-            name,
-            value,
-            image,
-            url,
-            cb);
-
-        console.log("PRODUCTINSERTCONTAINER performDBAction RESULTS:", results);
-
-        /************************************
-         * Set placeholder text if data was insertd
-         ****************************************/
-        if (results.message === "Action Completed") {
-            if (name) {
-                this.setState({ placeholderName: name });
-            }
-            if (value) {
-                this.setState({ placeholderValue: value });
-            }
-        }
-        console.log("Passed performDBAction");
-
-        // let parsedResults = JSON.parse(results);
-        let { message, refresh_token, isUserAuthorized, hasTimeExpired, productsList } = results;
-
-        /***************************************************
-         * Set State with the results of calling the DB Action
-         *****************************************************/
-        this.setState({
-            message,
-            refresh_token,
-            isUserAuthorized,
-            hasTimeExpired,
-        });
-
-        console.log("productListData =", productsList);
-        // 10/15/2019: Set the rendering components
-        this.productListData = productsList;
-    }
-
     async insertClickHandler(event) {
         event.preventDefault();
-        // event.persist();
         console.log("PRODUCTINSERTCONTAINER: insertCLICKHANDLER CLICKED");
-        // console.log("INSERTCONTAINER - REQFILE: ", req.file);
-
         try {
 
             let name = this.state.productName;
@@ -553,8 +466,6 @@ class ProductInsertContainer extends Component {
                     else {
                         console.log("I NEVER MADE IT TO IF");
                     }
-                    //12/08: 
-                    // this.refs.form.getDOMNode().dispatchEvent(new Event("submit"));
                 }
                 catch (err) {
                     // Clear all localStorage, due to invalid Refresh token
@@ -580,8 +491,6 @@ class ProductInsertContainer extends Component {
             }
             console.log("AUTHORIZED?:", this.state.isUserAuthorized);
             if (this.state.isUserAuthorized) {
-                // Refresh_Token should be temporarily set to 'norefresh' in productionAction, as tokens should NOT be refreshed
-                // this.setState({ refresh_token: 'norefresh' });
 
                 // 5/17/2020:
                 console.log('ProductInsertContainer:refresh_token = ', this.state.refresh_token);
@@ -593,19 +502,30 @@ class ProductInsertContainer extends Component {
                 /**************************************/
                 await this.submitImageHandler(event, this.state.image);
                 // console.log("base64 still here:", this.state.image.base64Str);
-
+                console.log("In stage");
                 /***********************************************
                  * Step8 of 8: PERFORM A DB ACTION IF TOKENS R VALID 
                  **********************************************/
-                // 12/15
-                await this.stageDBAction(
+                const dbActionResults = await stageDBAction(
                     this.state.productId,
                     this.state.email,
                     name,
                     value,
-                    image,
+                    this.state.image,
                     this.baseURL,
-                    insertProduct);
+                    this.state.refresh_token,
+                    this.state.authToken,
+                    this.state.hasTimeExpired,
+                    this.insertProduct);
+                console.log("Out stage");
+                console.log("ProductInsertContainer:", dbActionResults);
+                /***************************************************
+                 * Set State with the results of calling the DB Action
+                 ***************************************************/
+                this.setState(dbActionResults);
+                
+                // 10/15/2019: Set the rendering components
+                this.productListData = this.state.productsList;
             } // if
 
         } // try
@@ -620,20 +540,14 @@ class ProductInsertContainer extends Component {
     // Handles changing input text when an image is clicked
     // productImageClickHandler(event){
     productImageClickHandler(event) {
-        event.preventDefault();
-        // event.persist();
+        // event.preventDefault();
+        event.persist();
         let element = document.getElementById(this.state.image.submitBtnId)
-
-        // Display image
-        /**********************/
-        // this.selectImage(event);
-        /**********************/
 
         // 12/12
         let imageSelectorLabel = document.querySelector("#img-select-label")
         console.log("QUERY SELECTOR", imageSelectorLabel.innerHTML);
 
-        // const element = event.target;
         console.log("Image Selector Element", element);
         let labelElement = element.labels[0];
         let labelValue = labelElement.textContent;
